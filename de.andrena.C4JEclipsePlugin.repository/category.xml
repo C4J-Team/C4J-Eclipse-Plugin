@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<site>  
+   <category-def name="de.andrena.C4JEclipsePlugin" label="C4J Eclipse Plugin"/>  
+   <feature url="features/de.andrena.C4JEclipsePlugin.feature_0.0.0.qualifier.jar"  
+      id="de.andrena.C4JEclipsePlugin.feature">  
+      <category name="de.andrena.C4JEclipsePlugin" />  
+   </feature>  
+</site> 

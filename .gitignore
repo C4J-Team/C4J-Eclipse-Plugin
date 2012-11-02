@@ -1,0 +1,8 @@
+bin/
+target/
+.settings/
+.metadata/
+.project
+
+# Locally stored "Eclipse launch configurations"
+*.launch
