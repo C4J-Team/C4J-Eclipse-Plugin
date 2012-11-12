@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: C4J Eclipse Plugin Test
+Bundle-SymbolicName: de.andrena.C4J.eclipse.plugin.test
+Bundle-Version: 0.0.1.qualifier
+Fragment-Host: de.andrena.C4J.eclipse.plugin;bundle-version="0.0.1"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.junit;bundle-version="4.10.0"
