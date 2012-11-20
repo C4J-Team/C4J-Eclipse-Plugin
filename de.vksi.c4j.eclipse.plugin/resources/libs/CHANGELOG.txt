@@ -1,0 +1,58 @@
+C4J 6.0.0 (11/05/2012)
+=====
+New Features:
+* new version system, indicating compatibility to Java 6 and to allow having a separate version for Java 8
+* LSP fully implemented, now being sensitive that pre-conditions from multiple inherited interfaces must not be different
+
+Fixes:
+* fixed constructor-usage within old()
+* local configuration for top-level packages is found
+* performance improvement by avoiding calls to Thread.getStackTrace()
+* pure validation within class initializers allows write-access on own static fields
+* @Pure inheritance from pure registry
+
+C4J 4.0-Beta7 (08/15/2012)
+=====
+New Features:
+* implemented maxTime(seconds) asserting the duration of a method
+* changed configuration to be xml-based using a local and a global configuration
+
+Fixes:
+* @AllowPureAccess is now usable with Objects
+* fixed various issues executing conditions in the correct order
+* old-expressions are no longer being evaluated in the post-condition
+* fixed various side-effect issues using old and unchanged in post-conditions and invariants
+* fixed pure mechanism trying to access package-private fields from super-classes when class is not in the same package
+
+C4J 4.0-Beta6 (06/14/2012)
+=====
+New Features:
+* changed package-name to de.vksi.c4j
+* contracts for static methods, including static initializers
+* old() and unchanged() now usable within class-invariants
+* UsageError when referencing an overridden contract method from another contract method
+* UsageError when using @Pure on a contract method, which is already implicitly pure
+* migrated from Ant to Maven
+* setup a build server with BuildHive
+
+Fixes:
+* once a condition fails, no other conditions will be checked
+* class-invariants are no longer considered for private methods
+* removed false warning when using a constructor in a contract class
+* removed deprecated Condition.pre() and Condition.post()
+
+
+C4J 4.0-Beta5 (05/17/2012)
+=====
+New Features:
+* Configuration.getExternalContractsAsStrings() - external contracts can also be configured using strings
+* introduced Condition.noneIdentifiedYet() to communicate that no pre- or post-condition has been identified yet
+* advanced old() and unchanged() working with arbitrary expressions without local variables
+* PreTransformer allows to search a directory recursively, transform the contained .class files and save them to disk
+* Configuration.getContractsDirectory() now also accepts JAR-files
+* added EPL 1.0 as the license for C4J 4.0+
+
+Fixes:
+* renamed pre() and post() to preCondition() and postCondition() in order to be more descriptive
+* solved class-loader issues when using @Contract
+* @Pure strict enforcement now also works with array-element reassignments

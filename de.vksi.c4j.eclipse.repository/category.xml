@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/de.vksi.c4j.eclipse.feature_0.0.1.qualifier.jar" id="de.vksi.c4j.eclipse.feature" version="0.0.1.qualifier">
+      <category name="de.vksi.c4j.eclipse.plugin"/>
+   </feature>
+   <category-def name="de.vksi.c4j.eclipse.plugin" label="C4J Eclipse Plugin"/>
+</site>
