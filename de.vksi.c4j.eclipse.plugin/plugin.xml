@@ -13,7 +13,7 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+            locationURI="popup:org.eclipse.ui.projectConfigure?after=additions">
          <command
                commandId="de.vksi.c4j.eclipse.plugin.convertToC4jProject"
                label="Convert to C4J Project"
@@ -33,5 +33,19 @@
             </visibleWhen>
          </command>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="de.vksi.c4j.eclipse.plugin.category.wizards"
+            name="C4J Project Wizard">
+      </category>
+      <wizard
+            category="de.vksi.c4j.eclipse.plugin.category.wizards"
+            class="de.vksi.c4j.eclipse.plugin.wizards.C4JProjectWizard"
+            icon="icons/c4jIcon.gif"
+            id="de.vksi.c4j.eclipse.plugin.new.project.wizard"
+            name="C4J Project">
+      </wizard>
    </extension>
 </plugin>

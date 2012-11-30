@@ -21,8 +21,8 @@ import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.VMStandin;
 
 public class JavaProject {
-	private static final String BIN_FOLDER = "bin";
-	private static final String SRC_FOLDER = "src";
+	public static final String BIN_FOLDER = "bin";
+	public static final String SRC_FOLDER = "src";
 
 	private IProject generalProject;
 	private IJavaProject javaProject;

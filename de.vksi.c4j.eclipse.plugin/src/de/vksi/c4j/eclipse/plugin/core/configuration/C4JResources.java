@@ -20,18 +20,33 @@ import org.osgi.framework.Bundle;
 
 import de.vksi.c4j.eclipse.plugin.C4JEclipsePluginActivator;
 
-class C4JLibraries {
+public class C4JResources {
 	private static final String C4J_JAR = "c4j";
 	private static final String JAR_FILE_EXTENSION = "jar";
 	private static final String RESOURCES_LIBS = "resources/libs/";
+	private static final String RESOURCES_CONFIG = "resources/config/";
 
-	private IFolder destinationLibFolder;
+	private IFolder destinationFolder;
 	
 	
-	public void copyToProjectFolder(IFolder libFolder) {
-		this.destinationLibFolder = libFolder;
+	/**
+	 * @param libFolder
+	 */
+	public void copyConfigFilesTo(IFolder libFolder) {
+		this.destinationFolder = libFolder;
+		
+		List<String> filesToCopy = getC4JResourcesFromBundle(RESOURCES_CONFIG);
+		
+		for (String file : filesToCopy) {
+			if (!fileExists(file))
+				copy(file);
+		}
+	}
+	
+	public void copyLibrariesTo(IFolder libFolder) {
+		this.destinationFolder = libFolder;
 
-		List<String> filesToCopy = getC4JLibsFromBundle(RESOURCES_LIBS);
+		List<String> filesToCopy = getC4JResourcesFromBundle(RESOURCES_LIBS);
 
 		for (String file : filesToCopy) {
 			if (!fileExists(file))
@@ -39,33 +54,42 @@ class C4JLibraries {
 		}
 	}
 
-	private List<String> getC4JLibsFromBundle(String pathToLibs) {
+	private List<String> getC4JResourcesFromBundle(String pathToResources) {
 		List<String> filesToCopy = new ArrayList<String>();
 	
 		Bundle c4jPluginBundle = C4JEclipsePluginActivator.getDefault().getBundle();
-		Enumeration<String> elementsInDirectory = c4jPluginBundle.getBundleContext().getBundle().getEntryPaths(pathToLibs);
+		Enumeration<String> elementsInDirectory = c4jPluginBundle.getBundleContext().getBundle().getEntryPaths(pathToResources);
 
 		while (elementsInDirectory.hasMoreElements()) {
 			String element = (String) elementsInDirectory.nextElement();
 			if (!element.endsWith("/")) {
-				filesToCopy.add(element.replace(RESOURCES_LIBS, ""));
+				filesToCopy.add(element);
 			}
 		}
 		return filesToCopy;
 	}
 
 	private boolean fileExists(String fileName) {
-		IFile jarFile = this.destinationLibFolder.getFile(fileName);
+		String file = removePathInformation(fileName);
+		
+		IFile jarFile = this.destinationFolder.getFile(file);
 
 		return jarFile.exists();
 	}
+
+	private String removePathInformation(String fileName) {
+		int index = fileName.lastIndexOf("/");
+		String file = fileName.substring(index+1, fileName.length());
+		return file;
+	}
 	
 	private void copy(String file) {
-		IFile destinationFile = this.destinationLibFolder.getFile(file);
+		String fileName = removePathInformation(file);
+		IFile destinationFile = this.destinationFolder.getFile(fileName);
 		InputStream inputStream = null;
 
 		try {
-			Path pathToLib = new Path(RESOURCES_LIBS + file);
+			Path pathToLib = new Path(file);
 			Bundle c4jPluginBundle = C4JEclipsePluginActivator.getDefault().getBundle();
 			inputStream = FileLocator.openStream(c4jPluginBundle, pathToLib, false);
 			destinationFile.create(inputStream, false, null);
@@ -85,7 +109,7 @@ class C4JLibraries {
 	}
 	
 	public String getPathToLocalC4JJar() {
-		List<IFile> resourceFiles = getResourceFilesFrom(this.destinationLibFolder);
+		List<IFile> resourceFiles = getFilesFrom(this.destinationFolder);
 
 		for (IFile file : resourceFiles) {
 			if (isLocalC4JJar(file))
@@ -95,20 +119,7 @@ class C4JLibraries {
 		return "";
 	}
 
-	private List<IFile> getResourceFilesFrom(IFolder folder) {
-		List<IFile> resourceFiles = new ArrayList<IFile>();
-		IResource[] resources = getResourcesFrom(folder);
 
-		for (IResource res : resources) {
-			switch (res.getType()) {
-			case IResource.FILE:
-				resourceFiles.add((IFile) res);
-				break;
-			}
-		}
-
-		return resourceFiles;
-	}
 	
 	private boolean isLocalC4JJar(IFile file) {
 		String extension = file.getFileExtension();
@@ -120,7 +131,22 @@ class C4JLibraries {
 		return false;
 	}
 	
-	private IResource[] getResourcesFrom(IFolder folder) {
+	private List<IFile> getFilesFrom(IFolder folder) {
+		List<IFile> resourceFiles = new ArrayList<IFile>();
+		IResource[] resources = getAllMemberResourcesFrom(folder);
+
+		for (IResource res : resources) {
+			switch (res.getType()) {
+			case IResource.FILE:
+				resourceFiles.add((IFile) res);
+				break;
+			}
+		}
+
+		return resourceFiles;
+	}
+
+	private IResource[] getAllMemberResourcesFrom(IFolder folder) {
 		IResource[] resources = null;
 		try {
 			resources = folder.members();
@@ -131,14 +157,13 @@ class C4JLibraries {
 		return resources;
 	}
 
-
 	public void addJarsToClasspath(IJavaProject javaProject) throws JavaModelException {
 		new AddClasspathEntry(javaProject).add(this.getClassPathEntries());
 	}
 
 	private List<IClasspathEntry> getClassPathEntries() {
 		List<IClasspathEntry> classPathEntries = new ArrayList<IClasspathEntry>();
-		List<IFile> resourceFiles = getResourceFilesFrom(this.destinationLibFolder);
+		List<IFile> resourceFiles = getFilesFrom(this.destinationFolder);
 		
 		for (IFile file : resourceFiles) {
 			String extension = file.getFileExtension();

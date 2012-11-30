@@ -19,7 +19,7 @@ import de.vksi.c4j.eclipse.plugin.core.configuration.ConvertProject;
 
 public class ConvertProjectTest {
 
-	private static final String LIB_FOLDER_NAME = "lib";
+	private static final String LIB_FOLDER_NAME = "libs";
 	private static final String PROJECT_NAME = "testProject";
 
 	private static final String C4J_JAR = "c4j-6.0.0.jar";
@@ -39,7 +39,7 @@ public class ConvertProjectTest {
 	}
 
 	@Test
-	public void libFolderHasBeenCreatedTest() throws CoreException {
+	public void testLibFolderHasBeenCreated() throws CoreException {
 		converter.toC4JProject(this.projectToConvert);
 		
 		IFolder libFolder = getLibFolder();
@@ -48,13 +48,13 @@ public class ConvertProjectTest {
 	}
 	
 	@Test
-	public void existingLibFolderWillNotBeReplacedTest() throws Exception {
+	public void testExistingLibFolderWillNotBeReplaced() throws Exception {
 		this.javaProject.addFolderToClassEntries(LIB_FOLDER_NAME);
 		converter.toC4JProject(this.projectToConvert);
 	}
 
 	@Test
-	public void libFolderContainsRequiredJarsTest() throws Exception {
+	public void testLibFolderContainsRequiredJars() throws Exception {
 		converter.toC4JProject(this.projectToConvert);
 		IFolder libFolder = getLibFolder();
 
@@ -64,7 +64,7 @@ public class ConvertProjectTest {
 	}
 
 	@Test
-	public void jarsAddedToClassPathTest() throws Exception {
+	public void testJarsAddedToClassPath() throws Exception {
 		converter.toC4JProject(this.projectToConvert);
 		List<String> classpathEntries = getJarsFromClassPath();
 

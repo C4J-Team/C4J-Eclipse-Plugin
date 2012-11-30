@@ -7,7 +7,7 @@ import org.eclipse.core.resources.IProject;
 
 public class ConvertProject {
 
-	private static final String LIB_FOLDER_NAME = "lib";
+	private static final String LIB_FOLDER_NAME = "libs";
 	private IFolder libFolder;
 	private IJavaProject javaProject;
 	private C4JVM c4jVM;
@@ -16,8 +16,8 @@ public class ConvertProject {
 		this.javaProject = javaProject;
 		this.libFolder = createLibFolder();
 
-		C4JLibraries c4jLibs = new C4JLibraries();
-		c4jLibs.copyToProjectFolder(libFolder);
+		C4JResources c4jLibs = new C4JResources();
+		c4jLibs.copyLibrariesTo(libFolder);
 		c4jLibs.addJarsToClasspath(javaProject);
 		String c4JLocation = c4jLibs.getPathToLocalC4JJar();
 		

@@ -13,44 +13,48 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
 
-public class DuplicateVM {
+public class VMDuplicator {
 	private static final String JRE_CONTAINER = "org.eclipse.jdt.launching.JRE_CONTAINER";
 	private IJavaProject javaProject;
 
 	private VMStandin duplicatedStandin;
 	private IVMInstall duplicatedVm;
 
-	public DuplicateVM(IJavaProject javaProject) {
+	public VMDuplicator(IJavaProject javaProject) {
 		this.javaProject = javaProject;
 	}
 
 	public void duplicateVM(String nameOfDuplicate, String idOfDuplicate) throws CoreException {
-		if (!isDuplicated(nameOfDuplicate, idOfDuplicate)) {
-			IVMInstall currentInstalledVM = JavaRuntime.getVMInstall(this.javaProject);
-			duplicatedStandin = new VMStandin(currentInstalledVM, currentInstalledVM.getId() + idOfDuplicate);
-			duplicatedStandin.setName(currentInstalledVM.getName() + nameOfDuplicate);
-		}
+		IVMInstall currentInstalledVM = JavaRuntime.getVMInstall(this.javaProject);
+		duplicatedStandin = new VMStandin(currentInstalledVM, idOfDuplicate);
+		duplicatedStandin.setName(nameOfDuplicate);
+	}
+
+	public VMStandin getDuplicate() {
+		return this.duplicatedStandin;
 	}
 
 	public void convertDuplicateToRealVM() throws CoreException {
-		removeJREContainer();
-		duplicatedVm = duplicatedStandin.convertToRealVM();
-		addNewJREContainer();
+		if (!isAlreadyDuplicated()) {
+			removeJREContainer();
+			duplicatedVm = getDuplicate().convertToRealVM();
+			addNewJREContainer();
+		}
 	}
-	
-	public void setVMArgument(String parameter) {
-		if (duplicatedStandin != null) {
+
+	public void setVMArgumentForDuplicate(String parameter) {
+		if (getDuplicate() != null) {
 			duplicatedStandin.setVMArguments(new String[] { parameter });
 		}
 	}
 
-	private boolean isDuplicated(String nameOfDuplicate, String idOfDuplicate) throws CoreException {
+	private boolean isAlreadyDuplicated() throws CoreException {
 		IVMInstall vmInstall = JavaRuntime.getVMInstall(this.javaProject);
 
-		boolean nameEndsWithC4Jpostfix = vmInstall.getName().endsWith(nameOfDuplicate);
-		boolean idEndsWithC4Jpostfix = vmInstall.getId().endsWith(idOfDuplicate);
+		boolean nameEndsWith = vmInstall.getName().equals(this.duplicatedStandin.getName());
+		boolean idEndsWith = vmInstall.getId().equals(this.duplicatedStandin.getId());
 
-		return nameEndsWithC4Jpostfix && idEndsWithC4Jpostfix;
+		return nameEndsWith && idEndsWith;
 	}
 
 	private void removeJREContainer() throws CoreException {
@@ -66,11 +70,9 @@ public class DuplicateVM {
 		setClasspathEntries(entriesWithoutJREContainer);
 	}
 
-	private void setClasspathEntries(List<IClasspathEntry> entriesWithoutJREContainer)
-			throws JavaModelException {
-		IClasspathEntry[] entries = entriesWithoutJREContainer
-				.toArray(new IClasspathEntry[entriesWithoutJREContainer.size()]);
-		this.javaProject.setRawClasspath(entries, null);
+	private void setClasspathEntries(List<IClasspathEntry> entries) throws JavaModelException {
+		IClasspathEntry[] classPathEntries = entries.toArray(new IClasspathEntry[entries.size()]);
+		this.javaProject.setRawClasspath(classPathEntries, null);
 	}
 
 	private boolean isJreContainerEntry(IClasspathEntry entry) {
