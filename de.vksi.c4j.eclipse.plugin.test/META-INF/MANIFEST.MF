@@ -4,7 +4,7 @@ Bundle-Name: C4J Eclipse Plugin Test
 Bundle-SymbolicName: de.vksi.c4j.eclipse.plugin.test
 Bundle-Version: 0.0.1.qualifier
 Fragment-Host: de.vksi.c4j.eclipse.plugin;bundle-version="0.0.1"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.junit;bundle-version="4.10.0"
 
