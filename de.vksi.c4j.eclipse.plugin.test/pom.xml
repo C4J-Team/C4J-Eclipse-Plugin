@@ -11,11 +11,9 @@
 	</parent>
 
 	<packaging>eclipse-test-plugin</packaging>
-
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
-
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>

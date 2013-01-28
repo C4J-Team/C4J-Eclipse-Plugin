@@ -15,25 +15,27 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import testutil.JavaProjectCreator;
+
 public class C4JResourcesTest {
 
 	private static final String LOG4J_PROPERTIES = "log4j.properties";
 	private static final String C4J_PURE_REGISTRY_XML = "c4j-pure-registry.xml";
 	private static final String C4J_LOCAL_XML = "c4j-local.xml";
 	private static final String C4J_GLOBAL_XML = "c4j-global.xml";
-	private static final String PROJECT_NAME = "testProject";
+	private static final String PROJECT_NAME = "programmaticCreationOfJavaProject";
 	private IJavaProject javaProject;
 	private C4JResources c4jResources;
 	
 	@Before
 	public void setUp() throws CoreException{
-		this.javaProject = new JavaProject().create(PROJECT_NAME);
+		this.javaProject = JavaProjectCreator.create(PROJECT_NAME);
 		this.c4jResources = new C4JResources();
 	}
 	
 	@Test
 	public void testCopyConfigFilesTo() throws CoreException {
-		IFolder folder = this.javaProject.getProject().getFolder(JavaProject.SRC_FOLDER);
+		IFolder folder = this.javaProject.getProject().getFolder(JavaProjectCreator.SRC_FOLDER);
 		this.c4jResources.copyConfigFilesTo(folder);
 	
 		List<String> resourceFiles = new ArrayList<String>();

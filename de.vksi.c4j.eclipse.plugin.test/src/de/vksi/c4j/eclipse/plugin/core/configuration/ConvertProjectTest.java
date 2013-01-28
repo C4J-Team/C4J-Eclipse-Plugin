@@ -15,26 +15,25 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import testutil.JavaProjectCreator;
+
 import de.vksi.c4j.eclipse.plugin.core.configuration.ConvertProject;
 
 public class ConvertProjectTest {
 
 	private static final String LIB_FOLDER_NAME = "libs";
-	private static final String PROJECT_NAME = "testProject";
+	private static final String PROJECT_NAME = "programmaticCreationOfJavaProject";
 
 	private static final String C4J_JAR = "c4j-6.0.0.jar";
 	private static final String JAVA_ASSIST_JAR = "javassist-3.16.1-GA.jar";
 	private static final String LOG4J_JAR = "log4j-1.2.16.jar";
 
-	private JavaProject javaProject;
 	private IJavaProject projectToConvert;
 	private ConvertProject converter;
 
 	@Before
 	public void SetUp() throws CoreException {
-		
-		this.javaProject = new JavaProject();
-		this.projectToConvert = this.javaProject.create(PROJECT_NAME);
+		this.projectToConvert = JavaProjectCreator.create(PROJECT_NAME);
 		converter = new ConvertProject();
 	}
 
@@ -49,7 +48,7 @@ public class ConvertProjectTest {
 	
 	@Test
 	public void testExistingLibFolderWillNotBeReplaced() throws Exception {
-		this.javaProject.addFolderToClassEntries(LIB_FOLDER_NAME);
+		JavaProjectCreator.addFolderToClassEntries(this.projectToConvert, LIB_FOLDER_NAME);
 		converter.toC4JProject(this.projectToConvert);
 	}
 

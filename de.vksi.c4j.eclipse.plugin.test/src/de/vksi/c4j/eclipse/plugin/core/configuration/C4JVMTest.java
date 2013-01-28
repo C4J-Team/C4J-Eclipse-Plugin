@@ -11,19 +11,21 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import testutil.JavaProjectCreator;
+
 public class C4JVMTest {
 
 	private static final String PATH_TO_JAR_LOCATION = "pathToJarLocation";
 	private static final String C4J_NAME_POSTIFX = " C4J";
 	private static final String C4J_ID_POSTIFX = " c4j";
-	private static final String EA_JAVAAGENT = "-ea -javaagent: ";
+	private static final String EA_JAVAAGENT = "-ea -javaagent:";
 	private static final String PROJECT_NAME = "testProject";
 	private IJavaProject javaProject;
 	private C4JVM c4jVM;
 
 	@Before
 	public void setUp() throws CoreException {
-		this.javaProject = new JavaProject().create(PROJECT_NAME);
+		this.javaProject = JavaProjectCreator.create(PROJECT_NAME);
 		this.c4jVM = new C4JVM(this.javaProject);
 	}
 	

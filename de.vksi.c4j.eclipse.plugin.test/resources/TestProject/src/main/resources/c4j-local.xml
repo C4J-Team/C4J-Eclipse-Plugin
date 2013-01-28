@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<c4j-local xmlns="http://c4j.vksi.de/c4j-local/">
+	<configuration>
+		<pure-validate>true</pure-validate>
+		<pure-registry-import>c4j-pure-registry.xml</pure-registry-import>
+	</configuration>
+</c4j-local>

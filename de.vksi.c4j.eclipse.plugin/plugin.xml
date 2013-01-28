@@ -48,4 +48,12 @@
             name="C4J Project">
       </wizard>
    </extension>
+   <extension
+         point="org.eclipse.jdt.ui.javaEditorTextHovers">
+      <hover
+            activate="true"
+            class="de.vksi.c4j.eclipse.plugin.text.hover.C4JJavadocHover"
+            id="de.vksi.c4j.eclipse.plugin.hover">
+      </hover>
+   </extension>
 </plugin>
