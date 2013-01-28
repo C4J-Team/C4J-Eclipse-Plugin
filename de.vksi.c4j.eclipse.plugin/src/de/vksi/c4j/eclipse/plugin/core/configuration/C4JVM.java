@@ -9,7 +9,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 public class C4JVM {
 	private static final String C4J_NAME_POSTIFX = " C4J";
 	private static final String C4J_ID_POSTIFX = " c4j";
-	private static final String EA_JAVAAGENT = "-ea -javaagent: ";
+	private static final String EA_JAVAAGENT = "-ea -javaagent:";
 	
 	private VMDuplicator duplicator;
 	private String currentVMName = "";

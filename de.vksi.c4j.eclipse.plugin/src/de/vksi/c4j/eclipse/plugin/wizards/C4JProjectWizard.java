@@ -2,8 +2,6 @@ package de.vksi.c4j.eclipse.plugin.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 
-import de.vksi.c4j.eclipse.plugin.core.configuration.C4JResources;
-import de.vksi.c4j.eclipse.plugin.core.configuration.ConvertProject;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -19,6 +17,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
+
+import de.vksi.c4j.eclipse.plugin.core.configuration.C4JResources;
+import de.vksi.c4j.eclipse.plugin.core.configuration.ConvertProject;
 
 public class C4JProjectWizard extends Wizard implements IExecutableExtension, INewWizard {
 
@@ -45,7 +46,7 @@ public class C4JProjectWizard extends Wizard implements IExecutableExtension, IN
 		fMainPage = new WizardPageOne();
 		fMainPage.setTitle("Create a C4J Project");
 		addPage(fMainPage);
-
+		
 		fJavaPage = new NewJavaProjectWizardPageTwo(fMainPage);
 		addPage(fJavaPage);
 	}

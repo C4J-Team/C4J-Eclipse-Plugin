@@ -12,6 +12,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import testutil.JavaProjectCreator;
+
 public class VMDuplicatorTest {
 	private static final String TEST_ARGUMENTS = "testParameter";
 	private static final String ID_OF_DUPLICATE = "duplVM_ID";
@@ -22,7 +24,7 @@ public class VMDuplicatorTest {
 
 	@Before
 	public void setUp() throws CoreException {
-		this.javaProject = new JavaProject().create(PROJECT_NAME);
+		this.javaProject = JavaProjectCreator.create(PROJECT_NAME);
 		this.duplicateVm = new VMDuplicator(javaProject);
 	}
 

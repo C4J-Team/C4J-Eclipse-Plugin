@@ -17,6 +17,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import testutil.JavaProjectCreator;
+
 public class AddClasspathEntryTest {
 
 	private static final String TEST_PATH = "TestPath";
@@ -26,7 +28,7 @@ public class AddClasspathEntryTest {
 	
 	@Before
 	public void setUp() throws CoreException{
-		this.javaProject = new JavaProject().create(PROJECT_NAME);
+		this.javaProject = JavaProjectCreator.create(PROJECT_NAME);
 		this.addClasspathEntry = new AddClasspathEntry(this.javaProject);
 	}
 
