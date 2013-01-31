@@ -56,4 +56,12 @@
             id="de.vksi.c4j.eclipse.plugin.hover">
       </hover>
    </extension>
+   <extension
+         point="org.eclipse.jdt.ui.quickAssistProcessors">
+      <quickAssistProcessor
+            class="de.vksi.c4j.eclipse.plugin.quickassist.C4JQuickAssistProcessor"
+            id="de.vksi.c4j.eclipse.plugin.C4JQuickAssistProcessor"
+            name="Create Contract">
+      </quickAssistProcessor>
+   </extension>
 </plugin>
