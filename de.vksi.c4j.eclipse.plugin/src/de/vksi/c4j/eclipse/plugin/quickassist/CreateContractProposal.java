@@ -2,33 +2,50 @@ package de.vksi.c4j.eclipse.plugin.quickassist;
 
 import java.text.MessageFormat;
 
-import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.internal.corext.ValidateEditException;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.text.edits.MalformedTreeException;
 
 @SuppressWarnings("restriction")
 public class CreateContractProposal implements IJavaCompletionProposal {
 
-	private ICompilationUnit compilationUnit;
 	private ContractCreator contractCreator;
 	private IType type;
 
 	public CreateContractProposal(IInvocationContext context) {
-		this.contractCreator = new ContractCreator(context);
+		this.contractCreator = new ContractCreator();
 		this.type = context.getCompilationUnit().getType(context.getCoveringNode().toString());
 	}
 
 	@Override
 	public void apply(IDocument document) {
-		contractCreator.createContractFor(document);
+		IType contract = contractCreator.createContractFor(type);
+		
+		if (contract != null) {
+			try {
+				C4JTarget target = new C4JTarget(type);
+				target.addImportsFor(contract);
+				target.addContractReferenceAnnotation(contract);
+			} catch (ValidateEditException e) {
+				e.printStackTrace();
+			} catch (CoreException e) {
+				e.printStackTrace();
+			} catch (MalformedTreeException e) {
+				e.printStackTrace();
+			} catch (BadLocationException e) {
+				e.printStackTrace();
+			}
+		}
 	}
-
 
 	@Override
 	public Point getSelection(IDocument document) {

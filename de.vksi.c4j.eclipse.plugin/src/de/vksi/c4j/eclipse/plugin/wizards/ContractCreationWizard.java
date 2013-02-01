@@ -10,12 +10,12 @@ import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.internal.ui.wizards.NewElementWizard;
 import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
 
-public class NewContractClassCreationWizard extends NewElementWizard{
+public class ContractCreationWizard extends NewElementWizard{
 
-	private NewContractClassWizardPage fPage;
+	private ContractWizardPage fPage;
     private boolean fOpenEditorOnFinish;
 
-	public NewContractClassCreationWizard(NewContractClassWizardPage page, boolean openEditorOnFinish) {
+	public ContractCreationWizard(ContractWizardPage page, boolean openEditorOnFinish) {
 		setDefaultPageImageDescriptor(JavaPluginImages.DESC_WIZBAN_NEWCLASS);
 		setDialogSettings(JavaPlugin.getDefault().getDialogSettings());
 		setWindowTitle(NewWizardMessages.NewClassCreationWizard_title);
@@ -24,7 +24,7 @@ public class NewContractClassCreationWizard extends NewElementWizard{
 		fOpenEditorOnFinish= openEditorOnFinish;
 	}
 
-	public NewContractClassCreationWizard() {
+	public ContractCreationWizard() {
 		this(null, true);
 	}
 
@@ -32,7 +32,7 @@ public class NewContractClassCreationWizard extends NewElementWizard{
 	public void addPages() {
 		super.addPages();
 		if (fPage == null) {
-			fPage= new NewContractClassWizardPage();
+			fPage= new ContractWizardPage();
 			fPage.setWizard(this);
 			fPage.init(getSelection());
 		}
