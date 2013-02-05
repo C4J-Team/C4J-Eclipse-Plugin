@@ -15,7 +15,9 @@ import org.eclipse.jdt.core.IType;
 import org.junit.Before;
 import org.junit.Test;
 
-import testutil.JavaProjectLoader;
+import de.vksi.c4j.eclipse.plugin.ui.text.hover.ConditionExtractor;
+
+import test.util.JavaProjectLoader;
 
 public class ConditionExtractorTest {
 	private static final String PROJECTNAME = "TestProject";
@@ -48,7 +50,7 @@ public class ConditionExtractorTest {
 		ICompilationUnit targetCompUnit = JavaProjectLoader.getCompilationUnit(javaProject, DOI_0_TARGET_COMPILATION_UNIT);
 		IMethod method = JavaProjectLoader.getMethod(targetCompUnit, METHOD_NAME, METHOD_SIGNATURE);
 
-		Conditions conditionsOfMethod = ConditionExtractor.getConditionsOf(method);
+		C4JConditions conditionsOfMethod = new ConditionExtractor().getConditionsOf(method);
 		
 		List<String> expectedPreConditions = new ArrayList<String>();
 		expectedPreConditions.add("item != null : \"item != null\"");
@@ -59,8 +61,8 @@ public class ConditionExtractorTest {
 		expectedPostConditions.add("size() == old(size()) + 1 : \"size = old size + 1\"");
 		expectedPostConditions.add("!isEmpty() : \"not isEmpty\"");
 		
-		assertTrue(conditionsOfMethod.getConditions(Conditions.PRE_CONDITIONS).containsAll(expectedPreConditions));
-		assertTrue(conditionsOfMethod.getConditions(Conditions.POST_CONDITIONS).containsAll(expectedPostConditions));
+		assertTrue(conditionsOfMethod.getConditions(C4JConditions.PRE_CONDITIONS).containsAll(expectedPreConditions));
+		assertTrue(conditionsOfMethod.getConditions(C4JConditions.POST_CONDITIONS).containsAll(expectedPostConditions));
 	}
 
 	
@@ -69,7 +71,7 @@ public class ConditionExtractorTest {
 		ICompilationUnit targetCompUnit = JavaProjectLoader.getCompilationUnit(javaProject, DOI_1_TARGET_COMPILATION_UNIT);
 		IMethod method = JavaProjectLoader.getMethod(targetCompUnit, METHOD_NAME, METHOD_SIGNATURE);
 		
-		Conditions conditionsOfMethod = ConditionExtractor.getConditionsOf(method);
+		C4JConditions conditionsOfMethod = new ConditionExtractor().getConditionsOf(method);
 		
 		List<String> expectedPreConditions = new ArrayList<String>();
 		expectedPreConditions.add("item != null : \"item != null\"");
@@ -80,8 +82,8 @@ public class ConditionExtractorTest {
 		expectedPostConditions.add("size() == old(size()) + 1 : \"size = old size + 1\"");
 		expectedPostConditions.add("!isEmpty() : \"not isEmpty\"");
 		
-		assertTrue(conditionsOfMethod.getConditions(Conditions.PRE_CONDITIONS).containsAll(expectedPreConditions));
-		assertTrue(conditionsOfMethod.getConditions(Conditions.POST_CONDITIONS).containsAll(expectedPostConditions));
+		assertTrue(conditionsOfMethod.getConditions(C4JConditions.PRE_CONDITIONS).containsAll(expectedPreConditions));
+		assertTrue(conditionsOfMethod.getConditions(C4JConditions.POST_CONDITIONS).containsAll(expectedPostConditions));
 	}
 
 	@Test
@@ -89,7 +91,7 @@ public class ConditionExtractorTest {
 		ICompilationUnit targetCompUnit = JavaProjectLoader.getCompilationUnit(javaProject, DOI_2_TARGET_COMPILATION_UNIT);
 		IMethod method = JavaProjectLoader.getMethod(targetCompUnit, METHOD_NAME, METHOD_SIGNATURE);
 		
-		Conditions conditionsOfMethod = ConditionExtractor.getConditionsOf(method);
+		C4JConditions conditionsOfMethod = new ConditionExtractor().getConditionsOf(method);
 		
 		List<String> expectedPreConditions = new ArrayList<String>();
 		expectedPreConditions.add("item != null : \"item != null\"");
@@ -100,8 +102,8 @@ public class ConditionExtractorTest {
 		expectedPostConditions.add("size() == old(size()) + 1 : \"size = old size + 1\"");
 		expectedPostConditions.add("!isEmpty() : \"not isEmpty\"");
 		
-		assertTrue(conditionsOfMethod.getConditions(Conditions.PRE_CONDITIONS).containsAll(expectedPreConditions));
-		assertTrue(conditionsOfMethod.getConditions(Conditions.POST_CONDITIONS).containsAll(expectedPostConditions));
+		assertTrue(conditionsOfMethod.getConditions(C4JConditions.PRE_CONDITIONS).containsAll(expectedPreConditions));
+		assertTrue(conditionsOfMethod.getConditions(C4JConditions.POST_CONDITIONS).containsAll(expectedPostConditions));
 	}
 
 	@Test
@@ -109,7 +111,7 @@ public class ConditionExtractorTest {
 		ICompilationUnit targetCompUnit = JavaProjectLoader.getCompilationUnit(javaProject, DOI_3_TARGET_COMPILATION_UNIT);
 		IMethod method = JavaProjectLoader.getMethod(targetCompUnit, METHOD_NAME, METHOD_SIGNATURE);
 		
-		Conditions conditionsOfMethod = ConditionExtractor.getConditionsOf(method);
+		C4JConditions conditionsOfMethod = new ConditionExtractor().getConditionsOf(method);
 		
 		List<String> expectedPreConditions = new ArrayList<String>();
 		expectedPreConditions.add("!isFull() : \"not isFull\"");
@@ -120,17 +122,17 @@ public class ConditionExtractorTest {
 		expectedPostConditions.add("!isEmpty() : \"not isEmpty\"");
 		expectedPostConditions.add("\"newCondition\".equals(\"newCondition\") : \"some additional condition\"");
 		
-		assertTrue(conditionsOfMethod.getConditions(Conditions.PRE_CONDITIONS).containsAll(expectedPreConditions));
-		assertTrue(conditionsOfMethod.getConditions(Conditions.POST_CONDITIONS).containsAll(expectedPostConditions));
+		assertTrue(conditionsOfMethod.getConditions(C4JConditions.PRE_CONDITIONS).containsAll(expectedPreConditions));
+		assertTrue(conditionsOfMethod.getConditions(C4JConditions.POST_CONDITIONS).containsAll(expectedPostConditions));
 	}
 	
 	@Test
 	public void testReturnEmptyConditionsIfTargetMethodIsNull() throws Exception {
 		IMethod method = null;
-		Conditions conditionsOfMethod = ConditionExtractor.getConditionsOf(method);
+		C4JConditions conditionsOfMethod = new ConditionExtractor().getConditionsOf(method);
 
-		assertTrue(conditionsOfMethod.getConditions(Conditions.PRE_CONDITIONS).isEmpty());
-		assertTrue(conditionsOfMethod.getConditions(Conditions.POST_CONDITIONS).isEmpty());
+		assertTrue(conditionsOfMethod.getConditions(C4JConditions.PRE_CONDITIONS).isEmpty());
+		assertTrue(conditionsOfMethod.getConditions(C4JConditions.POST_CONDITIONS).isEmpty());
 	}
 	
 	@Test
@@ -138,7 +140,7 @@ public class ConditionExtractorTest {
 		ICompilationUnit targetCompUnit = JavaProjectLoader.getCompilationUnit(javaProject, DOI_0_TARGET_COMPILATION_UNIT);
 		IType type = JavaProjectLoader.getType(targetCompUnit);
 		
-		Conditions conditionsOfMethod = ConditionExtractor.getConditionsOf(type);
+		C4JConditions conditionsOfMethod = new ConditionExtractor().getConditionsOf(type);
 		
 		List<String> expectedInvariantConditions = new ArrayList<String>();
 		expectedInvariantConditions.add("capacity() == constCapacity : \"capacity is immutable\"");
@@ -147,7 +149,7 @@ public class ConditionExtractorTest {
 		expectedInvariantConditions.add("size() <= capacity() : \"size <= capacity\"");
 		expectedInvariantConditions.add("top() != null : \"if not isEmpty then top != null\"");
 		
-		assertTrue(conditionsOfMethod.getConditions(Conditions.INVARIANT_CONDITIONS).containsAll(expectedInvariantConditions));
+		assertTrue(conditionsOfMethod.getConditions(C4JConditions.INVARIANT_CONDITIONS).containsAll(expectedInvariantConditions));
 	}
 
 	@Test
@@ -155,7 +157,7 @@ public class ConditionExtractorTest {
 		ICompilationUnit targetCompUnit = JavaProjectLoader.getCompilationUnit(javaProject, DOI_3_TARGET_COMPILATION_UNIT);
 		IType type = JavaProjectLoader.getType(targetCompUnit);
 		
-		Conditions conditionsOfMethod = ConditionExtractor.getConditionsOf(type);
+		C4JConditions conditionsOfMethod = new ConditionExtractor().getConditionsOf(type);
 		
 		List<String> expectedInvariantConditions = new ArrayList<String>();
 		expectedInvariantConditions.add("capacity() == constCapacity : \"capacity is immutable\"");
@@ -165,15 +167,15 @@ public class ConditionExtractorTest {
 		expectedInvariantConditions.add("top() != null : \"if not isEmpty then top != null\"");
 		expectedInvariantConditions.add("\"foo\".equals(\"baa\") : \"some additional condition\"");
 		
-		assertTrue(conditionsOfMethod.getConditions(Conditions.INVARIANT_CONDITIONS).containsAll(expectedInvariantConditions));
+		assertTrue(conditionsOfMethod.getConditions(C4JConditions.INVARIANT_CONDITIONS).containsAll(expectedInvariantConditions));
 	}
 	
 	@Test
 	public void testReturnEmptyConditionsIfTargetTypeIsNull() throws Exception {
 		IType type = null;
-		Conditions conditionsOfMethod = ConditionExtractor.getConditionsOf(type);
+		C4JConditions conditionsOfMethod = new ConditionExtractor().getConditionsOf(type);
 
-		assertTrue(conditionsOfMethod.getConditions(Conditions.INVARIANT_CONDITIONS).isEmpty());
+		assertTrue(conditionsOfMethod.getConditions(C4JConditions.INVARIANT_CONDITIONS).isEmpty());
 	}
 	
 	

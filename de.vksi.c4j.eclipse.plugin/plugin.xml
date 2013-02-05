@@ -52,14 +52,14 @@
          point="org.eclipse.jdt.ui.javaEditorTextHovers">
       <hover
             activate="true"
-            class="de.vksi.c4j.eclipse.plugin.text.hover.C4JJavadocHover"
+            class="de.vksi.c4j.eclipse.plugin.ui.text.hover.C4JJavadocHover"
             id="de.vksi.c4j.eclipse.plugin.hover">
       </hover>
    </extension>
    <extension
          point="org.eclipse.jdt.ui.quickAssistProcessors">
       <quickAssistProcessor
-            class="de.vksi.c4j.eclipse.plugin.quickassist.C4JQuickAssistProcessor"
+            class="de.vksi.c4j.eclipse.plugin.ui.quickassist.C4JQuickAssistProcessor"
             id="de.vksi.c4j.eclipse.plugin.C4JQuickAssistProcessor"
             name="Create Contract">
       </quickAssistProcessor>

@@ -84,7 +84,7 @@ public class VMDuplicator {
 		if (duplicatedVm != null) {
 			IPath jreContainerPath = JavaRuntime.newJREContainerPath(duplicatedVm);
 			IClasspathEntry jreEntry = JavaCore.newContainerEntry(jreContainerPath);
-			new AddClasspathEntry(this.javaProject).add(jreEntry);
+			new Classpath(this.javaProject).add(jreEntry);
 		}
 	}
 }

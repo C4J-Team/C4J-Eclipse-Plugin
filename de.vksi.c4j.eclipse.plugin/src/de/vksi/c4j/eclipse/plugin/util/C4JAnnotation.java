@@ -8,13 +8,12 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
-import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CONTRACT_REFERENCE;
+public abstract class C4JAnnotation {
 
-public class ContractReferenceAnnotation {
 	private static final int FIRST_MEMBER_VALUE_PAIR = 0;
 	private IType type;
 
-	public ContractReferenceAnnotation(IType type) {
+	public C4JAnnotation(IType type) {
 		this.type = type;
 	}
 
@@ -25,38 +24,45 @@ public class ContractReferenceAnnotation {
 	public IAnnotation getAnnotation() {
 		if (type == null)
 			return null;
-
+	
 		try {
 			IAnnotation[] annotations = type.getAnnotations();
 			for (IAnnotation annotation : annotations) {
-				if (ANNOTATION_CONTRACT_REFERENCE.equals(annotation.getElementName())) {
+				if (c4jAnnotationType().equals(annotation.getElementName())) {
 					return annotation;
 				}
 			}
 		} catch (JavaModelException e) {
 			e.printStackTrace();
-			return null;
 		}
 		return null;
 	}
 
-	public String getAnnotationValue() throws JavaModelException {
+	public abstract String c4jAnnotationType();
+
+	public boolean hasValue() {
 		if (exists()) {
+			try {
+				if(getAnnotation().getMemberValuePairs().length > 0){
+					return true;
+				}
+			} catch (JavaModelException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
+	public String getAnnotationValue() throws JavaModelException {
+		if (hasValue()) {
 			IMemberValuePair memberValuePair = getAnnotation().getMemberValuePairs()[FIRST_MEMBER_VALUE_PAIR];
 			return memberValuePair.getValue().toString();
 		}
 		return "";
 	}
 
-	public IType getContractClass() throws JavaModelException {
-		if (exists()) {
-			String contractClass = getAnnotationValue();
-			return findContractClass(contractClass);
-		}
-		return null;
-	}
-
-	private IType findContractClass(String contractClass) throws JavaModelException {
+	protected IType findContractClass(String contractClass) throws JavaModelException {
 		IType contractType = findTypeByImports(contractClass);
 		// if contract-compilation unit is located in the same package, an
 		// import statement will not be required
@@ -73,7 +79,7 @@ public class ContractReferenceAnnotation {
 		}
 		return null;
 	}
-	
+
 	private IType findTypeInSamePackage(String contract) throws JavaModelException {
 		IPackageFragment[] packageFragments = type.getJavaProject().getPackageFragments();
 		for (IPackageFragment packageFragment : packageFragments) {
@@ -86,4 +92,5 @@ public class ContractReferenceAnnotation {
 		}
 		return null;
 	}
+
 }

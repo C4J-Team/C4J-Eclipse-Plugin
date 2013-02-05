@@ -1,4 +1,8 @@
-package de.vksi.c4j.eclipse.plugin.util;
+package de.vksi.c4j.eclipse.plugin.ui.text.hover;
+
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CLASS_INVARIANT;
+
+import java.util.Iterator;
 
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.IMethod;
@@ -8,16 +12,16 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
-import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CLASS_INVARIANT;
+import de.vksi.c4j.eclipse.plugin.util.C4JConditions;
 
 public class MethodVisitor extends ASTVisitor {
 	private static final String VOID = "void";
-	private Conditions conditions;
+	private C4JConditions conditions;
 	private IMethod targetMethod;
 
 	public MethodVisitor(IMethod targetMethod) {
 		this.targetMethod = targetMethod;
-		conditions = new Conditions();
+		conditions = new C4JConditions();
 	}
 
 	@Override
@@ -26,7 +30,7 @@ public class MethodVisitor extends ASTVisitor {
 			if(isClassInvariant()){
 				AssertStatementVisitor assertVisitor = new AssertStatementVisitor();
 				method.accept(assertVisitor);
-				conditions.setInvariantConditions(assertVisitor.getConditions());
+				conditions.addInvariantConditions(assertVisitor.getConditions());
 				return false;
 			}
 
@@ -87,17 +91,24 @@ public class MethodVisitor extends ASTVisitor {
 	private String createMethodSignature(MethodDeclaration method) {
 		String signature = method.getReturnType2() != null ? method.getReturnType2().toString() : VOID;
 		signature += " (";
-		for (Object currParam : method.parameters()) {
+		Iterator<?> paramIterator = method.parameters().iterator();
+		
+		while(paramIterator.hasNext()){
+			Object currParam = paramIterator.next();
 			if (currParam instanceof SingleVariableDeclaration) {
 				SingleVariableDeclaration param = (SingleVariableDeclaration) currParam;
-				signature += param.getType().toString() + " ";
+				signature += param.getType().toString();
 			}
+			
+			signature += paramIterator.hasNext() ? ", " : "";
 		}
-		signature = signature.trim() + ")";
+		
+		signature += ")";
+		
 		return signature;
 	}
 
-	public Conditions getConditions() {
+	public C4JConditions getConditions() {
 		return conditions;
 	}
 }

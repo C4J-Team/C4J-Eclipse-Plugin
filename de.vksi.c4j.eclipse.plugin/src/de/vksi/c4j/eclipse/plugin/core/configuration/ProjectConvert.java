@@ -5,7 +5,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 
-public class ConvertProject {
+public class ProjectConvert {
 
 	private static final String LIB_FOLDER_NAME = "libs";
 	private IFolder libFolder;

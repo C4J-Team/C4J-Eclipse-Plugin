@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.quickassist;
+package de.vksi.c4j.eclipse.plugin.ui.quickassist;
 
 import java.text.MessageFormat;
 
@@ -15,26 +15,32 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.text.edits.MalformedTreeException;
 
+import de.vksi.c4j.eclipse.plugin.util.C4JContract;
+import de.vksi.c4j.eclipse.plugin.util.C4JTarget;
+
 @SuppressWarnings("restriction")
 public class CreateContractProposal implements IJavaCompletionProposal {
 
-	private ContractCreator contractCreator;
-	private IType type;
+	private C4JContract contract;
+	private C4JTarget target;
 
 	public CreateContractProposal(IInvocationContext context) {
-		this.contractCreator = new ContractCreator();
-		this.type = context.getCompilationUnit().getType(context.getCoveringNode().toString());
+		this.contract = new C4JContract();
+		IType type = context.getCompilationUnit().getType(
+				context.getCoveringNode().toString());
+		this.target = new C4JTarget(type);
 	}
 
 	@Override
 	public void apply(IDocument document) {
-		IType contract = contractCreator.createContractFor(type);
-		
-		if (contract != null) {
+		contract.createContractFor(target.getType());
+
+		if (contract.exists()) {
 			try {
-				C4JTarget target = new C4JTarget(type);
-				target.addImportsFor(contract);
-				target.addContractReferenceAnnotation(contract);
+				if (!contract.isExternal()) {
+					target.addImportsFor(contract.getType());
+					target.addContractReferenceAnnotation(contract.getType());
+				}
 			} catch (ValidateEditException e) {
 				e.printStackTrace();
 			} catch (CoreException e) {
@@ -54,7 +60,9 @@ public class CreateContractProposal implements IJavaCompletionProposal {
 
 	@Override
 	public String getAdditionalProposalInfo() {
-		return MessageFormat.format("Create C4j Contract for ''{0}''. By using the contract creation wizard you can chose which contract stubs are going to be created for ''{0}''", this.type.getElementName());
+		return MessageFormat
+				.format("Create C4j Contract for ''{0}''. By using the contract creation wizard you can chose which contract stubs are going to be created for ''{0}''",
+						target.getType().getElementName());
 	}
 
 	@Override

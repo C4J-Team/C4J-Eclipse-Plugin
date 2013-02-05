@@ -1,6 +1,7 @@
 package de.vksi.c4j.eclipse.plugin.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,7 +18,9 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.junit.Before;
 import org.junit.Test;
 
-import testutil.JavaProjectLoader;
+import de.vksi.c4j.eclipse.plugin.ui.text.hover.MethodVisitor;
+
+import test.util.JavaProjectLoader;
 
 public class MethodVisitorTest {
 	private static final String PROJECTNAME = "TestProject";
@@ -55,8 +58,8 @@ public class MethodVisitorTest {
 		List<String> expectedPreConditions = new ArrayList<String>();
 		expectedPreConditions.add("capacity > 0 : \"capacity > 0\"");
 
-		Conditions conditions = methodVisitor.getConditions();
-		assertEquals(expectedPreConditions, conditions.getConditions(Conditions.PRE_CONDITIONS));
+		C4JConditions conditions = methodVisitor.getConditions();
+		assertTrue(conditions.getConditions(C4JConditions.PRE_CONDITIONS).containsAll(expectedPreConditions));
 	}
 
 	@Test
@@ -71,8 +74,8 @@ public class MethodVisitorTest {
 		List<String> expectedPostConditions = new ArrayList<String>();
 		expectedPostConditions.add("capacity() == capacity : \"capacity set\"");
 		
-		Conditions conditions = methodVisitor.getConditions();
-		assertEquals(expectedPostConditions, conditions.getConditions(Conditions.POST_CONDITIONS));
+		C4JConditions conditions = methodVisitor.getConditions();
+		assertTrue(conditions.getConditions(C4JConditions.POST_CONDITIONS).containsAll(expectedPostConditions));
 	}
 	
 	@Test
@@ -88,8 +91,8 @@ public class MethodVisitorTest {
 		expectedPreConditions.add("item != null : \"item != null\"");
 		expectedPreConditions.add("!isFull() : \"not isFull\"");
 	
-		Conditions conditions = methodVisitor.getConditions();
-		assertEquals(expectedPreConditions, conditions.getConditions(Conditions.PRE_CONDITIONS));
+		C4JConditions conditions = methodVisitor.getConditions();
+		assertTrue(conditions.getConditions(C4JConditions.PRE_CONDITIONS).containsAll(expectedPreConditions));
 	}
 
 	@Test
@@ -106,8 +109,8 @@ public class MethodVisitorTest {
 		expectedPostConditions.add("size() == old(size()) + 1 : \"size = old size + 1\"");
 		expectedPostConditions.add("!isEmpty() : \"not isEmpty\"");
 		
-		Conditions conditions = methodVisitor.getConditions();
-		assertEquals(expectedPostConditions, conditions.getConditions(Conditions.POST_CONDITIONS));
+		C4JConditions conditions = methodVisitor.getConditions();
+		assertTrue(conditions.getConditions(C4JConditions.POST_CONDITIONS).containsAll(expectedPostConditions));
 	}
 
 	@Test
@@ -122,9 +125,10 @@ public class MethodVisitorTest {
 		List<String> expectedPreConditions = new ArrayList<String>();
 		List<String> expectedPostConditions = new ArrayList<String>();
 		
-		Conditions conditions = methodVisitor.getConditions();
-		assertEquals(expectedPreConditions, conditions.getConditions(Conditions.PRE_CONDITIONS));
-		assertEquals(expectedPostConditions, conditions.getConditions(Conditions.POST_CONDITIONS));
+		C4JConditions conditions = methodVisitor.getConditions();
+		
+		assertTrue(conditions.getConditions(C4JConditions.PRE_CONDITIONS).containsAll(expectedPreConditions));
+		assertTrue(conditions.getConditions(C4JConditions.POST_CONDITIONS).containsAll(expectedPostConditions));
 	}
 
 	private static ASTNode parseCompilationUnit(ICompilationUnit compilationUnit) {

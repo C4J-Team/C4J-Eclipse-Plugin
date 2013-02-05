@@ -8,7 +8,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-import de.vksi.c4j.eclipse.plugin.core.configuration.ConvertProject;
+import de.vksi.c4j.eclipse.plugin.core.configuration.ProjectConvert;
 
 public class ConvertToC4JProjectHandler extends AbstractHandler {
 
@@ -20,7 +20,7 @@ public class ConvertToC4JProjectHandler extends AbstractHandler {
 	    
 	    if (firstElement instanceof IJavaProject) {
 	    	try {
-	    		new ConvertProject().toC4JProject((IJavaProject) firstElement);
+	    		new ProjectConvert().toC4JProject((IJavaProject) firstElement);
 			} catch (Exception e) {
 //				C4jEclipsePlugin.log("Eror converting project to c4j project", e);
 			}

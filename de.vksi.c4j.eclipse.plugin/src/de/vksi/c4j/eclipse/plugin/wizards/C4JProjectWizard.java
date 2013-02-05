@@ -19,7 +19,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 import de.vksi.c4j.eclipse.plugin.core.configuration.C4JResources;
-import de.vksi.c4j.eclipse.plugin.core.configuration.ConvertProject;
+import de.vksi.c4j.eclipse.plugin.core.configuration.ProjectConvert;
 
 public class C4JProjectWizard extends Wizard implements IExecutableExtension, INewWizard {
 
@@ -68,7 +68,7 @@ public class C4JProjectWizard extends Wizard implements IExecutableExtension, IN
 			C4JResources c4jRes = new C4JResources();
 			c4jRes.copyConfigFilesTo(folder);
 
-			new ConvertProject().toC4JProject(newElement);
+			new ProjectConvert().toC4JProject(newElement);
 
 			BasicNewProjectResourceWizard.updatePerspective(fConfigElement);
 			BasicNewResourceWizard.selectAndReveal(newElement.getResource(), PlatformUI.getWorkbench()

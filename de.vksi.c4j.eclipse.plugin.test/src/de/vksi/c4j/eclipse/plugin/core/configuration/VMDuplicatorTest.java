@@ -12,7 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import testutil.JavaProjectCreator;
+import test.util.JavaProjectCreator;
 
 public class VMDuplicatorTest {
 	private static final String TEST_ARGUMENTS = "testParameter";

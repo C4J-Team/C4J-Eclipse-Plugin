@@ -15,11 +15,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import testutil.JavaProjectCreator;
+import test.util.JavaProjectCreator;
 
-import de.vksi.c4j.eclipse.plugin.core.configuration.ConvertProject;
+import de.vksi.c4j.eclipse.plugin.core.configuration.ProjectConvert;
 
-public class ConvertProjectTest {
+public class ProjectConvertTest {
 
 	private static final String LIB_FOLDER_NAME = "libs";
 	private static final String PROJECT_NAME = "programmaticCreationOfJavaProject";
@@ -29,12 +29,12 @@ public class ConvertProjectTest {
 	private static final String LOG4J_JAR = "log4j-1.2.16.jar";
 
 	private IJavaProject projectToConvert;
-	private ConvertProject converter;
+	private ProjectConvert converter;
 
 	@Before
 	public void SetUp() throws CoreException {
 		this.projectToConvert = JavaProjectCreator.create(PROJECT_NAME);
-		converter = new ConvertProject();
+		converter = new ProjectConvert();
 	}
 
 	@Test

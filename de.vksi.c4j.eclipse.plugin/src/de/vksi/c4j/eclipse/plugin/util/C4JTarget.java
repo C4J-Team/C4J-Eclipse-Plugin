@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.quickassist;
+package de.vksi.c4j.eclipse.plugin.util;
 
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CONTRACT_REFERENCE;
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.IMPORT_CONTRACT_REFERENCE;
@@ -32,7 +32,6 @@ public class C4JTarget {
 	private IDocument document;
 	private IType target;
 
-	// TODO: get rid of IDocument
 	public C4JTarget(IType target) {
 		this.target = target;
 		this.targetCompilationUnit = target.getCompilationUnit();
@@ -87,6 +86,10 @@ public class C4JTarget {
 		edits.apply(document);
 
 		targetCompilationUnit.getBuffer().setContents(document.get());
+	}
+
+	public IType getType() {
+		return target;
 	}
 
 }

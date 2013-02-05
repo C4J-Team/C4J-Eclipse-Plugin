@@ -1,4 +1,14 @@
-package de.vksi.c4j.eclipse.plugin.quickassist;
+package de.vksi.c4j.eclipse.plugin.util;
+
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CLASS_INVARIANT;
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CONTRACT;
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_TARGET;
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.IMPORT_CLASSINVARIANT;
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.IMPORT_IGNORED;
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.IMPORT_POST_CONDITIONS;
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.IMPORT_PRE_CONDITIONS;
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.IMPORT_TARGET;
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.RETURN_IGNORED;
 
 import java.util.List;
 
@@ -37,8 +47,13 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
 
 @SuppressWarnings("restriction")
-public class C4JContract {
-
+public class C4JContractModifier {
+	private static final String PRE_CONDITION_TODO_COMMENT = "// TODO: write preconditions if required";
+	private static final String POST_CONDITION_TODO_COMMENT = "// TODO: write postconditions if required";
+	private static final String CLASS_INVARIANTS_TODO_COMMENT = "// TODO: write invariants if required";
+	private static final String CLASS_INVARIANT_METHOD = "classInvariant";
+	private static final String TARGET_MEMBER = "target";
+	
 	private IType contract;
 	private CompilationUnit astRoot;
 	private AST ast;
@@ -47,7 +62,7 @@ public class C4JContract {
 	private ListRewrite listRewrite;
 	private ImportRewrite importRewrite;
 
-	public C4JContract(IType contract) {
+	public C4JContractModifier(IType contract) {
 		this.contract = contract;
 		init(contract);
 	}
@@ -74,40 +89,45 @@ public class C4JContract {
 		}
 	}
 
-	public void addMethodStubs(IMethodBinding[] methods) throws JavaModelException, CoreException {
-
-		CodeGenerationSettings settings = JavaPreferencesSettings.getCodeGenerationSettings(contract
-				.getJavaProject());
-
-		for (IMethodBinding method : methods) {
-			MethodDeclaration methodStub = StubUtility2.createImplementationStub(contract
-					.getCompilationUnit(), rewriter, importRewrite, null, method, typeDecl.getName()
-					.toString(), settings, typeDecl.isInterface());
-
-			Block methodBody = createMethodBody(methodStub);
-
-			methodStub.setBody(methodBody);
-			listRewrite.insertLast(methodStub, null);
-		}
+	public void addC4JStandardImports() {
+		addStaticImport(IMPORT_PRE_CONDITIONS, false);
+		addStaticImport(IMPORT_POST_CONDITIONS, false);
+		addStaticImport(IMPORT_IGNORED, false);
+		addImport(IMPORT_TARGET);
+		addImport(IMPORT_CLASSINVARIANT);
+	}
+	
+	private void addImport(String qualifiedTypeName){
+		importRewrite.addImport(qualifiedTypeName);
 	}
 
-	public void addC4JStandardImports() {
-		importRewrite.addStaticImport("de.vksi.c4j.Condition", "preCondition", false);
-		importRewrite.addStaticImport("de.vksi.c4j.Condition", "postCondition", false);
-		importRewrite.addStaticImport("de.vksi.c4j.Condition", "ignored", false);
-		importRewrite.addImport("de.vksi.c4j.Target");
-		importRewrite.addImport("de.vksi.c4j.ClassInvariant");
+	private void addStaticImport(String qualifiedTypeName, boolean isField){
+		String simpleName = qualifiedTypeName.substring(qualifiedTypeName.lastIndexOf(".")+1, qualifiedTypeName.length());
+		String declaringTypeName = qualifiedTypeName.replace("." + simpleName, "");
+		importRewrite.addStaticImport(declaringTypeName, simpleName, isField);
+	}
+	
+	public void addContractAnnotation() {
+
+		ListRewrite listRewrite = rewriter.getListRewrite(typeDecl, TypeDeclaration.MODIFIERS2_PROPERTY);
+				
+		MarkerAnnotation contractRefAnnotation = ast.newMarkerAnnotation();
+		contractRefAnnotation.setTypeName(ast.newSimpleName(ANNOTATION_CONTRACT));
+		
+		addImport("de.vksi.c4j.Contract");
+
+		listRewrite.insertFirst(contractRefAnnotation, null);
 	}
 
 	@SuppressWarnings("unchecked")
 	public void addTargetMember() {
 		VariableDeclarationFragment targetFragment = ast.newVariableDeclarationFragment();
-		targetFragment.setName(ast.newSimpleName("target"));
+		targetFragment.setName(ast.newSimpleName(TARGET_MEMBER));
 
 		FieldDeclaration targetDeclaration = ast.newFieldDeclaration(targetFragment);
 
 		MarkerAnnotation targetMarkerAnnotation = ast.newMarkerAnnotation();
-		targetMarkerAnnotation.setTypeName(ast.newSimpleName("Target"));
+		targetMarkerAnnotation.setTypeName(ast.newSimpleName(ANNOTATION_TARGET));
 		targetDeclaration.modifiers().add(targetMarkerAnnotation);
 		targetDeclaration.modifiers().add(ast.newModifier(ModifierKeyword.PRIVATE_KEYWORD));
 
@@ -131,18 +151,35 @@ public class C4JContract {
 	public void addClassInvariant() {
 		MethodDeclaration classInvariantMethod = ast.newMethodDeclaration();
 		MarkerAnnotation invariantMarkerAnnotation = ast.newMarkerAnnotation();
-		invariantMarkerAnnotation.setTypeName(ast.newSimpleName("ClassInvariant"));
+		invariantMarkerAnnotation.setTypeName(ast.newSimpleName(ANNOTATION_CLASS_INVARIANT));
 		classInvariantMethod.modifiers().add(invariantMarkerAnnotation);
 		classInvariantMethod.modifiers().add(ast.newModifier(ModifierKeyword.PUBLIC_KEYWORD));
 		classInvariantMethod.setReturnType2(ast.newPrimitiveType(PrimitiveType.VOID));
-		classInvariantMethod.setName(ast.newSimpleName("classInvariant"));
+		classInvariantMethod.setName(ast.newSimpleName(CLASS_INVARIANT_METHOD));
 		Block classInvariantMethodBlock = ast.newBlock();
 		Statement toDoComment = (Statement) rewriter.createStringPlaceholder(
-				"// TODO: write invariants if required", ASTNode.EMPTY_STATEMENT);
+				CLASS_INVARIANTS_TODO_COMMENT, ASTNode.EMPTY_STATEMENT);
 		classInvariantMethodBlock.statements().add(toDoComment);
 		classInvariantMethod.setBody(classInvariantMethodBlock);
 
 		listRewrite.insertLast(classInvariantMethod, null);
+	}
+	
+	public void addMethodStubs(IMethodBinding[] methods) throws JavaModelException, CoreException {
+
+		CodeGenerationSettings settings = JavaPreferencesSettings.getCodeGenerationSettings(contract
+				.getJavaProject());
+
+		for (IMethodBinding method : methods) {
+			MethodDeclaration methodStub = StubUtility2.createImplementationStub(contract
+					.getCompilationUnit(), rewriter, importRewrite, null, method, typeDecl.getName()
+					.toString(), settings, typeDecl.isInterface());
+
+			Block methodBody = createMethodBody(methodStub);
+
+			methodStub.setBody(methodBody);
+			listRewrite.insertLast(methodStub, null);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -170,7 +207,7 @@ public class C4JContract {
 		postcondition.setName(ast.newSimpleName("postCondition"));
 		ifPostconditionStatement.setExpression(postcondition);
 		toDoComment = (Statement) rewriter.createStringPlaceholder(
-				"// TODO: write postconditions if required", ASTNode.EMPTY_STATEMENT);
+				POST_CONDITION_TODO_COMMENT, ASTNode.EMPTY_STATEMENT);
 		thenStatementBlock = ast.newBlock();
 		thenStatementBlock.statements().add(toDoComment);
 		ifPostconditionStatement.setThenStatement(thenStatementBlock);
@@ -184,7 +221,7 @@ public class C4JContract {
 		precondition.setName(ast.newSimpleName("preCondition"));
 		ifPreconditionStatement.setExpression(precondition);
 		Statement toDoComment = (Statement) rewriter.createStringPlaceholder(
-				"// TODO: write preconditions if required", ASTNode.EMPTY_STATEMENT);
+				PRE_CONDITION_TODO_COMMENT, ASTNode.EMPTY_STATEMENT);
 		Block thenStatementBlock = ast.newBlock();
 		thenStatementBlock.statements().add(toDoComment);
 		ifPreconditionStatement.setThenStatement(thenStatementBlock);
@@ -194,7 +231,7 @@ public class C4JContract {
 	private ReturnStatement createReturnIgnored() {
 		ReturnStatement returnIgnoredStatement = ast.newReturnStatement();
 		MethodInvocation ignored = ast.newMethodInvocation();
-		ignored.setName(ast.newSimpleName("ignored"));
+		ignored.setName(ast.newSimpleName(RETURN_IGNORED));
 		returnIgnoredStatement.setExpression(ignored);
 		return returnIgnoredStatement;
 	}
@@ -239,5 +276,4 @@ public class C4JContract {
 
 		contract.getCompilationUnit().getBuffer().setContents(document.get());
 	}
-
 }

@@ -17,19 +17,19 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import testutil.JavaProjectCreator;
+import test.util.JavaProjectCreator;
 
-public class AddClasspathEntryTest {
+public class ClasspathTest {
 
 	private static final String TEST_PATH = "TestPath";
 	private static final String PROJECT_NAME = "testProject";
 	private IJavaProject javaProject;
-	private AddClasspathEntry addClasspathEntry;
+	private Classpath addClasspathEntry;
 	
 	@Before
 	public void setUp() throws CoreException{
 		this.javaProject = JavaProjectCreator.create(PROJECT_NAME);
-		this.addClasspathEntry = new AddClasspathEntry(this.javaProject);
+		this.addClasspathEntry = new Classpath(this.javaProject);
 	}
 
 	@Test

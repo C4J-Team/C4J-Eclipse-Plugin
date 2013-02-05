@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.util;
+package de.vksi.c4j.eclipse.plugin.ui.text.hover;
 
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.POST_CONDITION;
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.PRE_CONDITION;
@@ -6,11 +6,13 @@ import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.PRE_CONDITION;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.IfStatement;
 
+import de.vksi.c4j.eclipse.plugin.util.C4JConditions;
+
 public class IfStatementVisitor extends ASTVisitor {
-	private Conditions conditions;
+	private C4JConditions conditions;
 	
 	public IfStatementVisitor(){
-		conditions = new Conditions();
+		conditions = new C4JConditions();
 	}
 
 	@Override
@@ -19,15 +21,15 @@ public class IfStatementVisitor extends ASTVisitor {
 		ifStatement.accept(assertVisitor);
 
 		if (ifStatement.getExpression().toString().equals(PRE_CONDITION))
-			conditions.setPreConditions(assertVisitor.getConditions());
+			conditions.addPreConditions(assertVisitor.getConditions());
 		else if (ifStatement.getExpression().toString().equals(POST_CONDITION))
-			conditions.setPostConditions(assertVisitor.getConditions());
+			conditions.addPostConditions(assertVisitor.getConditions());
 
 		// false: children of this node should be skipped
 		return false;
 	}
 
-	public Conditions getConditions() {
+	public C4JConditions getConditions() {
 		return conditions;
 	}
 

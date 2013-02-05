@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.util;
+package de.vksi.c4j.eclipse.plugin.ui.text.hover;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -28,10 +28,6 @@ public class C4JResources {
 
 	private IFolder destinationFolder;
 	
-	
-	/**
-	 * @param libFolder
-	 */
 	public void copyConfigFilesTo(IFolder libFolder) {
 		this.destinationFolder = libFolder;
 		
@@ -119,8 +115,6 @@ public class C4JResources {
 		return "";
 	}
 
-
-	
 	private boolean isLocalC4JJar(IFile file) {
 		String extension = file.getFileExtension();
 		String fileName = file.toString().toLowerCase();
@@ -158,7 +152,7 @@ public class C4JResources {
 	}
 
 	public void addJarsToClasspath(IJavaProject javaProject) throws JavaModelException {
-		new AddClasspathEntry(javaProject).add(this.getClassPathEntries());
+		new Classpath(javaProject).add(this.getClassPathEntries());
 	}
 
 	private List<IClasspathEntry> getClassPathEntries() {

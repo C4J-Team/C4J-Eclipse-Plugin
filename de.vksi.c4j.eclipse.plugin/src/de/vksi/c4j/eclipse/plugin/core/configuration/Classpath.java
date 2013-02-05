@@ -7,11 +7,11 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 
-public class AddClasspathEntry {
+public class Classpath {
 
 	private IJavaProject javaProject;
 
-	public AddClasspathEntry(IJavaProject javaProject) {
+	public Classpath(IJavaProject javaProject) {
 		this.javaProject = javaProject;
 	}
 
