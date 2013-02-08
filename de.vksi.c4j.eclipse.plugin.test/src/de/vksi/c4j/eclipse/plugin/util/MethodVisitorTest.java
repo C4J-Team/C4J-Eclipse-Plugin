@@ -1,6 +1,5 @@
 package de.vksi.c4j.eclipse.plugin.util;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -18,9 +17,8 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.vksi.c4j.eclipse.plugin.ui.text.hover.MethodVisitor;
-
 import test.util.JavaProjectLoader;
+import de.vksi.c4j.eclipse.plugin.ui.text.hover.MethodVisitor;
 
 public class MethodVisitorTest {
 	private static final String PROJECTNAME = "TestProject";

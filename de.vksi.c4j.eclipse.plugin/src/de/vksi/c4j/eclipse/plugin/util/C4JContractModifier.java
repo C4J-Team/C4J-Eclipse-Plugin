@@ -8,6 +8,7 @@ import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.IMPORT_IGNORED;
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.IMPORT_POST_CONDITIONS;
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.IMPORT_PRE_CONDITIONS;
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.IMPORT_TARGET;
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.IMPORT_CONTRACT_ANNOTATION;
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.RETURN_IGNORED;
 
 import java.util.List;
@@ -24,9 +25,12 @@ import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
+import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
+import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
@@ -53,7 +57,7 @@ public class C4JContractModifier {
 	private static final String CLASS_INVARIANTS_TODO_COMMENT = "// TODO: write invariants if required";
 	private static final String CLASS_INVARIANT_METHOD = "classInvariant";
 	private static final String TARGET_MEMBER = "target";
-	
+
 	private IType contract;
 	private CompilationUnit astRoot;
 	private AST ast;
@@ -96,27 +100,50 @@ public class C4JContractModifier {
 		addImport(IMPORT_TARGET);
 		addImport(IMPORT_CLASSINVARIANT);
 	}
-	
-	private void addImport(String qualifiedTypeName){
+
+	private void addImport(String qualifiedTypeName) {
 		importRewrite.addImport(qualifiedTypeName);
 	}
 
-	private void addStaticImport(String qualifiedTypeName, boolean isField){
-		String simpleName = qualifiedTypeName.substring(qualifiedTypeName.lastIndexOf(".")+1, qualifiedTypeName.length());
+	private void addStaticImport(String qualifiedTypeName, boolean isField) {
+		String simpleName = qualifiedTypeName.substring(qualifiedTypeName.lastIndexOf(".") + 1,
+				qualifiedTypeName.length());
 		String declaringTypeName = qualifiedTypeName.replace("." + simpleName, "");
 		importRewrite.addStaticImport(declaringTypeName, simpleName, isField);
 	}
-	
-	public void addContractAnnotation() {
 
+	public void addContractAnnotation() {
 		ListRewrite listRewrite = rewriter.getListRewrite(typeDecl, TypeDeclaration.MODIFIERS2_PROPERTY);
-				
 		MarkerAnnotation contractRefAnnotation = ast.newMarkerAnnotation();
 		contractRefAnnotation.setTypeName(ast.newSimpleName(ANNOTATION_CONTRACT));
+		addImport(IMPORT_CONTRACT_ANNOTATION);
+		listRewrite.insertFirst(contractRefAnnotation, null);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void addContractAnnotation(IType target) {
+		if(target == null){
+			addContractAnnotation();
+			return;
+		}
 		
-		addImport("de.vksi.c4j.Contract");
+		ListRewrite listRewrite = rewriter.getListRewrite(typeDecl, TypeDeclaration.MODIFIERS2_PROPERTY);
+
+		NormalAnnotation contractRefAnnotation = ast.newNormalAnnotation();
+		contractRefAnnotation.setTypeName(ast.newSimpleName(ANNOTATION_CONTRACT));
+
+		MemberValuePair annotationValue =  ast.newMemberValuePair();
+		annotationValue.setName(ast.newSimpleName("forTarget"));
+		TypeLiteral typeLiteral = ast.newTypeLiteral();
+		typeLiteral.setType(ast.newSimpleType(ast.newSimpleName(target.getElementName())));
+		annotationValue.setValue(typeLiteral);
+		
+		contractRefAnnotation.values().add(annotationValue);
+		
+		addImport(IMPORT_CONTRACT_ANNOTATION);
 
 		listRewrite.insertFirst(contractRefAnnotation, null);
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -157,14 +184,14 @@ public class C4JContractModifier {
 		classInvariantMethod.setReturnType2(ast.newPrimitiveType(PrimitiveType.VOID));
 		classInvariantMethod.setName(ast.newSimpleName(CLASS_INVARIANT_METHOD));
 		Block classInvariantMethodBlock = ast.newBlock();
-		Statement toDoComment = (Statement) rewriter.createStringPlaceholder(
-				CLASS_INVARIANTS_TODO_COMMENT, ASTNode.EMPTY_STATEMENT);
+		Statement toDoComment = (Statement) rewriter.createStringPlaceholder(CLASS_INVARIANTS_TODO_COMMENT,
+				ASTNode.EMPTY_STATEMENT);
 		classInvariantMethodBlock.statements().add(toDoComment);
 		classInvariantMethod.setBody(classInvariantMethodBlock);
 
 		listRewrite.insertLast(classInvariantMethod, null);
 	}
-	
+
 	public void addMethodStubs(IMethodBinding[] methods) throws JavaModelException, CoreException {
 
 		CodeGenerationSettings settings = JavaPreferencesSettings.getCodeGenerationSettings(contract
@@ -206,8 +233,8 @@ public class C4JContractModifier {
 		MethodInvocation postcondition = ast.newMethodInvocation();
 		postcondition.setName(ast.newSimpleName("postCondition"));
 		ifPostconditionStatement.setExpression(postcondition);
-		toDoComment = (Statement) rewriter.createStringPlaceholder(
-				POST_CONDITION_TODO_COMMENT, ASTNode.EMPTY_STATEMENT);
+		toDoComment = (Statement) rewriter.createStringPlaceholder(POST_CONDITION_TODO_COMMENT,
+				ASTNode.EMPTY_STATEMENT);
 		thenStatementBlock = ast.newBlock();
 		thenStatementBlock.statements().add(toDoComment);
 		ifPostconditionStatement.setThenStatement(thenStatementBlock);
@@ -220,8 +247,8 @@ public class C4JContractModifier {
 		MethodInvocation precondition = ast.newMethodInvocation();
 		precondition.setName(ast.newSimpleName("preCondition"));
 		ifPreconditionStatement.setExpression(precondition);
-		Statement toDoComment = (Statement) rewriter.createStringPlaceholder(
-				PRE_CONDITION_TODO_COMMENT, ASTNode.EMPTY_STATEMENT);
+		Statement toDoComment = (Statement) rewriter.createStringPlaceholder(PRE_CONDITION_TODO_COMMENT,
+				ASTNode.EMPTY_STATEMENT);
 		Block thenStatementBlock = ast.newBlock();
 		thenStatementBlock.statements().add(toDoComment);
 		ifPreconditionStatement.setThenStatement(thenStatementBlock);
@@ -249,7 +276,7 @@ public class C4JContractModifier {
 		try {
 			TextEdit edits = rewriter.rewriteAST();
 			applyEdits(edits);
-			
+
 			TextEdit importEdit = importRewrite.rewriteImports(null);
 			applyEdits(importEdit);
 		} catch (JavaModelException e) {
@@ -265,8 +292,8 @@ public class C4JContractModifier {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//load new ast
+
+		// load new ast
 		init(contract);
 	}
 

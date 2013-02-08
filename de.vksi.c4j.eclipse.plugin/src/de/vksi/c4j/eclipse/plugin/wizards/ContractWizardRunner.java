@@ -3,10 +3,8 @@ package de.vksi.c4j.eclipse.plugin.wizards;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.resource.JFaceResources;
@@ -31,7 +29,7 @@ public class ContractWizardRunner {
 	public IType runWizard(){
 		StructuredSelection selection = new StructuredSelection(target.getCompilationUnit());
 
-		ContractWizardPage page = new ContractWizardPage();
+		ContractWizardPage page = new ContractWizardPage(target);
 		page.init(selection);
 
 		ContractCreationWizard wizard = new ContractCreationWizard(page, true);

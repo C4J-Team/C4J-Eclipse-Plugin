@@ -7,7 +7,7 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AssertStatement;
 
 public class AssertStatementVisitor extends ASTVisitor {
-	private static final String TARGET = "target."; //better solution: search for @Target-Ref and get the value name
+	private static final String TARGET = "target."; //TODO: better solution: search for @Target-Ref and get the value name
 	private List<String> conditions = new ArrayList<String>();
 
 	@Override

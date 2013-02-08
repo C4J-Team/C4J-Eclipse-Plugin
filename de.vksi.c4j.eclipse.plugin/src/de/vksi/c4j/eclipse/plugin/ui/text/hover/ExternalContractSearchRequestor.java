@@ -25,7 +25,7 @@ public class ExternalContractSearchRequestor extends SearchRequestor {
 				return;
 			}
 
-			if (matchedType.getSuperclassName() != null) {
+			if (matchedType.getSuperclassName() != null && !isObject(matchedType)) {
 				addExternalContract(getSupertypeOf(matchedType), matchedType);
 			}
 
@@ -38,6 +38,11 @@ public class ExternalContractSearchRequestor extends SearchRequestor {
 		}
 	}
 
+	private boolean isObject(IType matchedType) {
+		return Object.class.getName().equals(matchedType.getFullyQualifiedName());
+	}
+
+	//TODO: what if one key has many values?!
 	public Map<IType, IType> getExternalContracts() {
 		return externalContracts;
 	}

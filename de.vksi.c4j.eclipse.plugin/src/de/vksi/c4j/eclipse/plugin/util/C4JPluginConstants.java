@@ -16,4 +16,5 @@ public class C4JPluginConstants {
 	public static final String IMPORT_IGNORED = "de.vksi.c4j.Condition.ignored";
 	public static final String IMPORT_POST_CONDITIONS = "de.vksi.c4j.Condition.postCondition";
 	public static final String IMPORT_PRE_CONDITIONS = "de.vksi.c4j.Condition.preCondition";
+	public static final String IMPORT_CONTRACT_ANNOTATION = "de.vksi.c4j.Contract";
 }

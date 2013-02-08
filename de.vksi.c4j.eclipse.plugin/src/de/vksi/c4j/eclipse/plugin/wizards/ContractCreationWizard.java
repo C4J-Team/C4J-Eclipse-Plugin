@@ -10,6 +10,7 @@ import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.internal.ui.wizards.NewElementWizard;
 import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
 
+@SuppressWarnings("restriction")
 public class ContractCreationWizard extends NewElementWizard{
 
 	private ContractWizardPage fPage;

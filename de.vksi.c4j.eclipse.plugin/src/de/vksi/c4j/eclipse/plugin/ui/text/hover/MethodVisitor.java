@@ -27,10 +27,10 @@ public class MethodVisitor extends ASTVisitor {
 	@Override
 	public boolean visit(MethodDeclaration method) {
 		if (matchesTargetMethod(method)) {
-			if(isClassInvariant()){
+			if (isClassInvariant()) {
 				AssertStatementVisitor assertVisitor = new AssertStatementVisitor();
 				method.accept(assertVisitor);
-				conditions.addInvariantConditions(assertVisitor.getConditions());
+				conditions.setInvariantConditions(assertVisitor.getConditions());
 				return false;
 			}
 
@@ -43,27 +43,6 @@ public class MethodVisitor extends ASTVisitor {
 		return false;
 	}
 
-	private boolean isClassInvariant() {
-		try {
-			for (IAnnotation annotation : targetMethod.getAnnotations()) {
-				if (ANNOTATION_CLASS_INVARIANT.equals(annotation.getElementName())) {
-					return true;
-				}
-			}
-		} catch (JavaModelException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	private boolean isConstructor(IMethod method) {
-		try {
-			return targetMethod.isConstructor();
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
 	private boolean matchesTargetMethod(MethodDeclaration method) {
 		if (targetMethod == null)
 			return false;
@@ -73,10 +52,12 @@ public class MethodVisitor extends ASTVisitor {
 			String contractMethodSignature = createMethodSignature(method);
 
 			String targetMethodName = targetMethod.getElementName();
-			String targetMethodSignature = Signature.getSignatureSimpleName(targetMethod.getSignature());
+			String targetMethodSignature = Signature
+					.getSignatureSimpleName(targetMethod.getSignature());
 
 			if (isConstructor(targetMethod))
-				return (method.isConstructor() && contractMethodSignature.equals(targetMethodSignature));
+				return (method.isConstructor() && contractMethodSignature
+						.equals(targetMethodSignature));
 			else
 				return (contractMethodName.equals(targetMethodName) && contractMethodSignature
 						.equals(targetMethodSignature));
@@ -88,23 +69,46 @@ public class MethodVisitor extends ASTVisitor {
 		return false;
 	}
 
+	private boolean isConstructor(IMethod method) {
+		try {
+			return targetMethod.isConstructor();
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	private boolean isClassInvariant() {
+		try {
+			for (IAnnotation annotation : targetMethod.getAnnotations()) {
+				if (ANNOTATION_CLASS_INVARIANT.equals(annotation
+						.getElementName())) {
+					return true;
+				}
+			}
+		} catch (JavaModelException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 	private String createMethodSignature(MethodDeclaration method) {
-		String signature = method.getReturnType2() != null ? method.getReturnType2().toString() : VOID;
+		String signature = method.getReturnType2() != null ? method
+				.getReturnType2().toString() : VOID;
 		signature += " (";
 		Iterator<?> paramIterator = method.parameters().iterator();
-		
-		while(paramIterator.hasNext()){
+
+		while (paramIterator.hasNext()) {
 			Object currParam = paramIterator.next();
 			if (currParam instanceof SingleVariableDeclaration) {
 				SingleVariableDeclaration param = (SingleVariableDeclaration) currParam;
 				signature += param.getType().toString();
 			}
-			
+
 			signature += paramIterator.hasNext() ? ", " : "";
 		}
-		
+
 		signature += ")";
-		
+
 		return signature;
 	}
 

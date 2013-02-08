@@ -21,9 +21,9 @@ public class IfStatementVisitor extends ASTVisitor {
 		ifStatement.accept(assertVisitor);
 
 		if (ifStatement.getExpression().toString().equals(PRE_CONDITION))
-			conditions.addPreConditions(assertVisitor.getConditions());
+			conditions.setPreConditions(assertVisitor.getConditions());
 		else if (ifStatement.getExpression().toString().equals(POST_CONDITION))
-			conditions.addPostConditions(assertVisitor.getConditions());
+			conditions.setPostConditions(assertVisitor.getConditions());
 
 		// false: children of this node should be skipped
 		return false;

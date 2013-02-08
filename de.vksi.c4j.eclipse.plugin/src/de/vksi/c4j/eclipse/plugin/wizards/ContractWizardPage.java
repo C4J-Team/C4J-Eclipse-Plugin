@@ -1,5 +1,8 @@
 package de.vksi.c4j.eclipse.plugin.wizards;
 
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CONTRACT;
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CONTRACT_REFERENCE;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +29,6 @@ import org.eclipse.jdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.SelectionButtonDialogFieldGroup;
 import org.eclipse.jdt.ui.wizards.NewTypeWizardPage;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -35,8 +37,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 
 import de.vksi.c4j.eclipse.plugin.util.C4JContractModifier;
-import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CONTRACT;
-import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CONTRACT_REFERENCE;;
 
 @SuppressWarnings("restriction")
 public class ContractWizardPage extends NewTypeWizardPage {
@@ -61,6 +61,7 @@ public class ContractWizardPage extends NewTypeWizardPage {
 	private SelectionButtonDialogFieldGroup fContractTypeButtons;
 
 	protected IStatus fSuperClassOrSuperInterfaceIsSetStatus;
+	private IType target;
 
 	public ContractWizardPage() {
 		super(true, PAGE_NAME);
@@ -77,21 +78,16 @@ public class ContractWizardPage extends NewTypeWizardPage {
 		fContractStubsButtons.setLabelText("Which method stubs would you like to create?");
 	}
 
+	public ContractWizardPage(IType target) {
+		this();
+		this.target = target;
+	}
+
 	public void init(IStructuredSelection selection) {
 		IJavaElement jelem = getInitialJavaElement(selection);
 		initContainerPage(jelem);
 		initTypePage(jelem);
 		doStatusUpdate();
-
-		// TODO: may use this to get selections -> selections of last call stored
-		// boolean createContractForAllMethods = true;
-		// IDialogSettings dialogSettings = getDialogSettings();
-		// if (dialogSettings != null) {
-		// IDialogSettings section = dialogSettings.getSection(PAGE_NAME);
-		// if (section != null) {
-		// createContractForAllMethods = section.getBoolean(ONLY_CONTRACT_STUB);
-		// }
-		// }
 
 		setModifiers(Flags.AccPublic, false);
 		setContractTypeSelection(true, false, true);
@@ -99,7 +95,6 @@ public class ContractWizardPage extends NewTypeWizardPage {
 	}
 
 	private void doStatusUpdate() {
-		// status of all used components
 		IStatus[] status = new IStatus[] {
 				fContainerStatus,
 				isEnclosingTypeSelected() ? fEnclosingTypeStatus
@@ -237,7 +232,7 @@ public class ContractWizardPage extends NewTypeWizardPage {
 		contract.addC4JStandardImports();
 		
 		if(isCreateExternalContract())
-			contract.addContractAnnotation();
+			contract.addContractAnnotation(target);
 		
 		contract.addTargetMember();
 		contract.addClassInvariant();
