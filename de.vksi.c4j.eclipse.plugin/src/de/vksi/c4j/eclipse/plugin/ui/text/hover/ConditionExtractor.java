@@ -4,7 +4,7 @@ import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CLAS
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.List;
 
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.IJavaElement;
@@ -16,12 +16,14 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 
-import de.vksi.c4j.eclipse.plugin.util.C4JConditions;
-import de.vksi.c4j.eclipse.plugin.util.C4JContractReferenceAnnotation;
+import de.vksi.c4j.eclipse.plugin.internal.C4JConditions;
+import de.vksi.c4j.eclipse.plugin.internal.C4JContractReferenceAnnotation;
+import de.vksi.c4j.eclipse.plugin.util.ExternalContractMap;
+import de.vksi.c4j.eclipse.plugin.util.ExternalContractScanner;
 
 public class ConditionExtractor {
 	private C4JConditions conditions;
-	private Map<IType, IType> externalContracts;
+	private ExternalContractMap externalContracts;
 
 	public ConditionExtractor() {
 		conditions = new C4JConditions();
@@ -83,42 +85,44 @@ public class ConditionExtractor {
 		return allSupertypesInclusiveCurrentType;
 	}
 
-	private void searchTypeForContractConditions(IJavaElement element,
-			IType type) {
-		IType contract = getContract(type);
+	private void searchTypeForContractConditions(IJavaElement element, IType type) {
+		List<IType> listOfContracts = getContract(type);
+		for (IType contract : listOfContracts) {
+			IMethod method = getMethodOfInterest(element, contract);
+			C4JConditions conditionsToMerge = parseContract(contract, method);
 
-		IMethod method = getMethodOfInterest(element, contract);
-		C4JConditions conditionsToMerge = parseContract(contract, method);
-
-		if (preConditionsAlreadyDefined(type, conditionsToMerge)) {
+			if (preConditionsAlreadyDefined(type, conditionsToMerge)) {
 				addWarningToPreconditions(contract);
 				conditionsToMerge.setPreConditions(new ArrayList<String>());
-		}
+			}
 
-		conditions.mergeWith(conditionsToMerge);
+			conditions.mergeWith(conditionsToMerge);
+		}
 	}
 
-	private boolean preConditionsAlreadyDefined(IType type,C4JConditions conditionsToMerge) {
-		return hasSupertype(type) 
-				&& conditions.hasPreConditions()
+	private boolean preConditionsAlreadyDefined(IType type, C4JConditions conditionsToMerge) {
+		return hasSupertype(type) && conditions.hasPreConditions()
 				&& !conditionsToMerge.getConditions(C4JConditions.PRE_CONDITIONS).isEmpty();
 	}
 
 	private boolean hasSupertype(IType type) {
 		try {
-			return type.getSuperclassName() != null
-					|| type.getSuperInterfaceNames().length > 0;
+			return type.getSuperclassName() != null || type.getSuperInterfaceNames().length > 0;
 		} catch (JavaModelException e) {
 			return false;
 		}
 	}
 
-	private IType getContract(IType type) {
-		C4JContractReferenceAnnotation contractReference = new C4JContractReferenceAnnotation(
-				type);
-		IType contract = contractReference.exists() ? contractReference
-				.getContractClass() : externalContracts.get(type);
-		return contract;
+	private List<IType> getContract(IType type) {
+		C4JContractReferenceAnnotation contractReference = new C4JContractReferenceAnnotation(type);
+		List<IType> listOfContracts = new ArrayList<IType>();
+
+		if (contractReference.exists())
+			listOfContracts.add(contractReference.getContractClass());
+		
+		listOfContracts.addAll(externalContracts.getContractsFor(type));
+
+		return listOfContracts;
 	}
 
 	private IMethod getMethodOfInterest(IJavaElement element, IType contract) {
@@ -135,13 +139,11 @@ public class ConditionExtractor {
 		return method;
 	}
 
-	private IMethod getClassInvariantsMethod(IType contract)
-			throws JavaModelException {
+	private IMethod getClassInvariantsMethod(IType contract) throws JavaModelException {
 		if (contract != null) {
 			for (IMethod method : contract.getMethods()) {
 				for (IAnnotation annotation : method.getAnnotations()) {
-					if (ANNOTATION_CLASS_INVARIANT.equals(annotation
-							.getElementName())) {
+					if (ANNOTATION_CLASS_INVARIANT.equals(annotation.getElementName())) {
 						return method;
 					}
 				}
@@ -171,10 +173,9 @@ public class ConditionExtractor {
 
 	private void addWarningToPreconditions(IType type) {
 		String relatedContractName = type.getElementName();
-		String warning = MessageFormat
-				.format("<br>WARNING: Found strengthening pre-condition "
-						+ "in Contract ''{0}'' which is already defined from its super Contract "
-						+ "- ignoring the pre-condition", relatedContractName);
+		String warning = MessageFormat.format("<br>WARNING: Found strengthening pre-condition "
+				+ "in Contract ''{0}'' which is already defined from its super Contract "
+				+ "- ignoring the pre-condition", relatedContractName);
 		conditions.addWaringToConditions(C4JConditions.PRE_CONDITIONS, warning);
 	}
 }

@@ -15,8 +15,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.text.edits.MalformedTreeException;
 
-import de.vksi.c4j.eclipse.plugin.util.C4JContract;
-import de.vksi.c4j.eclipse.plugin.util.C4JTarget;
+import de.vksi.c4j.eclipse.plugin.internal.C4JContract;
+import de.vksi.c4j.eclipse.plugin.internal.C4JTarget;
 
 @SuppressWarnings("restriction")
 public class CreateContractProposal implements IJavaCompletionProposal {

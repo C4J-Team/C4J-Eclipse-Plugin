@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.util;
+package de.vksi.c4j.eclipse.plugin.internal;
 
 import org.eclipse.jdt.core.IType;
 
@@ -6,7 +6,7 @@ import de.vksi.c4j.eclipse.plugin.wizards.ContractWizardRunner;
 
 public class C4JContract {
 	private IType target;
-	private IType contract;;
+	private IType contract;
 
 	public C4JContract() {
 	}

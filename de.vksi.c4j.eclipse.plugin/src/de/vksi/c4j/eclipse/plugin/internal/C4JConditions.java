@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.util;
+package de.vksi.c4j.eclipse.plugin.internal;
 
 import java.util.ArrayList;
 import java.util.HashMap;

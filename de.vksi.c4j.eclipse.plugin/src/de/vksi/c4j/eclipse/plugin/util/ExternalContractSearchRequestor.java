@@ -1,7 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.ui.text.hover;
-
-import java.util.HashMap;
-import java.util.Map;
+package de.vksi.c4j.eclipse.plugin.util;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IType;
@@ -9,10 +6,11 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.SearchMatch;
 import org.eclipse.jdt.core.search.SearchRequestor;
 
-import de.vksi.c4j.eclipse.plugin.util.C4JContractAnnotation;
+import de.vksi.c4j.eclipse.plugin.internal.C4JContractAnnotation;
+
 
 public class ExternalContractSearchRequestor extends SearchRequestor {
-	private Map<IType, IType> externalContracts = new HashMap<IType, IType>();
+	private ExternalContractMap externalContracts = new ExternalContractMap();
 
 	@Override
 	public void acceptSearchMatch(SearchMatch match) throws CoreException {
@@ -21,18 +19,18 @@ public class ExternalContractSearchRequestor extends SearchRequestor {
 			C4JContractAnnotation contractAnnotation = new C4JContractAnnotation(matchedType);
 
 			if (contractAnnotation.hasValue()) {
-				addExternalContract(contractAnnotation.getTargetClass(), matchedType);
+				externalContracts.addContractFor(contractAnnotation.getTargetClass(), matchedType);
 				return;
 			}
 
 			if (matchedType.getSuperclassName() != null && !isObject(matchedType)) {
-				addExternalContract(getSupertypeOf(matchedType), matchedType);
+				externalContracts.addContractFor(getSupertypeOf(matchedType), matchedType);
 			}
 
 			if (matchedType.getSuperInterfaceNames().length > 0) {
 				IType[] superInterfaces = getSuperInterfacesOf(matchedType);
 				for (IType superInterface : superInterfaces) {
-					addExternalContract(superInterface, matchedType);
+					externalContracts.addContractFor(superInterface, matchedType);
 				}
 			}
 		}
@@ -42,8 +40,7 @@ public class ExternalContractSearchRequestor extends SearchRequestor {
 		return Object.class.getName().equals(matchedType.getFullyQualifiedName());
 	}
 
-	//TODO: what if one key has many values?!
-	public Map<IType, IType> getExternalContracts() {
+	public ExternalContractMap getExternalContracts() {
 		return externalContracts;
 	}
 
@@ -66,9 +63,4 @@ public class ExternalContractSearchRequestor extends SearchRequestor {
 		}
 		return null;
 	}
-
-	private void addExternalContract(IType target, IType contract) {
-		externalContracts.put(target, contract);
-	}
-
 }

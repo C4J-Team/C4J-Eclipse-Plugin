@@ -6,7 +6,7 @@ import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.PRE_CONDITION;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.IfStatement;
 
-import de.vksi.c4j.eclipse.plugin.util.C4JConditions;
+import de.vksi.c4j.eclipse.plugin.internal.C4JConditions;
 
 public class IfStatementVisitor extends ASTVisitor {
 	private C4JConditions conditions;

@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import test.util.JavaProjectLoader;
+import de.vksi.c4j.eclipse.plugin.internal.C4JConditions;
 import de.vksi.c4j.eclipse.plugin.ui.text.hover.MethodVisitor;
 
 public class MethodVisitorTest {

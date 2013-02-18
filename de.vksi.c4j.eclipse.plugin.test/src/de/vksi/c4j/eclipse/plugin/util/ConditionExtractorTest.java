@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.IType;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.vksi.c4j.eclipse.plugin.internal.C4JConditions;
 import de.vksi.c4j.eclipse.plugin.ui.text.hover.ConditionExtractor;
 
 import test.util.JavaProjectLoader;

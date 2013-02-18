@@ -15,56 +15,52 @@ import org.eclipse.jdt.ui.text.java.IQuickAssistProcessor;
 public class C4JQuickAssistProcessor implements IQuickAssistProcessor {
 
 	@Override
-	public IJavaCompletionProposal[] getAssists(IInvocationContext context,
-			IProblemLocation[] locations) throws CoreException {
+	public IJavaCompletionProposal[] getAssists(IInvocationContext context, IProblemLocation[] locations)
+			throws CoreException {
 
-		if(locations.length == 0)
+		if (locations.length == 0)
 			return getQuickAssists(context, locations);
 		else
 			return getQuickFixes(context, locations);
-		
-		
+
 	}
 
-	private IJavaCompletionProposal[] getQuickAssists(
-			IInvocationContext context, IProblemLocation[] locations) {
+	private IJavaCompletionProposal[] getQuickAssists(IInvocationContext context, IProblemLocation[] locations) {
 		if (context.getCoveringNode() != null) {
 			ASTNode currentNode = context.getCoveringNode().getParent();
 			if (currentNode != null) {
 				if (currentNode.getNodeType() == ASTNode.TYPE_DECLARATION)
-					return createAssistFor((TypeDeclaration) currentNode,
-							context);
+					return createAssistFor((TypeDeclaration) currentNode, context);
 				else if (currentNode.getNodeType() == ASTNode.METHOD_DECLARATION)
-					return createAssistFor((MethodDeclaration) currentNode,
-							context);
+					return createAssistFor((MethodDeclaration) currentNode, context);
 			}
 		}
 		return new IJavaCompletionProposal[] {};
 	}
 
-	private IJavaCompletionProposal[] getQuickFixes(IInvocationContext context,
-			IProblemLocation[] locations) {
-		//TODO: provide quick fixes (e.g. create contract by entering the contract reference annotation)
+	private IJavaCompletionProposal[] getQuickFixes(IInvocationContext context, IProblemLocation[] locations) {
+		// TODO: provide quick fixes (e.g. create contract by entering the
+		// contract reference annotation)
 		return new IJavaCompletionProposal[] {};
 	}
-	
-	private IJavaCompletionProposal[] createAssistFor(
-			TypeDeclaration currentNode, IInvocationContext context) {
+
+	private IJavaCompletionProposal[] createAssistFor(TypeDeclaration currentNode, IInvocationContext context) {
 		// no contract support for nested classes
+		//TODO: allow the creation of contract, even if the target already has a contract annotation (one-to-many-relationship)
+		//-> if target has "contractRefAnnotation" -> only provide the option to create external contracts!
 		if (!hasContractAnnotation(currentNode) && !isNestedClass(currentNode))
-			return new IJavaCompletionProposal[] { new CreateContractProposal(
-					context) };
+			return new IJavaCompletionProposal[] { new CreateContractProposal(context) };
 
 		return new IJavaCompletionProposal[] {};
 	}
 
-	private IJavaCompletionProposal[] createAssistFor(
-			MethodDeclaration currentNode, IInvocationContext context) {
+	private IJavaCompletionProposal[] createAssistFor(MethodDeclaration currentNode,
+			IInvocationContext context) {
 
 		TypeDeclaration typeDeclaration = getTypeDeclaration(currentNode);
 		// no contract support for nested classes
-		if (hasContractAnnotation(typeDeclaration)
-				&& !isNestedClass(typeDeclaration)) {
+		if (hasContractAnnotation(typeDeclaration) && !isNestedClass(typeDeclaration)) {
+			return new IJavaCompletionProposal[] { new CreateContractMethodProposal(context) };
 
 		}
 		// else: contract does not exist yet
@@ -72,11 +68,12 @@ public class C4JQuickAssistProcessor implements IQuickAssistProcessor {
 		return new IJavaCompletionProposal[] {};
 	}
 
+	// TODO: check for external contract
 	private boolean hasContractAnnotation(TypeDeclaration currentNode) {
 		for (Object modifier : currentNode.modifiers()) {
 			if (modifier instanceof SingleMemberAnnotation) {
-				String annotationName = ((SingleMemberAnnotation) modifier)
-						.getTypeName().getFullyQualifiedName();
+				String annotationName = ((SingleMemberAnnotation) modifier).getTypeName()
+						.getFullyQualifiedName();
 				return ANNOTATION_CONTRACT_REFERENCE.equals(annotationName);
 			}
 		}
@@ -88,8 +85,7 @@ public class C4JQuickAssistProcessor implements IQuickAssistProcessor {
 		if (currentNode.getNodeType() == ASTNode.TYPE_DECLARATION)
 			return (TypeDeclaration) currentNode;
 		else if (currentNode.getNodeType() == ASTNode.METHOD_DECLARATION) {
-			return (TypeDeclaration) ((MethodDeclaration) currentNode)
-					.getParent();
+			return (TypeDeclaration) ((MethodDeclaration) currentNode).getParent();
 		}
 		return null;
 	}

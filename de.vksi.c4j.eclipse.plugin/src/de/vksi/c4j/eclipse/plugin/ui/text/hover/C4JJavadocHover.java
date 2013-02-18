@@ -6,7 +6,7 @@ import org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 
-import de.vksi.c4j.eclipse.plugin.util.C4JConditions;
+import de.vksi.c4j.eclipse.plugin.internal.C4JConditions;
 
 @SuppressWarnings("restriction")
 public class C4JJavadocHover extends JavadocHover {

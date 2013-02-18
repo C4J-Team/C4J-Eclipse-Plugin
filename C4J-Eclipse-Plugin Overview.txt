@@ -1,0 +1,14 @@
+Das C4J-Eclipse-Plugin...
+...stellt einen "Wizard" zur Erstellung neuer C4J-Projekte bereit
+	a)Projekt mit Maven-Struktur 
+	b)Projekt mit standard Java Projektstruktur 
+...ermöglicht die Konvertierung bestehender Projekte in C4J-Projekte
+...bietet QuickAssists
+	a)Auf Klassenebene zur Erstellung von Contracts
+		i)Unterscheidung zwischen externen und internen Contracts
+		ii)Auswahlmöglichkeit, welche Methoden-Stubs im Contract enthalten sein sollen
+...bietet eine TextHover Unterstützung im Editor um Contract-Informationen zur Entwicklungszeit anzuzeigen
+	a)Standard TextHover wird durch Contract-Infos angereichert, nicht ersetzt
+	b)Vererbungshierarchy der Klassen/Contracts wird berücksichtigt
+	c)Information können bereits bei der Erstellung eines Contracts abgerufen werden -> ggf. Warnung anzeigen
+	

@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 
-import de.vksi.c4j.eclipse.plugin.util.C4JContractModifier;
+import de.vksi.c4j.eclipse.plugin.util.C4JContractTransformer;
 
 @SuppressWarnings("restriction")
 public class ContractWizardPage extends NewTypeWizardPage {
@@ -227,7 +227,7 @@ public class ContractWizardPage extends NewTypeWizardPage {
 	protected void createTypeMembers(IType type, ImportsManager imports,
 			IProgressMonitor monitor) throws CoreException {
 
-		C4JContractModifier contract = new C4JContractModifier(type);
+		C4JContractTransformer contract = new C4JContractTransformer(type);
 
 		contract.addC4JStandardImports();
 		

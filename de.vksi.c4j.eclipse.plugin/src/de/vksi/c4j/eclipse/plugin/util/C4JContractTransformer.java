@@ -51,7 +51,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
 
 @SuppressWarnings("restriction")
-public class C4JContractModifier {
+public class C4JContractTransformer {
 	private static final String PRE_CONDITION_TODO_COMMENT = "// TODO: write preconditions if required";
 	private static final String POST_CONDITION_TODO_COMMENT = "// TODO: write postconditions if required";
 	private static final String CLASS_INVARIANTS_TODO_COMMENT = "// TODO: write invariants if required";
@@ -66,7 +66,7 @@ public class C4JContractModifier {
 	private ListRewrite listRewrite;
 	private ImportRewrite importRewrite;
 
-	public C4JContractModifier(IType contract) {
+	public C4JContractTransformer(IType contract) {
 		this.contract = contract;
 		init(contract);
 	}

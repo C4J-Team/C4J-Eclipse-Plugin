@@ -12,7 +12,7 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
-import de.vksi.c4j.eclipse.plugin.util.C4JConditions;
+import de.vksi.c4j.eclipse.plugin.internal.C4JConditions;
 
 public class MethodVisitor extends ASTVisitor {
 	private static final String VOID = "void";

@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.util;
+package de.vksi.c4j.eclipse.plugin.internal;
 
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CONTRACT;
 import org.eclipse.jdt.core.IType;

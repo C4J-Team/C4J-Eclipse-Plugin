@@ -1,10 +1,6 @@
-package de.vksi.c4j.eclipse.plugin.ui.text.hover;
-
-import java.util.HashMap;
-import java.util.Map;
+package de.vksi.c4j.eclipse.plugin.util;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
@@ -12,7 +8,7 @@ import org.eclipse.jdt.core.search.SearchParticipant;
 import org.eclipse.jdt.core.search.SearchPattern;
 
 public class ExternalContractScanner {
-	private Map<IType, IType> externalContracts = new HashMap<IType, IType>();
+	private ExternalContractMap externalContracts = new ExternalContractMap();
 
 	public void scan() {
 		SearchPattern pattern = SearchPattern.createPattern("Contract", IJavaSearchConstants.TYPE,
@@ -33,7 +29,7 @@ public class ExternalContractScanner {
 		externalContracts = externalContractRequestor.getExternalContracts();
 	}
 
-	public Map<IType, IType> getExternalContracts() {
+	public ExternalContractMap getExternalContracts() {
 		return externalContracts;
 	}
 	

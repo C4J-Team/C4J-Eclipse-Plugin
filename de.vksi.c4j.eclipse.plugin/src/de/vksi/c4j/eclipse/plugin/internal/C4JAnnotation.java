@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.util;
+package de.vksi.c4j.eclipse.plugin.internal;
 
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;
