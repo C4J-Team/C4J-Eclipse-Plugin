@@ -13,6 +13,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 
+import de.vksi.c4j.eclipse.plugin.internal.C4JContractReferenceAnnotation;
+
 @SuppressWarnings("restriction")
 public class ContractWizardRunner {
 	private static final String CONTRACT = "Contract";
@@ -45,6 +47,7 @@ public class ContractWizardRunner {
 		dialog.getShell().setText(DIALOG_TITLE);
 
 		configureWizardPage(page);
+		
 		IType createdType = null;
 
 		if (dialog.open() == Window.OK) {
@@ -55,7 +58,16 @@ public class ContractWizardRunner {
 	
 	private void configureWizardPage(ContractWizardPage page) {
 		fillInWizardPageName(page);
+		selectContractType(page);
 		fillInWizardPageSuperTypes(page);
+	}
+
+	private void selectContractType(ContractWizardPage page) {
+		C4JContractReferenceAnnotation contractReference = new C4JContractReferenceAnnotation(target);
+		if(contractReference.exists()){
+			page.setContractTypeSelection(false, true, false);
+		}
+		
 	}
 
 	private void fillInWizardPageName(ContractWizardPage page) {

@@ -87,4 +87,5 @@ public class VMDuplicator {
 			new Classpath(this.javaProject).add(jreEntry);
 		}
 	}
+
 }

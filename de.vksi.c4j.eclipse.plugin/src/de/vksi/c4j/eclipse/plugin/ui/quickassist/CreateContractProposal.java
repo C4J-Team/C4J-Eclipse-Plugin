@@ -25,21 +25,19 @@ public class CreateContractProposal implements IJavaCompletionProposal {
 	private C4JTarget target;
 
 	public CreateContractProposal(IInvocationContext context) {
-		this.contract = new C4JContract();
-		IType type = context.getCompilationUnit().getType(
-				context.getCoveringNode().toString());
+		IType type = context.getCompilationUnit().getType(context.getCoveringNode().toString());
 		this.target = new C4JTarget(type);
 	}
 
 	@Override
 	public void apply(IDocument document) {
-		contract.createContractFor(target.getType());
+		contract = C4JContract.createContractFor(target.getType());
 
 		if (contract.exists()) {
 			try {
 				if (!contract.isExternal()) {
-					target.addImportsFor(contract.getType());
-					target.addContractReferenceAnnotation(contract.getType());
+					target.addImportsFor(contract.getContract());
+					target.addContractReferenceAnnotation(contract.getContract());
 				}
 			} catch (ValidateEditException e) {
 				e.printStackTrace();
@@ -60,9 +58,11 @@ public class CreateContractProposal implements IJavaCompletionProposal {
 
 	@Override
 	public String getAdditionalProposalInfo() {
-		return MessageFormat
-				.format("Create C4j Contract for ''{0}''. By using the contract creation wizard you can chose which contract stubs are going to be created for ''{0}''",
-						target.getType().getElementName());
+		return MessageFormat.format("Create C4J Contract for ''{0}''. By using the contract creation "
+				+ "wizard you can chose which contract stubs are going to be created "
+				+ "for ''{0}''.<br><br>FYI: This functionality does not comprise static "
+				+ "code analysis, please make sure your contract(s) is(are) valid.", target.getType()
+				.getElementName());
 	}
 
 	@Override

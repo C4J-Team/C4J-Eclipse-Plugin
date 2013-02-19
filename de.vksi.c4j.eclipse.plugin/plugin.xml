@@ -8,6 +8,10 @@
             id="de.vksi.c4j.eclipse.plugin.convertToC4jProject"
             name="Convert to C4J Project">
       </command>
+      <category
+            id="de.vksi.c4j.eclipse.plugin.commands.category"
+            name="C4J">
+      </category>
    </extension>
    <extension
          point="org.eclipse.ui.menus">

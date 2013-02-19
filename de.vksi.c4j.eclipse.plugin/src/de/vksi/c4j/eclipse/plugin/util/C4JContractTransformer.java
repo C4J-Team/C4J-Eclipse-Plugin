@@ -4,16 +4,21 @@ import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CLAS
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CONTRACT;
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_TARGET;
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.IMPORT_CLASSINVARIANT;
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.IMPORT_CONTRACT_ANNOTATION;
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.IMPORT_IGNORED;
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.IMPORT_POST_CONDITIONS;
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.IMPORT_PRE_CONDITIONS;
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.IMPORT_TARGET;
-import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.IMPORT_CONTRACT_ANNOTATION;
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.RETURN_IGNORED;
 
 import java.util.List;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
@@ -28,7 +33,6 @@ import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.PrimitiveType;
@@ -36,6 +40,7 @@ import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ImportRewrite;
@@ -46,7 +51,6 @@ import org.eclipse.jdt.internal.corext.codemanipulation.StubUtility2;
 import org.eclipse.jdt.internal.ui.javaeditor.ASTProvider;
 import org.eclipse.jdt.internal.ui.preferences.JavaPreferencesSettings;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
 
@@ -73,6 +77,7 @@ public class C4JContractTransformer {
 
 	private void init(IType contract) {
 		ASTParser parser = ASTParser.newParser(ASTProvider.SHARED_AST_LEVEL);
+//		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		parser.setSource(contract.getCompilationUnit());
 		astRoot = (CompilationUnit) parser.createAST(null);
 
@@ -91,14 +96,6 @@ public class C4JContractTransformer {
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public void addC4JStandardImports() {
-		addStaticImport(IMPORT_PRE_CONDITIONS, false);
-		addStaticImport(IMPORT_POST_CONDITIONS, false);
-		addStaticImport(IMPORT_IGNORED, false);
-		addImport(IMPORT_TARGET);
-		addImport(IMPORT_CLASSINVARIANT);
 	}
 
 	private void addImport(String qualifiedTypeName) {
@@ -122,24 +119,24 @@ public class C4JContractTransformer {
 
 	@SuppressWarnings("unchecked")
 	public void addContractAnnotation(IType target) {
-		if(target == null){
+		if (target == null) {
 			addContractAnnotation();
 			return;
 		}
-		
+
 		ListRewrite listRewrite = rewriter.getListRewrite(typeDecl, TypeDeclaration.MODIFIERS2_PROPERTY);
 
 		NormalAnnotation contractRefAnnotation = ast.newNormalAnnotation();
 		contractRefAnnotation.setTypeName(ast.newSimpleName(ANNOTATION_CONTRACT));
 
-		MemberValuePair annotationValue =  ast.newMemberValuePair();
+		MemberValuePair annotationValue = ast.newMemberValuePair();
 		annotationValue.setName(ast.newSimpleName("forTarget"));
 		TypeLiteral typeLiteral = ast.newTypeLiteral();
 		typeLiteral.setType(ast.newSimpleType(ast.newSimpleName(target.getElementName())));
 		annotationValue.setValue(typeLiteral);
-		
+
 		contractRefAnnotation.values().add(annotationValue);
-		
+
 		addImport(IMPORT_CONTRACT_ANNOTATION);
 
 		listRewrite.insertFirst(contractRefAnnotation, null);
@@ -170,7 +167,8 @@ public class C4JContractTransformer {
 
 		Type newType = (Type) ASTNode.copySubtree(ast, targetType);
 		targetDeclaration.setType(newType);
-
+		
+		addImport(IMPORT_TARGET);
 		listRewrite.insertFirst(targetDeclaration, null);
 	}
 
@@ -189,24 +187,29 @@ public class C4JContractTransformer {
 		classInvariantMethodBlock.statements().add(toDoComment);
 		classInvariantMethod.setBody(classInvariantMethodBlock);
 
+		addImport(IMPORT_CLASSINVARIANT);
 		listRewrite.insertLast(classInvariantMethod, null);
 	}
 
 	public void addMethodStubs(IMethodBinding[] methods) throws JavaModelException, CoreException {
+		for (IMethodBinding method : methods) {
+			addMethodStub(method);
+		}
+	}
 
+	public void addMethodStub(IMethodBinding method) throws JavaModelException, CoreException {
 		CodeGenerationSettings settings = JavaPreferencesSettings.getCodeGenerationSettings(contract
 				.getJavaProject());
 
-		for (IMethodBinding method : methods) {
-			MethodDeclaration methodStub = StubUtility2.createImplementationStub(contract
-					.getCompilationUnit(), rewriter, importRewrite, null, method, typeDecl.getName()
-					.toString(), settings, typeDecl.isInterface());
+		MethodDeclaration methodStub = StubUtility2.createImplementationStub(contract.getCompilationUnit(),
+				rewriter, importRewrite, null, method, typeDecl.getName().toString(), settings,
+				typeDecl.isInterface());
 
-			Block methodBody = createMethodBody(methodStub);
+		Block methodBody = createMethodBody(methodStub);
 
-			methodStub.setBody(methodBody);
-			listRewrite.insertLast(methodStub, null);
-		}
+		methodStub.setBody(methodBody);
+		
+		listRewrite.insertLast(methodStub, null);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -214,13 +217,16 @@ public class C4JContractTransformer {
 		Block methodBody = ast.newBlock();
 		IfStatement ifPreconditionStatement = createPreCondition();
 		methodBody.statements().add(ifPreconditionStatement);
-
+		addStaticImport(IMPORT_PRE_CONDITIONS, false);
+		
 		IfStatement ifPostconditionStatement = createPostCondition();
 		methodBody.statements().add(ifPostconditionStatement);
+		addStaticImport(IMPORT_POST_CONDITIONS, false);
 
 		if (!isReturnTypeVoid(methodStub)) {
 			ReturnStatement returnIgnoredStatement = createReturnIgnored();
 			methodBody.statements().add(returnIgnoredStatement);
+			addStaticImport(IMPORT_IGNORED, false);
 		}
 		return methodBody;
 	}
@@ -292,15 +298,21 @@ public class C4JContractTransformer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		// load new ast
-		init(contract);
 	}
 
-	private void applyEdits(TextEdit edits) throws JavaModelException, BadLocationException {
-		IDocument document = new Document(contract.getCompilationUnit().getSource());
-		edits.apply(document);
+	private void applyEdits(TextEdit edits) throws BadLocationException, CoreException {
+		ITextFileBufferManager bufferManager = FileBuffers.getTextFileBufferManager();
+		IPath path = astRoot.getJavaElement().getPath();
+		try {
+			bufferManager.connect(path, LocationKind.NORMALIZE , null); 
+			ITextFileBuffer textFileBuffer = bufferManager.getTextFileBuffer(path, LocationKind.NORMALIZE);
+			IDocument document = textFileBuffer.getDocument();
+			edits.apply(document);
+			
+			textFileBuffer.commit(null, false); 
 
-		contract.getCompilationUnit().getBuffer().setContents(document.get());
+		} finally {
+			bufferManager.disconnect(path, LocationKind.NORMALIZE, null);
+		}
 	}
 }

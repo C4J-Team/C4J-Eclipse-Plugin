@@ -228,8 +228,6 @@ public class ContractWizardPage extends NewTypeWizardPage {
 			IProgressMonitor monitor) throws CoreException {
 
 		C4JContractTransformer contract = new C4JContractTransformer(type);
-
-		contract.addC4JStandardImports();
 		
 		if(isCreateExternalContract())
 			contract.addContractAnnotation(target);
@@ -253,6 +251,19 @@ public class ContractWizardPage extends NewTypeWizardPage {
 		}
 	}
 
+	private List<IMethodBinding> getOnlyMethodsContainedInTarget(IType type)
+			throws JavaModelException {
+		String superTypeName = type.getSuperclassName() != null ? type
+				.getSuperclassName() : type.getSuperInterfaceNames()[0];
+		List<IMethodBinding> methodsContainedInTarget = new ArrayList<IMethodBinding>();
+		IMethodBinding[] allMethodsOfTypeHierarchy = getAllMethodsOfTypeHierarchy(type);
+		for (IMethodBinding method : allMethodsOfTypeHierarchy) {
+			if (method.getDeclaringClass().getName().equals(superTypeName))
+				methodsContainedInTarget.add(method);
+		}
+		return methodsContainedInTarget;
+	}
+	
 	private IMethodBinding[] getAllMethodsOfTypeHierarchy(IType type) {
 		RefactoringASTParser parser = new RefactoringASTParser(
 				ASTProvider.SHARED_AST_LEVEL);
@@ -281,17 +292,5 @@ public class ContractWizardPage extends NewTypeWizardPage {
 			e.printStackTrace();
 			return new IMethodBinding[] {};
 		}
-	}
-
-	private List<IMethodBinding> getOnlyMethodsContainedInTarget(IType type)
-			throws JavaModelException {
-		String superTypeName = type.getSuperclassName() != null ? type
-				.getSuperclassName() : type.getSuperInterfaceNames()[0];
-		List<IMethodBinding> methodsContainedInTarget = new ArrayList<IMethodBinding>();
-		for (IMethodBinding method : getAllMethodsOfTypeHierarchy(type)) {
-			if (method.getDeclaringClass().getName().equals(superTypeName))
-				methodsContainedInTarget.add(method);
-		}
-		return methodsContainedInTarget;
 	}
 }

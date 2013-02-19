@@ -1,16 +1,20 @@
 package de.vksi.c4j.eclipse.plugin.ui.quickassist;
 
-import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CONTRACT_REFERENCE;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jdt.ui.text.java.IProblemLocation;
 import org.eclipse.jdt.ui.text.java.IQuickAssistProcessor;
+
+import de.vksi.c4j.eclipse.plugin.internal.C4JContract;
+import de.vksi.c4j.eclipse.plugin.util.ContractRequestor;
 
 public class C4JQuickAssistProcessor implements IQuickAssistProcessor {
 
@@ -46,9 +50,7 @@ public class C4JQuickAssistProcessor implements IQuickAssistProcessor {
 
 	private IJavaCompletionProposal[] createAssistFor(TypeDeclaration currentNode, IInvocationContext context) {
 		// no contract support for nested classes
-		//TODO: allow the creation of contract, even if the target already has a contract annotation (one-to-many-relationship)
-		//-> if target has "contractRefAnnotation" -> only provide the option to create external contracts!
-		if (!hasContractAnnotation(currentNode) && !isNestedClass(currentNode))
+		if (!isNestedClass(currentNode))
 			return new IJavaCompletionProposal[] { new CreateContractProposal(context) };
 
 		return new IJavaCompletionProposal[] {};
@@ -59,26 +61,17 @@ public class C4JQuickAssistProcessor implements IQuickAssistProcessor {
 
 		TypeDeclaration typeDeclaration = getTypeDeclaration(currentNode);
 		// no contract support for nested classes
-		if (hasContractAnnotation(typeDeclaration) && !isNestedClass(typeDeclaration)) {
-			return new IJavaCompletionProposal[] { new CreateContractMethodProposal(context) };
+		if (!isNestedClass(typeDeclaration)) {
+			IType type = context.getCompilationUnit().findPrimaryType();
+			ContractRequestor contractRequestor = new ContractRequestor();
+			List<IType> contracts = contractRequestor.getContractsFor(type);
 
+			if(!contracts.isEmpty())			
+				return new IJavaCompletionProposal[] { new CreateContractMethodProposal(context, contracts) };
 		}
 		// else: contract does not exist yet
 
 		return new IJavaCompletionProposal[] {};
-	}
-
-	// TODO: check for external contract
-	private boolean hasContractAnnotation(TypeDeclaration currentNode) {
-		for (Object modifier : currentNode.modifiers()) {
-			if (modifier instanceof SingleMemberAnnotation) {
-				String annotationName = ((SingleMemberAnnotation) modifier).getTypeName()
-						.getFullyQualifiedName();
-				return ANNOTATION_CONTRACT_REFERENCE.equals(annotationName);
-			}
-		}
-
-		return false;
 	}
 
 	private TypeDeclaration getTypeDeclaration(ASTNode currentNode) {

@@ -17,13 +17,11 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 
 import de.vksi.c4j.eclipse.plugin.internal.C4JConditions;
-import de.vksi.c4j.eclipse.plugin.internal.C4JContractReferenceAnnotation;
-import de.vksi.c4j.eclipse.plugin.util.ExternalContractMap;
-import de.vksi.c4j.eclipse.plugin.util.ExternalContractScanner;
+import de.vksi.c4j.eclipse.plugin.util.ContractRequestor;
 
 public class ConditionExtractor {
 	private C4JConditions conditions;
-	private ExternalContractMap externalContracts;
+	private ContractRequestor contractRequestor;
 
 	public ConditionExtractor() {
 		conditions = new C4JConditions();
@@ -31,16 +29,10 @@ public class ConditionExtractor {
 
 	public C4JConditions getConditionsOf(IJavaElement element) {
 		if (element != null) {
-			searchForExternalContracts();
+			contractRequestor = new ContractRequestor();
 			searchTypeHierachyForContractConditions(element);
 		}
 		return conditions;
-	}
-
-	private void searchForExternalContracts() {
-		ExternalContractScanner externalContractScanner = new ExternalContractScanner();
-		externalContractScanner.scan();
-		externalContracts = externalContractScanner.getExternalContracts();
 	}
 
 	private void searchTypeHierachyForContractConditions(IJavaElement element) {
@@ -86,7 +78,8 @@ public class ConditionExtractor {
 	}
 
 	private void searchTypeForContractConditions(IJavaElement element, IType type) {
-		List<IType> listOfContracts = getContract(type);
+//		List<IType> listOfContracts = getContract(type);
+		List<IType> listOfContracts = contractRequestor.getContractsFor(type);
 		for (IType contract : listOfContracts) {
 			IMethod method = getMethodOfInterest(element, contract);
 			C4JConditions conditionsToMerge = parseContract(contract, method);
@@ -111,18 +104,6 @@ public class ConditionExtractor {
 		} catch (JavaModelException e) {
 			return false;
 		}
-	}
-
-	private List<IType> getContract(IType type) {
-		C4JContractReferenceAnnotation contractReference = new C4JContractReferenceAnnotation(type);
-		List<IType> listOfContracts = new ArrayList<IType>();
-
-		if (contractReference.exists())
-			listOfContracts.add(contractReference.getContractClass());
-		
-		listOfContracts.addAll(externalContracts.getContractsFor(type));
-
-		return listOfContracts;
 	}
 
 	private IMethod getMethodOfInterest(IJavaElement element, IType contract) {

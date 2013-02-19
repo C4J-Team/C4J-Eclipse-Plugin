@@ -12,3 +12,10 @@ Das C4J-Eclipse-Plugin...
 	b)Vererbungshierarchy der Klassen/Contracts wird berücksichtigt
 	c)Information können bereits bei der Erstellung eines Contracts abgerufen werden -> ggf. Warnung anzeigen
 	
+	
+Vorteil von AST-Code-Modification:
+- Codestyle wird berücksichtigt
+- undo/redo
+- benötigte imports werden mit eingebunden -> zB create contract method stub -> parameter der methode ist vom typ "List"
+- Vision: Preview für Codeänderungen (wie bei standard refactorings) -> somit auch statische Codeanalyse möglich
+- Syntax-check -> fehlt zB ein Strichpunkt? 
