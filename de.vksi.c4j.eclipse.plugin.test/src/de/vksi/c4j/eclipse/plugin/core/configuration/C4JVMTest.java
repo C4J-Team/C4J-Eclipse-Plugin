@@ -19,7 +19,7 @@ public class C4JVMTest {
 	private static final String C4J_NAME_POSTIFX = " C4J";
 	private static final String C4J_ID_POSTIFX = " c4j";
 	private static final String EA_JAVAAGENT = "-ea -javaagent:";
-	private static final String PROJECT_NAME = "testProject";
+	private static final String PROJECT_NAME = "virtualTestProject";
 	private IJavaProject javaProject;
 	private C4JVM c4jVM;
 

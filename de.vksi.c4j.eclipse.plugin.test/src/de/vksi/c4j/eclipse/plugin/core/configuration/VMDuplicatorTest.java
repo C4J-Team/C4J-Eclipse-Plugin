@@ -18,7 +18,7 @@ public class VMDuplicatorTest {
 	private static final String TEST_ARGUMENTS = "testParameter";
 	private static final String ID_OF_DUPLICATE = "duplVM_ID";
 	private static final String NAME_OF_DUPLICATE = "duplicatedVM";
-	private static final String PROJECT_NAME = "testProject";
+	private static final String PROJECT_NAME = "virtualTestProject";
 	private VMDuplicator duplicateVm;
 	private IJavaProject javaProject;
 

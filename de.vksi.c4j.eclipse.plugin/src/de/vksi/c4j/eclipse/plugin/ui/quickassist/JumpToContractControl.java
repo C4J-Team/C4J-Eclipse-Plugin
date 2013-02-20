@@ -42,6 +42,7 @@ public class JumpToContractControl extends PopupDialog {
 		return super.open();
 	}
 
+	
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);

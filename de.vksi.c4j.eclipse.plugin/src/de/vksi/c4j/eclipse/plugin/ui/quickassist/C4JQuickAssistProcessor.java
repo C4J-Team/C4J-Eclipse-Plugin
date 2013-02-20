@@ -3,7 +3,6 @@ package de.vksi.c4j.eclipse.plugin.ui.quickassist;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -13,7 +12,6 @@ import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jdt.ui.text.java.IProblemLocation;
 import org.eclipse.jdt.ui.text.java.IQuickAssistProcessor;
 
-import de.vksi.c4j.eclipse.plugin.internal.C4JContract;
 import de.vksi.c4j.eclipse.plugin.util.ContractRequestor;
 
 public class C4JQuickAssistProcessor implements IQuickAssistProcessor {

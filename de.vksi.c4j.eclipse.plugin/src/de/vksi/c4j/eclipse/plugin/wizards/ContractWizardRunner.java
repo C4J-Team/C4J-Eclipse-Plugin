@@ -13,6 +13,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 
+import de.vksi.c4j.eclipse.plugin.internal.C4JContract;
 import de.vksi.c4j.eclipse.plugin.internal.C4JContractReferenceAnnotation;
 
 @SuppressWarnings("restriction")
@@ -28,7 +29,7 @@ public class ContractWizardRunner {
 		this.target = type;
 	}
 	
-	public IType runWizard(){
+	public C4JContract runWizard(){
 		StructuredSelection selection = new StructuredSelection(target.getCompilationUnit());
 
 		ContractWizardPage page = new ContractWizardPage(target);
@@ -53,7 +54,7 @@ public class ContractWizardRunner {
 		if (dialog.open() == Window.OK) {
 			createdType = (IType) wizard.getCreatedElement();
 		}
-		return createdType;
+		return new C4JContract(target, createdType);
 	}
 	
 	private void configureWizardPage(ContractWizardPage page) {

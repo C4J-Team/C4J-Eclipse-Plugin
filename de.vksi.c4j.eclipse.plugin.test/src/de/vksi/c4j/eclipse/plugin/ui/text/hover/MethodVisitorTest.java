@@ -1,13 +1,12 @@
-package de.vksi.c4j.eclipse.plugin.util;
+package de.vksi.c4j.eclipse.plugin.ui.text.hover;
 
 import static org.junit.Assert.assertTrue;
+import static test.util.TestConstants.PATH_TO_DOT_PROJECT_FILE;
+import static test.util.TestConstants.PROJECTNAME;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
@@ -22,10 +21,6 @@ import de.vksi.c4j.eclipse.plugin.internal.C4JConditions;
 import de.vksi.c4j.eclipse.plugin.ui.text.hover.MethodVisitor;
 
 public class MethodVisitorTest {
-	private static final String PROJECTNAME = "TestProject";
-	private static final String PATH_TO_DOT_PROJECT_FILE = "resources" + File.separator
-			+ PROJECTNAME + "/.project";
-	
 	private static final String CONTRACT_COMPILATION_UNIT = "StackSpecContract.java";
 	private static final String CONTRACT_COMPILATION_UNIT_WITH_CONSTRUCTOR = "StackDepthOfInheritance_1_Contract.java";
 	private static final String TARGET_COMPILATION_UNIT = "StackDepthOfInheritance_1.java";
@@ -35,14 +30,13 @@ public class MethodVisitorTest {
 	private static final String METHOD_SIGNATURE = "(QT;)V"; //see: Signature javaDoc
 	private static final String CONSTRUCTOR_NAME = "StackDepthOfInheritance_1";
 	private static final String CONSTRUCTOR_SIGNATURE = "(I)V"; //see: Signature javaDoc
-
+	
 	private IJavaProject javaProject;
 	private MethodVisitor methodVisitor;
 
 	@Before
 	public void setUp() {
-		IPath pathToDotProjectFile = getPathToDotProjectFile();
-		javaProject = JavaProjectLoader.loadProject(PROJECTNAME, pathToDotProjectFile);
+		javaProject = JavaProjectLoader.loadProject(PROJECTNAME, PATH_TO_DOT_PROJECT_FILE);
 	}
 	
 	@Test
@@ -138,10 +132,4 @@ public class MethodVisitorTest {
 
 		return root;
 	}
-
-	private static IPath getPathToDotProjectFile() {
-		File file = new File(PATH_TO_DOT_PROJECT_FILE);
-		return new Path(file.getAbsolutePath());
-	}
-
 }

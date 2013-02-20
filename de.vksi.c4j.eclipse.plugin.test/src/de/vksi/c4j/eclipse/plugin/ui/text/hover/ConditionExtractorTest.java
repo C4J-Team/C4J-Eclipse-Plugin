@@ -1,13 +1,16 @@
-package de.vksi.c4j.eclipse.plugin.util;
+package de.vksi.c4j.eclipse.plugin.ui.text.hover;
 
 import static org.junit.Assert.assertTrue;
+import static test.util.TestConstants.PATH_TO_DOT_PROJECT_FILE;
+import static test.util.TestConstants.PROJECTNAME;
+import static test.util.TestConstants.TARGET_SOURCEFILE_DOI_0;
+import static test.util.TestConstants.TARGET_SOURCEFILE_DOI_1;
+import static test.util.TestConstants.TARGET_SOURCEFILE_DOI_2;
+import static test.util.TestConstants.TARGET_SOURCEFILE_DOI_3;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
@@ -15,24 +18,12 @@ import org.eclipse.jdt.core.IType;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.vksi.c4j.eclipse.plugin.internal.C4JConditions;
-import de.vksi.c4j.eclipse.plugin.ui.text.hover.ConditionExtractor;
-
 import test.util.JavaProjectLoader;
+import de.vksi.c4j.eclipse.plugin.internal.C4JConditions;
 
 public class ConditionExtractorTest {
-	private static final String PROJECTNAME = "TestProject";
-	private static final String PATH_TO_DOT_PROJECT_FILE = "resources" + File.separator
-			+ PROJECTNAME + "/.project";
-	
-	//Depth Of Inheritance (DOI) is 0 -> Base Class
-	private static final String DOI_0_TARGET_COMPILATION_UNIT = "StackSpec.java";
-	//Depth Of Inheritance (DOI) is 1
-	private static final String DOI_1_TARGET_COMPILATION_UNIT = "StackDepthOfInheritance_1.java";
-	//Depth Of Inheritance (DOI) is 2
-	private static final String DOI_2_TARGET_COMPILATION_UNIT = "StackDepthOfInheritance_2.java";
-	//Depth Of Inheritance (DOI) is 3
-	private static final String DOI_3_TARGET_COMPILATION_UNIT = "StackDepthOfInheritance_3.java";
+
+
 	
 	//Target Method
 	private static final String METHOD_NAME = "push";
@@ -42,13 +33,12 @@ public class ConditionExtractorTest {
 
 	@Before
 	public void setUp() throws Exception {
-		IPath pathToDotProjectFile = getPathToDotProjectFile();
-		javaProject = JavaProjectLoader.loadProject(PROJECTNAME, pathToDotProjectFile);
+		javaProject = JavaProjectLoader.loadProject(PROJECTNAME, PATH_TO_DOT_PROJECT_FILE);
 	}
 	
 	@Test
 	public void testGetConitionsOfTargetMethod_DepthOfInheritance_0() throws Exception {
-		ICompilationUnit targetCompUnit = JavaProjectLoader.getCompilationUnit(javaProject, DOI_0_TARGET_COMPILATION_UNIT);
+		ICompilationUnit targetCompUnit = JavaProjectLoader.getCompilationUnit(javaProject, TARGET_SOURCEFILE_DOI_0);
 		IMethod method = JavaProjectLoader.getMethod(targetCompUnit, METHOD_NAME, METHOD_SIGNATURE);
 
 		C4JConditions conditionsOfMethod = new ConditionExtractor().getConditionsOf(method);
@@ -69,7 +59,7 @@ public class ConditionExtractorTest {
 	
 	@Test
 	public void testGetConitionsOfTargetMethod_DepthOfInheritance_1() throws Exception {
-		ICompilationUnit targetCompUnit = JavaProjectLoader.getCompilationUnit(javaProject, DOI_1_TARGET_COMPILATION_UNIT);
+		ICompilationUnit targetCompUnit = JavaProjectLoader.getCompilationUnit(javaProject, TARGET_SOURCEFILE_DOI_1);
 		IMethod method = JavaProjectLoader.getMethod(targetCompUnit, METHOD_NAME, METHOD_SIGNATURE);
 		
 		C4JConditions conditionsOfMethod = new ConditionExtractor().getConditionsOf(method);
@@ -89,7 +79,7 @@ public class ConditionExtractorTest {
 
 	@Test
 	public void testGetConitionsOfTargetMethod_DepthOfInheritance_2() throws Exception {
-		ICompilationUnit targetCompUnit = JavaProjectLoader.getCompilationUnit(javaProject, DOI_2_TARGET_COMPILATION_UNIT);
+		ICompilationUnit targetCompUnit = JavaProjectLoader.getCompilationUnit(javaProject, TARGET_SOURCEFILE_DOI_2);
 		IMethod method = JavaProjectLoader.getMethod(targetCompUnit, METHOD_NAME, METHOD_SIGNATURE);
 		
 		C4JConditions conditionsOfMethod = new ConditionExtractor().getConditionsOf(method);
@@ -108,14 +98,16 @@ public class ConditionExtractorTest {
 	}
 
 	@Test
-	public void testGetConitionsOfTargetMethod_DepthOfInheritance_3() throws Exception {
-		ICompilationUnit targetCompUnit = JavaProjectLoader.getCompilationUnit(javaProject, DOI_3_TARGET_COMPILATION_UNIT);
+	public void testGetConitionsOfTargetMethod_DepthOfInheritance_3_PreConditionViolation() throws Exception {
+		ICompilationUnit targetCompUnit = JavaProjectLoader.getCompilationUnit(javaProject, TARGET_SOURCEFILE_DOI_3);
 		IMethod method = JavaProjectLoader.getMethod(targetCompUnit, METHOD_NAME, METHOD_SIGNATURE);
 		
 		C4JConditions conditionsOfMethod = new ConditionExtractor().getConditionsOf(method);
 		
 		List<String> expectedPreConditions = new ArrayList<String>();
+		expectedPreConditions.add("item != null : \"item != null\"");
 		expectedPreConditions.add("!isFull() : \"not isFull\"");
+		expectedPreConditions.add("<br>WARNING: Found strengthening pre-condition in Contract 'StackDepthOfInheritance_3_Contract' which is already defined from its super Contract - ignoring the pre-condition");
 		
 		List<String> expectedPostConditions = new ArrayList<String>();
 		expectedPostConditions.add("top() == item : \"item set\"");
@@ -138,7 +130,7 @@ public class ConditionExtractorTest {
 	
 	@Test
 	public void testGetInvariantsOfTargetType_DepthOfInheritance_0() throws Exception {
-		ICompilationUnit targetCompUnit = JavaProjectLoader.getCompilationUnit(javaProject, DOI_0_TARGET_COMPILATION_UNIT);
+		ICompilationUnit targetCompUnit = JavaProjectLoader.getCompilationUnit(javaProject, TARGET_SOURCEFILE_DOI_0);
 		IType type = JavaProjectLoader.getType(targetCompUnit);
 		
 		C4JConditions conditionsOfMethod = new ConditionExtractor().getConditionsOf(type);
@@ -155,7 +147,7 @@ public class ConditionExtractorTest {
 
 	@Test
 	public void testGetInvariantsOfTargetType_DepthOfInheritance_3() throws Exception {
-		ICompilationUnit targetCompUnit = JavaProjectLoader.getCompilationUnit(javaProject, DOI_3_TARGET_COMPILATION_UNIT);
+		ICompilationUnit targetCompUnit = JavaProjectLoader.getCompilationUnit(javaProject, TARGET_SOURCEFILE_DOI_3);
 		IType type = JavaProjectLoader.getType(targetCompUnit);
 		
 		C4JConditions conditionsOfMethod = new ConditionExtractor().getConditionsOf(type);
@@ -177,11 +169,5 @@ public class ConditionExtractorTest {
 		C4JConditions conditionsOfMethod = new ConditionExtractor().getConditionsOf(type);
 
 		assertTrue(conditionsOfMethod.getConditions(C4JConditions.INVARIANT_CONDITIONS).isEmpty());
-	}
-	
-	
-	private static IPath getPathToDotProjectFile() {
-		File file = new File(PATH_TO_DOT_PROJECT_FILE);
-		return new Path(file.getAbsolutePath());
 	}
 }

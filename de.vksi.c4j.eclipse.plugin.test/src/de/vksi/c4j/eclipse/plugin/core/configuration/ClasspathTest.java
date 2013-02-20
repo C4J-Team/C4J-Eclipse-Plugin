@@ -22,7 +22,7 @@ import test.util.JavaProjectCreator;
 public class ClasspathTest {
 
 	private static final String TEST_PATH = "TestPath";
-	private static final String PROJECT_NAME = "testProject";
+	private static final String PROJECT_NAME = "virtualTestProject";
 	private IJavaProject javaProject;
 	private Classpath addClasspathEntry;
 	

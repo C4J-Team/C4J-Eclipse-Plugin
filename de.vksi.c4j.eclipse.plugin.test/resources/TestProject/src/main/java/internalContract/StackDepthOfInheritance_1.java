@@ -1,12 +1,11 @@
 package internalContract;
 
-import java.io.Serializable;
-
 import internalContract.StackDepthOfInheritance_1_Contract;
 import de.vksi.c4j.ContractReference;
 
 @ContractReference(StackDepthOfInheritance_1_Contract.class)
 public class StackDepthOfInheritance_1<T> implements StackSpec<T> {
+
 
 	private Object[] values;
 	private int capacity;
@@ -71,4 +70,12 @@ public class StackDepthOfInheritance_1<T> implements StackSpec<T> {
 	public void methodWithoutConditions(){
 		System.out.println("Do nothing");
 	}
+	
+	public class NestedClass {
+		public void xyz(){
+			System.out.println("Do nothing");
+		}
+	}
+	
+	
 }

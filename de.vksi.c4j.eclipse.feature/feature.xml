@@ -27,6 +27,7 @@
       <import plugin="org.eclipse.jdt.launching" version="3.6.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.ide" version="3.8.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.filesystem"/>
+      <import plugin="org.eclipse.core.filebuffers" version="3.5.200" match="greaterOrEqual"/>
    </requires>
 
    <plugin

@@ -22,7 +22,7 @@ import de.vksi.c4j.eclipse.plugin.core.configuration.ProjectConvert;
 public class ProjectConvertTest {
 
 	private static final String LIB_FOLDER_NAME = "libs";
-	private static final String PROJECT_NAME = "programmaticCreationOfJavaProject";
+	private static final String PROJECT_NAME = "virtualTestProject";
 
 	private static final String C4J_JAR = "c4j-6.0.0.jar";
 	private static final String JAVA_ASSIST_JAR = "javassist-3.16.1-GA.jar";

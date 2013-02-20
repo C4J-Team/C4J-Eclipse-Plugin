@@ -1,5 +1,6 @@
 package test.util;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -22,8 +24,9 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.wizards.JavaCapabilityConfigurationPage;
 
 public class JavaProjectLoader {
-
-	public static IJavaProject loadProject(String projectName, IPath pathToDotProjectFile) {
+	
+	public static IJavaProject loadProject(String projectName, String relativPathToProjectFile) {
+		IPath pathToDotProjectFile = getAbsolutPathTo(relativPathToProjectFile);
 		IJavaProject javaProject = null;
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -47,6 +50,11 @@ public class JavaProjectLoader {
 		}
 
 		return javaProject;
+	}
+	
+	public static IPath getAbsolutPathTo(String relativFilePath) {
+		File file = new File(relativFilePath);
+		return new Path(file.getAbsolutePath());
 	}
 
 	public static ICompilationUnit getCompilationUnit(IJavaProject javaProject, String nameWithFileExtension)

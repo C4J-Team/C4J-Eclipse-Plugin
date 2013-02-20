@@ -17,6 +17,7 @@ import org.eclipse.text.edits.MalformedTreeException;
 
 import de.vksi.c4j.eclipse.plugin.internal.C4JContract;
 import de.vksi.c4j.eclipse.plugin.internal.C4JTarget;
+import de.vksi.c4j.eclipse.plugin.wizards.ContractWizardRunner;
 
 @SuppressWarnings("restriction")
 public class CreateContractProposal implements IJavaCompletionProposal {
@@ -31,7 +32,7 @@ public class CreateContractProposal implements IJavaCompletionProposal {
 
 	@Override
 	public void apply(IDocument document) {
-		contract = C4JContract.createContractFor(target.getType());
+		contract =  new ContractWizardRunner(target.getType()).runWizard();
 
 		if (contract.exists()) {
 			try {

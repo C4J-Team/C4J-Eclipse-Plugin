@@ -13,6 +13,7 @@ public class ContentProvider implements ITreeContentProvider {
 	public void dispose() {
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.contracts = (List<IType>) newInput;

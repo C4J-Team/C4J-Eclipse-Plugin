@@ -3,6 +3,7 @@ package internalContract;
 import static de.vksi.c4j.Condition.old;
 import static de.vksi.c4j.Condition.postCondition;
 import static de.vksi.c4j.Condition.preCondition;
+import de.vksi.c4j.ClassInvariant;
 import de.vksi.c4j.Target;
 
 public class StackDepthOfInheritance_3_Contract<T> extends StackDepthOfInheritance_3<T> {
@@ -14,7 +15,6 @@ public class StackDepthOfInheritance_3_Contract<T> extends StackDepthOfInheritan
 	public void classInvariant() {
 		assert "foo".equals("baa") : "some additional condition";
 	}
-	
 	
 	public StackDepthOfInheritance_3_Contract(int capacity) {
 		super(capacity);

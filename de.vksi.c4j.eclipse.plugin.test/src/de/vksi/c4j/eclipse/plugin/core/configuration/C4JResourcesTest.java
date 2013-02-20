@@ -23,7 +23,7 @@ public class C4JResourcesTest {
 	private static final String C4J_PURE_REGISTRY_XML = "c4j-pure-registry.xml";
 	private static final String C4J_LOCAL_XML = "c4j-local.xml";
 	private static final String C4J_GLOBAL_XML = "c4j-global.xml";
-	private static final String PROJECT_NAME = "programmaticCreationOfJavaProject";
+	private static final String PROJECT_NAME = "virtualTestProject";
 	private IJavaProject javaProject;
 	private C4JResources c4jResources;
 	
