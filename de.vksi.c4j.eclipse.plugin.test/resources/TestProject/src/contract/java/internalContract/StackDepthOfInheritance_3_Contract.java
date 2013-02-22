@@ -38,5 +38,4 @@ public class StackDepthOfInheritance_3_Contract<T> extends StackDepthOfInheritan
 			assert "newCondition".equals("newCondition") : "some additional condition"; 
 		}
 	}
-
 }
