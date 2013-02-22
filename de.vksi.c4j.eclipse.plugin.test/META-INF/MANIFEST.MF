@@ -5,8 +5,5 @@ Bundle-SymbolicName: de.vksi.c4j.eclipse.plugin.test
 Bundle-Version: 0.0.1.qualifier
 Fragment-Host: de.vksi.c4j.eclipse.plugin;bundle-version="0.0.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-ActivationPolicy: lazy
 Require-Bundle: org.junit;bundle-version="4.10.0",
  org.mockito.mockito-all;bundle-version="1.9.5"
-
-

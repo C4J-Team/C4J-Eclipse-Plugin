@@ -9,7 +9,7 @@ public class JumpToContractCommand extends AbstractHandler{
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
-		System.out.println("JUUUUUUUUUMP");
+		//TODO: implement
 		return null;
 	}
 
