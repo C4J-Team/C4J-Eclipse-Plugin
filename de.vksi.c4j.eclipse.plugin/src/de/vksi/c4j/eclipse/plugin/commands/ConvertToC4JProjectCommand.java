@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.command;
+package de.vksi.c4j.eclipse.plugin.commands;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.jdt.core.IJavaProject;

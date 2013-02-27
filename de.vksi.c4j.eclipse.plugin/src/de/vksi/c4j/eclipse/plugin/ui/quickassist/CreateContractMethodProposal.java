@@ -1,55 +1,51 @@
 package de.vksi.c4j.eclipse.plugin.ui.quickassist;
 
 import java.text.MessageFormat;
-import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.IContextInformation;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Shell;
 
-import de.vksi.c4j.eclipse.plugin.internal.C4JContract;
-import de.vksi.c4j.eclipse.plugin.util.C4JContractTransformer;
+import de.vksi.c4j.eclipse.plugin.internal.TargetFacade;
+import de.vksi.c4j.eclipse.plugin.internal.TypeFacade;
+import de.vksi.c4j.eclipse.plugin.util.AssosiatedMemberRequest;
+import de.vksi.c4j.eclipse.plugin.util.AssosiatedMemberRequest.MemberType;
 
 @SuppressWarnings("restriction")
-public class CreateContractMethodProposal implements IJavaCompletionProposal, DisposeListener {
+public class CreateContractMethodProposal implements IJavaCompletionProposal {
 
 	private static final String DISPLAY_STRING = "Create/Jump to Contract method";
 
-	private List<IType> contracts;
 	private MethodDeclaration selectedMethoDeclarationNode;
 	private IMethod selectedMethod;
-	private JumpToContractControl jumpControl;
 
-	public CreateContractMethodProposal(IInvocationContext context, List<IType> contracts) {
-		this.contracts = contracts;
+	private IType target;
+
+	public CreateContractMethodProposal(IInvocationContext context) {
+		this.target = context.getCompilationUnit().findPrimaryType();
 		selectedMethoDeclarationNode = (MethodDeclaration) context.getCoveringNode().getParent();
-		selectedMethod = (IMethod) selectedMethoDeclarationNode.resolveBinding().getJavaElement();
+		setSelectedMethod((IMethod) selectedMethoDeclarationNode.resolveBinding().getJavaElement());
 	}
 
 	@Override
 	public void apply(IDocument document) {
-		if (contracts.size() == 1) {
-			createContractMethod(contracts.get(0));
-			jumpToContractMethod(contracts.get(0));
-		} else if (contracts.size() > 1) {
-			Shell shell = JavaPlugin.getActiveWorkbenchShell();
-			jumpControl = new JumpToContractControl(contracts, shell, this);
-			jumpControl.create();
-			jumpControl.open();
-		}
+		TypeFacade tf = TargetFacade.createFacade(target.getCompilationUnit());
+		AssosiatedMemberRequest request = AssosiatedMemberRequest.newCorrespondingMemberRequest() //
+				.asCreateRequest() //
+		        .withExpectedResultType(MemberType.METHOD) //
+		        .withCurrentMethodDeclaration(selectedMethoDeclarationNode) //
+		        .setDialogPromtText("Create method in Contract or jump if it already exists...") //
+		        .build();
+		IMember assosiatedMember = tf.getAssosiatedType(request);
+		JumpAction.openType(assosiatedMember);
 	}
 
 	@Override
@@ -64,7 +60,7 @@ public class CreateContractMethodProposal implements IJavaCompletionProposal, Di
 						+ "If the target class ''{1}'' is guarded by more than one contract, you will have an "
 						+ "option to select the desired contract. <br><br>FYI: This functionality does not "
 						+ "comprise static code analysis, please make sure your contract(s) is(are) valid  after "
-						+ "adding new method-stubs.", selectedMethod.getElementName(), selectedMethod
+						+ "adding new method-stubs.", getSelectedMethod().getElementName(), getSelectedMethod()
 						.getParent().getElementName());
 	}
 
@@ -88,32 +84,11 @@ public class CreateContractMethodProposal implements IJavaCompletionProposal, Di
 		return 0;
 	}
 
-	@Override
-	public void widgetDisposed(DisposeEvent e) {
-		createContractMethod(jumpControl.getSelectedContract());
-		jumpToContractMethod(jumpControl.getSelectedContract());
+	public IMethod getSelectedMethod() {
+		return selectedMethod;
 	}
 
-	private void createContractMethod(IType selectedContract) {
-		if (selectedContract != null) {
-			C4JContract contract = new C4JContract(selectedContract);
-			if (!contract.hasMethod(selectedMethod)) {
-				C4JContractTransformer contractTransformer = new C4JContractTransformer(selectedContract);
-				try {
-					contractTransformer.addMethodStub(selectedMethoDeclarationNode.resolveBinding());
-					contractTransformer.applyEdits();
-				} catch (JavaModelException e1) {
-					e1.printStackTrace();
-				} catch (CoreException e1) {
-					e1.printStackTrace();
-				}
-			}
-		}
-	}
-
-	private void jumpToContractMethod(IType selectedContract) {
-		if (selectedContract != null)
-			JumpAction.openType(selectedContract.getMethod(selectedMethod.getElementName(),
-					selectedMethod.getParameterTypes()));
+	private void setSelectedMethod(IMethod selectedMethod) {
+		this.selectedMethod = selectedMethod;
 	}
 }

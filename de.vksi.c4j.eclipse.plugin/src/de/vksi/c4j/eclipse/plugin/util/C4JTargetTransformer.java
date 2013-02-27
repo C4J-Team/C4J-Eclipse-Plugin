@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.internal;
+package de.vksi.c4j.eclipse.plugin.util;
 
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CONTRACT_REFERENCE;
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.IMPORT_CONTRACT_REFERENCE;
@@ -17,7 +17,6 @@ import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ImportRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
-import org.eclipse.jdt.internal.corext.ValidateEditException;
 import org.eclipse.jdt.internal.corext.codemanipulation.StubUtility;
 import org.eclipse.jdt.internal.ui.javaeditor.ASTProvider;
 import org.eclipse.jface.text.BadLocationException;
@@ -27,37 +26,42 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
 @SuppressWarnings("restriction")
-public class C4JTarget {
+public class C4JTargetTransformer {
 	public ICompilationUnit targetCompilationUnit;
 	private IDocument document;
 	private IType target;
 
-	public C4JTarget(IType target) {
+	public C4JTargetTransformer(IType target) {
 		this.target = target;
 		this.targetCompilationUnit = target.getCompilationUnit();
 	}
 
-	public void addImportsFor(IType contract) throws ValidateEditException, CoreException,
-			MalformedTreeException, BadLocationException {
+	public void addImportsFor(IType contract) {
 		IJavaElement container = contract.getParent();
 		if (container instanceof ICompilationUnit) {
 			container = container.getParent();
 
-			ImportRewrite rewrite = StubUtility.createImportRewrite(targetCompilationUnit, true);
-			if (!container.equals(targetCompilationUnit.getParent())) {
-				rewrite.addImport(contract.getFullyQualifiedName('.'));
+			ImportRewrite rewrite;
+			try {
+				rewrite = StubUtility.createImportRewrite(targetCompilationUnit, true);
+				if (!container.equals(targetCompilationUnit.getParent())) {
+					rewrite.addImport(contract.getFullyQualifiedName('.'));
+				}
+				
+				rewrite.addImport(IMPORT_CONTRACT_REFERENCE);
+				
+				TextEdit edits = rewrite.rewriteImports(null);
+				
+				applyEdits(edits);
+			} catch (JavaModelException e) {
+				e.printStackTrace();
+			} catch (CoreException e) {
+				e.printStackTrace();
 			}
-
-			rewrite.addImport(IMPORT_CONTRACT_REFERENCE);
-
-			TextEdit edits = rewrite.rewriteImports(null);
-
-			applyEdits(edits);
 		}
 	}
 
-	public void addContractReferenceAnnotation(IType contract) throws JavaModelException,
-			MalformedTreeException, BadLocationException {
+	public void addContractReferenceAnnotation(IType contract) {
 		ASTParser parser = ASTParser.newParser(ASTProvider.SHARED_AST_LEVEL);
 		parser.setSource(targetCompilationUnit);
 		CompilationUnit astRoot = (CompilationUnit) parser.createAST(null);
@@ -76,16 +80,30 @@ public class C4JTarget {
 
 		listRewrite.insertFirst(contractRefAnnotation, null);
 
-		TextEdit edits = rewriter.rewriteAST();
+		TextEdit edits;
+		try {
+			edits = rewriter.rewriteAST();
+			applyEdits(edits);
+		} catch (JavaModelException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		}
 
-		applyEdits(edits);
 	}
 	
-	private void applyEdits(TextEdit edits) throws JavaModelException, BadLocationException {
-		this.document = new Document(target.getCompilationUnit().getSource());
-		edits.apply(document);
-
-		targetCompilationUnit.getBuffer().setContents(document.get());
+	private void applyEdits(TextEdit edits){
+		try {
+			this.document = new Document(target.getCompilationUnit().getSource());
+			edits.apply(document);
+			targetCompilationUnit.getBuffer().setContents(document.get());
+		} catch (JavaModelException e) {
+			e.printStackTrace();
+		} catch (MalformedTreeException e) {
+			e.printStackTrace();
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public IType getType() {

@@ -6,9 +6,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.internal.ui.wizards.NewElementWizard;
 import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
+
+import de.vksi.c4j.eclipse.plugin.util.PluginImages;
 
 @SuppressWarnings("restriction")
 public class ContractCreationWizard extends NewElementWizard{
@@ -17,7 +18,7 @@ public class ContractCreationWizard extends NewElementWizard{
     private boolean fOpenEditorOnFinish;
 
 	public ContractCreationWizard(ContractWizardPage page, boolean openEditorOnFinish) {
-		setDefaultPageImageDescriptor(JavaPluginImages.DESC_WIZBAN_NEWCLASS);
+		setDefaultPageImageDescriptor(PluginImages.DESC_NEW_CONTRACT_WIZ);
 		setDialogSettings(JavaPlugin.getDefault().getDialogSettings());
 		setWindowTitle(NewWizardMessages.NewClassCreationWizard_title);
 

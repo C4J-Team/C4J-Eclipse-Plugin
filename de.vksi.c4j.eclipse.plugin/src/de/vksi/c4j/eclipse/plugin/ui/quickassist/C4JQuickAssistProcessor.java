@@ -1,7 +1,5 @@
 package de.vksi.c4j.eclipse.plugin.ui.quickassist;
 
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -12,14 +10,17 @@ import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jdt.ui.text.java.IProblemLocation;
 import org.eclipse.jdt.ui.text.java.IQuickAssistProcessor;
 
-import de.vksi.c4j.eclipse.plugin.util.ContractRequestor;
+import de.vksi.c4j.eclipse.plugin.util.ContractChecker;
 
 public class C4JQuickAssistProcessor implements IQuickAssistProcessor {
+
+	private IInvocationContext context;
 
 	@Override
 	public IJavaCompletionProposal[] getAssists(IInvocationContext context, IProblemLocation[] locations)
 			throws CoreException {
 
+		this.context = context;
 		if (locations.length == 0)
 			return getQuickAssists(context, locations);
 		else
@@ -30,7 +31,7 @@ public class C4JQuickAssistProcessor implements IQuickAssistProcessor {
 	private IJavaCompletionProposal[] getQuickAssists(IInvocationContext context, IProblemLocation[] locations) {
 		if (context.getCoveringNode() != null) {
 			ASTNode currentNode = context.getCoveringNode().getParent();
-			if (currentNode != null) {
+			if (currentNode != null && !isContract(currentNode)) {
 				if (currentNode.getNodeType() == ASTNode.TYPE_DECLARATION)
 					return createAssistFor((TypeDeclaration) currentNode, context);
 				else if (currentNode.getNodeType() == ASTNode.METHOD_DECLARATION)
@@ -38,6 +39,12 @@ public class C4JQuickAssistProcessor implements IQuickAssistProcessor {
 			}
 		}
 		return new IJavaCompletionProposal[] {};
+	}
+
+	private boolean isContract(ASTNode currentNode) {
+		TypeDeclaration typeDeclaration = getTypeDeclaration(currentNode);
+		IType type = context.getCompilationUnit().getType(typeDeclaration.getName().toString());
+		return ContractChecker.isContract(type);
 	}
 
 	private IJavaCompletionProposal[] getQuickFixes(IInvocationContext context, IProblemLocation[] locations) {
@@ -60,14 +67,9 @@ public class C4JQuickAssistProcessor implements IQuickAssistProcessor {
 		TypeDeclaration typeDeclaration = getTypeDeclaration(currentNode);
 		// no contract support for nested classes
 		if (!isNestedClass(typeDeclaration)) {
-			IType type = context.getCompilationUnit().findPrimaryType();
-			ContractRequestor contractRequestor = new ContractRequestor();
-			List<IType> contracts = contractRequestor.getContractsFor(type);
 
-			if(!contracts.isEmpty())			
-				return new IJavaCompletionProposal[] { new CreateContractMethodProposal(context, contracts) };
+			return new IJavaCompletionProposal[] { new CreateContractMethodProposal(context) };
 		}
-		// else: contract does not exist yet
 
 		return new IJavaCompletionProposal[] {};
 	}

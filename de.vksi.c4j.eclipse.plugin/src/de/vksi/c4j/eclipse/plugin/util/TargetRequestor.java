@@ -1,33 +1,41 @@
 package de.vksi.c4j.eclipse.plugin.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
 import de.vksi.c4j.eclipse.plugin.internal.C4JContractAnnotation;
 
-public class TargetRequestor {
-	public IType getTargetOf(IType contract) {
+public class TargetRequestor implements Requestor {
+	public List<IType> getAssociatedMemberOf(IType contract) {
+		List<IType> target = new ArrayList<IType>();
+		
 		C4JContractAnnotation contractAnnotation = new C4JContractAnnotation(contract);
 		if (contractAnnotation.hasValue()) {
-			return contractAnnotation.getTargetClass();
+			target.add(contractAnnotation.getTargetClass());
+			return target;
 		}
 
-		IType supertype = SupertypeRequestor.getSupertypeOf(contract);
+		IType supertype = TypeHierarchyRequestor.getSupertypeOf(contract);
 		try {
-			if (contract.getSuperclassName() != null && !SupertypeRequestor.isObject(supertype)
+			if (contract.getSuperclassName() != null && !TypeHierarchyRequestor.isObject(supertype)
 					&& !ContractChecker.isContract(supertype)) {
-				return supertype;
+				target.add(supertype);
+				return target;
 			}
 
 			if (contract.getSuperInterfaceNames().length > 0) {
 				//TODO: do not just return the first interface of the array. Instead, return type of the target member (annotated with '@Target') 
-				return SupertypeRequestor.getSuperInterfacesOf(contract)[0]; //reason: one contract has exactly one target! 
+				target.add(TypeHierarchyRequestor.getSuperInterfacesOf(contract)[0]);//reason: one contract has exactly one target!
+				return target;  
 			}
 
 		} catch (JavaModelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return target;
 	}
 }

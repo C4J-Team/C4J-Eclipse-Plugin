@@ -5,7 +5,7 @@
          point="org.eclipse.ui.commands">
       <command
             categoryId="de.vksi.c4j.eclipse.plugin.commands.category"
-            defaultHandler="de.vksi.c4j.eclipse.plugin.command.ConvertToC4JProjectCommand"
+            defaultHandler="de.vksi.c4j.eclipse.plugin.commands.ConvertToC4JProjectCommand"
             id="de.vksi.c4j.eclipse.plugin.convertToC4jProject"
             name="Convert to C4J Project">
       </command>
@@ -15,7 +15,7 @@
       </category>
       <command
             categoryId="de.vksi.c4j.eclipse.plugin.commands.category"
-            defaultHandler="de.vksi.c4j.eclipse.plugin.command.JumpToContractCommand"
+            defaultHandler="de.vksi.c4j.eclipse.plugin.commands.JumpToContractCommand"
             description="Jump to contract"
             id="de.vksi.c4j.eclipse.plugin.jumpToContract"
             name="Jump to Contract">
@@ -64,7 +64,7 @@
          point="org.eclipse.jdt.ui.javaEditorTextHovers">
       <hover
             activate="true"
-            class="de.vksi.c4j.eclipse.plugin.ui.text.hover.C4JTextHover"
+            class="de.vksi.c4j.eclipse.plugin.ui.texthover.C4JTextHover"
             id="de.vksi.c4j.eclipse.plugin.hover">
       </hover>
    </extension>
@@ -83,6 +83,12 @@
             contextId="org.eclipse.ui.textEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Ctrl+Alt+ARROW_RIGHT">
+      </key>
+      <key
+            commandId="de.vksi.c4j.eclipse.plugin.jumpToContract"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Ctrl+Alt+ARROW_LEFT">
       </key>
    </extension>
 </plugin>

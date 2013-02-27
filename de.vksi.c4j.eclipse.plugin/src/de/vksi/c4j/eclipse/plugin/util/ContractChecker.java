@@ -9,24 +9,44 @@ public class ContractChecker {
 
 	public static boolean isContract(IType type) {
 		if (type != null) {
-			C4JContractAnnotation c4jContractAnnotation = new C4JContractAnnotation(type);
-			if(c4jContractAnnotation.exists())
+			if (hasContractAnnotation(type))
 				return true;
 
-			C4JContractReferenceAnnotation c4jContractReferenceAnnotation = new C4JContractReferenceAnnotation(type);
-			if(c4jContractReferenceAnnotation.exists())
+			if(hasContractReferenceAnnotation(type))
 				return false;
-			
-			IType supertype = SupertypeRequestor.getSupertypeOf(type);
-			if(supertype != null){
-				return isContract(supertype);
+
+			IType supertype = TypeHierarchyRequestor.getSupertypeOf(type);
+			if (supertype != null && !TypeHierarchyRequestor.isObject(supertype)) {
+				C4JContractReferenceAnnotation c4jContractReferenceAnnotation = new C4JContractReferenceAnnotation(supertype);
+				if(c4jContractReferenceAnnotation.exists() && type.equals(c4jContractReferenceAnnotation.getContractClass()))
+					return true;
+				
+				C4JContractAnnotation c4jContractAnnotation = new C4JContractAnnotation(supertype);
+				if(c4jContractAnnotation.exists())
+					return true;
 			}
 
-			IType[] superInterfaces = SupertypeRequestor.getSuperInterfacesOf(type);
-			if(superInterfaces.length > 0){
-				return isContract(superInterfaces[0]);
+			IType[] superInterfaces = TypeHierarchyRequestor.getSuperInterfacesOf(type);
+			if (superInterfaces.length > 0) {
+				C4JContractReferenceAnnotation c4jContractReferenceAnnotation = new C4JContractReferenceAnnotation(superInterfaces[0]);
+				if(c4jContractReferenceAnnotation.exists() && type.equals(c4jContractReferenceAnnotation.getContractClass()))
+					return true;
+				
+				C4JContractAnnotation c4jContractAnnotation = new C4JContractAnnotation(superInterfaces[0]);
+				if(c4jContractAnnotation.exists())
+					return true;
 			}
 		}
 		return false;
+	}
+
+	private static boolean hasContractReferenceAnnotation(IType type) {
+		C4JContractReferenceAnnotation c4jContractReferenceAnnotation = new C4JContractReferenceAnnotation(type);
+		return c4jContractReferenceAnnotation.exists();
+	}
+
+	private static boolean hasContractAnnotation(IType type) {
+		C4JContractAnnotation c4jContractAnnotation = new C4JContractAnnotation(type);
+		return c4jContractAnnotation.exists();
 	}
 }

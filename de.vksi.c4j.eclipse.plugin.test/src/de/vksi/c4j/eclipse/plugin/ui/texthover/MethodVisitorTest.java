@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.ui.text.hover;
+package de.vksi.c4j.eclipse.plugin.ui.texthover;
 
 import static org.junit.Assert.assertTrue;
 import static test.util.TestConstants.PATH_TO_DOT_PROJECT_FILE;
@@ -18,7 +18,7 @@ import org.junit.Test;
 
 import test.util.JavaProjectLoader;
 import de.vksi.c4j.eclipse.plugin.internal.C4JConditions;
-import de.vksi.c4j.eclipse.plugin.ui.text.hover.MethodVisitor;
+import de.vksi.c4j.eclipse.plugin.ui.texthover.MethodVisitor;
 
 public class MethodVisitorTest {
 	private static final String CONTRACT_COMPILATION_UNIT = "StackSpecContract.java";

@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.search.SearchPattern;
 public class ExternalContractScanner {
 	private ExternalContractMap externalContracts = new ExternalContractMap();
 
+	//TODO: try to scope the search to "type hierarchy" -> like JDTSearchProvider.searchMethodReference(referenceList, method, scope, iJavaProject);
 	public void scan() {
 		SearchPattern pattern = SearchPattern.createPattern("Contract", IJavaSearchConstants.TYPE,
 				IJavaSearchConstants.ANNOTATION_TYPE_REFERENCE, SearchPattern.R_EXACT_MATCH);

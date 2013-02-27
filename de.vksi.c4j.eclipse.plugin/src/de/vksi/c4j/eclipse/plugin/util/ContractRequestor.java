@@ -7,21 +7,18 @@ import org.eclipse.jdt.core.IType;
 
 import de.vksi.c4j.eclipse.plugin.internal.C4JContractReferenceAnnotation;
 
-public class ContractRequestor {
+public class ContractRequestor  implements Requestor {
 	private ExternalContractMap externalContracts;
-	
-	public ContractRequestor(){
-		externalContracts = searchForExternalContracts();
-	}
 
-	public List<IType> getContractsFor(IType target){
+	public List<IType> getAssociatedMemberOf(IType target){
+		externalContracts = searchForExternalContracts();
+		
 		C4JContractReferenceAnnotation contractReference = new C4JContractReferenceAnnotation(target);
 		List<IType> listOfContracts = new ArrayList<IType>();
 
 		if (contractReference.exists())
 			listOfContracts.add(contractReference.getContractClass());
 		
-		searchForExternalContracts();
 		listOfContracts.addAll(externalContracts.getContractsFor(target));
 
 		return listOfContracts;

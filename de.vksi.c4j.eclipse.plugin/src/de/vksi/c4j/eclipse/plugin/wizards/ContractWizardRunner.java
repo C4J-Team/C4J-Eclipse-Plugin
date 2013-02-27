@@ -13,23 +13,24 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 
-import de.vksi.c4j.eclipse.plugin.internal.C4JContract;
+import de.vksi.c4j.eclipse.plugin.internal.C4JContractAnnotation;
 import de.vksi.c4j.eclipse.plugin.internal.C4JContractReferenceAnnotation;
+import de.vksi.c4j.eclipse.plugin.util.C4JTargetTransformer;
 
 @SuppressWarnings("restriction")
-public class ContractWizardRunner {
+public class ContractWizardRunner implements WizardRunner<IType> {
 	private static final String CONTRACT = "Contract";
 	private static final String DIALOG_TITLE = "New Contract Class";
 	private static final String RIGHT_ARROW_BRACKET = ">";
 	private static final String LEFT_ARROW_BRACKET = "<";
-	
+
 	private IType target;
 
-	public ContractWizardRunner(IType type){
+	public ContractWizardRunner(IType type) {
 		this.target = type;
 	}
-	
-	public C4JContract runWizard(){
+
+	public IType run() {
 		StructuredSelection selection = new StructuredSelection(target.getCompilationUnit());
 
 		ContractWizardPage page = new ContractWizardPage(target);
@@ -48,15 +49,28 @@ public class ContractWizardRunner {
 		dialog.getShell().setText(DIALOG_TITLE);
 
 		configureWizardPage(page);
-		
+
 		IType createdType = null;
 
 		if (dialog.open() == Window.OK) {
 			createdType = (IType) wizard.getCreatedElement();
 		}
-		return new C4JContract(target, createdType);
+
+		if (createdType != null) {
+			if (!isExternalContract(createdType)) {
+				C4JTargetTransformer targetTransformer = new C4JTargetTransformer(target);
+				targetTransformer.addImportsFor(createdType);
+				targetTransformer.addContractReferenceAnnotation(createdType);
+			}
+		}
+
+		return createdType;
 	}
-	
+
+	private boolean isExternalContract(IType createdType) {
+		return new C4JContractAnnotation(createdType).exists();
+	}
+
 	private void configureWizardPage(ContractWizardPage page) {
 		fillInWizardPageName(page);
 		selectContractType(page);
@@ -65,10 +79,10 @@ public class ContractWizardRunner {
 
 	private void selectContractType(ContractWizardPage page) {
 		C4JContractReferenceAnnotation contractReference = new C4JContractReferenceAnnotation(target);
-		if(contractReference.exists()){
+		if (contractReference.exists()) {
 			page.setContractTypeSelection(false, true, false);
 		}
-		
+
 	}
 
 	private void fillInWizardPageName(ContractWizardPage page) {
@@ -90,7 +104,7 @@ public class ContractWizardRunner {
 			page.setSuperClass("", true);
 		}
 	}
-	
+
 	private String getFullyQualifiedName(IType type) {
 		String param = "";
 		try {
@@ -101,18 +115,18 @@ public class ContractWizardRunner {
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 		}
-		
+
 		return type.getElementName() + CONTRACT + param;
 	}
-	
+
 	private String getParameter(String typeName) {
 		String param = typeName.substring(typeName.indexOf(LEFT_ARROW_BRACKET),
 				typeName.indexOf(RIGHT_ARROW_BRACKET) + 1);
 		return param;
 	}
-	
+
 	private boolean isParameterized(String fullyQualifiedName) {
 		return fullyQualifiedName.contains(LEFT_ARROW_BRACKET);
 	}
-	
+
 }
