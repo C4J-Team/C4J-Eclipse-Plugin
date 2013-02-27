@@ -37,7 +37,10 @@ import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.TypeLiteral;
@@ -71,14 +74,16 @@ public class C4JContractTransformer {
 	private ImportRewrite importRewrite;
 
 	public C4JContractTransformer(IType contract) {
+		assert contract != null : "contract must not be null";
 		this.contract = contract;
-		init(contract);
+		init();
 	}
 
-	private void init(IType contract) {
+	private void init() {
 		ASTParser parser = ASTParser.newParser(ASTProvider.SHARED_AST_LEVEL);
-//		parser.setKind(ASTParser.K_COMPILATION_UNIT);
+		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		parser.setSource(contract.getCompilationUnit());
+		//TODO: try parser.setResolveBindings(false);
 		astRoot = (CompilationUnit) parser.createAST(null);
 
 		// create a ASTRewrite
@@ -158,13 +163,14 @@ public class C4JContractTransformer {
 		Type superclassType = typeDecl.getSuperclassType();
 		List<Type> superInterfaceTypes = typeDecl.superInterfaceTypes();
 
+		//TODO: handle the case if both, supertype AND superinterface, are set
 		Type targetType = null;
 		if (superclassType != null) {
 			targetType = superclassType;
 		} else if (!superInterfaceTypes.isEmpty()) {
 			targetType = superInterfaceTypes.get(0);
 		}
-
+		
 		Type newType = (Type) ASTNode.copySubtree(ast, targetType);
 		targetDeclaration.setType(newType);
 		
@@ -191,7 +197,7 @@ public class C4JContractTransformer {
 		listRewrite.insertLast(classInvariantMethod, null);
 	}
 
-	public void addMethodStubs(IMethodBinding[] methods) throws JavaModelException, CoreException {
+	public void addMethodStubs(List<IMethodBinding> methods) throws JavaModelException, CoreException {
 		for (IMethodBinding method : methods) {
 			addMethodStub(method);
 		}
@@ -210,6 +216,29 @@ public class C4JContractTransformer {
 		methodStub.setBody(methodBody);
 		
 		listRewrite.insertLast(methodStub, null);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void addContructorStub(IMethodBinding method) throws JavaModelException, CoreException {
+		CodeGenerationSettings settings = JavaPreferencesSettings.getCodeGenerationSettings(contract
+				.getJavaProject());
+		
+		MethodDeclaration constructor = StubUtility2.createConstructorStub(contract.getCompilationUnit(), rewriter, importRewrite, null, method, typeDecl.getName().toString(), ModifierKeyword.PUBLIC_KEYWORD.toFlagValue(), true, true, settings);
+		
+		Block constructorBody = createMethodBody(constructor);
+		
+		SuperConstructorInvocation superContructorInvovation = ast.newSuperConstructorInvocation();
+		
+		List<SingleVariableDeclaration> svd = (List<SingleVariableDeclaration>) constructor.getStructuralProperty(MethodDeclaration.PARAMETERS_PROPERTY);
+		for (SingleVariableDeclaration singleVariableDeclaration : svd) {
+			SimpleName varName = ast.newSimpleName(singleVariableDeclaration.getName().toString());
+			superContructorInvovation.arguments().add(varName);
+		}
+		
+		constructorBody.statements().add(0, superContructorInvovation);
+		
+		constructor.setBody(constructorBody);
+		listRewrite.insertLast(constructor, null); //TODO: insert after classInvariants
 	}
 
 	@SuppressWarnings("unchecked")
@@ -285,17 +314,14 @@ public class C4JContractTransformer {
 
 			TextEdit importEdit = importRewrite.rewriteImports(null);
 			applyEdits(importEdit);
+			//TODO: implement undo functionality if creation/modification fails
 		} catch (JavaModelException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

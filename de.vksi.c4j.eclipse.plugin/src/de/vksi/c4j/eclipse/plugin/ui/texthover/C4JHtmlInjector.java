@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.ui.text.hover;
+package de.vksi.c4j.eclipse.plugin.ui.texthover;
 
 import de.vksi.c4j.eclipse.plugin.internal.C4JConditions;
 

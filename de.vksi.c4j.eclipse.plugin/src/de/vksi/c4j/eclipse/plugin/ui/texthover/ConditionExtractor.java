@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.ui.text.hover;
+package de.vksi.c4j.eclipse.plugin.ui.texthover;
 
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CLASS_INVARIANT;
 
@@ -10,7 +10,6 @@ import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -18,6 +17,7 @@ import org.eclipse.jdt.core.dom.ASTParser;
 
 import de.vksi.c4j.eclipse.plugin.internal.C4JConditions;
 import de.vksi.c4j.eclipse.plugin.util.ContractRequestor;
+import de.vksi.c4j.eclipse.plugin.util.TypeHierarchyRequestor;
 
 public class ConditionExtractor {
 	private C4JConditions conditions;
@@ -36,50 +36,15 @@ public class ConditionExtractor {
 	}
 
 	private void searchTypeHierachyForContractConditions(IJavaElement element) {
-		IType[] typeHierachy = getTypeHierachy(element);
+		IType[] typeHierachy = TypeHierarchyRequestor.getTypeHierachy(element);
 
 		for (int i = typeHierachy.length - 1; i >= 0; i--) {
 			searchTypeForContractConditions(element, typeHierachy[i]);
 		}
 	}
 
-	private IType[] getTypeHierachy(IJavaElement element) {
-		if (element instanceof IType)
-			return getTypeHierachy((IType) element);
-
-		if (element instanceof IMethod)
-			return getTypeHierachy(((IMethod) element).getDeclaringType());
-
-		return new IType[] {};
-	}
-
-	private IType[] getTypeHierachy(IType type) {
-		if (Object.class.getName().equals(type.getFullyQualifiedName()))
-			return new IType[] {};
-
-		try {
-			ITypeHierarchy typeHierarchy = type.newTypeHierarchy(null);
-			IType[] allSupertypes = typeHierarchy.getAllSupertypes(type);
-			return addGivenTypeToHierarchy(type, allSupertypes);
-
-		} catch (JavaModelException e) {
-			return new IType[] {};
-		}
-	}
-
-	private IType[] addGivenTypeToHierarchy(IType type, IType[] allSupertypes) {
-		IType[] allSupertypesInclusiveCurrentType = new IType[allSupertypes.length + 1];
-
-		allSupertypesInclusiveCurrentType[0] = type;
-		for (int i = 0; i < allSupertypes.length; i++) {
-			allSupertypesInclusiveCurrentType[i + 1] = allSupertypes[i];
-		}
-		return allSupertypesInclusiveCurrentType;
-	}
-
 	private void searchTypeForContractConditions(IJavaElement element, IType type) {
-//		List<IType> listOfContracts = getContract(type);
-		List<IType> listOfContracts = contractRequestor.getContractsFor(type);
+		List<IType> listOfContracts = contractRequestor.getAssociatedMemberOf(type);
 		for (IType contract : listOfContracts) {
 			IMethod method = getMethodOfInterest(element, contract);
 			C4JConditions conditionsToMerge = parseContract(contract, method);
@@ -144,6 +109,7 @@ public class ConditionExtractor {
 	}
 
 	private ASTNode parse(IType contract) {
+		//TODO: try to use ASTProvider.SHARED_AST_LEVEL instead of AST.JLS4
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setSource(contract.getCompilationUnit());
 		parser.setResolveBindings(false);

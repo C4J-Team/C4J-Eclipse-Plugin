@@ -15,7 +15,6 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IMethodBinding;
-import org.eclipse.jdt.core.dom.IPackageBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.internal.corext.codemanipulation.StubUtility2;
 import org.eclipse.jdt.internal.corext.dom.ASTNodes;
@@ -50,8 +49,10 @@ public class ContractWizardPage extends NewTypeWizardPage {
 
 	private final static String PAGE_NAME = "NewContractClassWizardPage";
 
-	private static final String CREATE_INTERNAL_CONTRACT = "Create internal Contract (@" + ANNOTATION_CONTRACT_REFERENCE + ")";
-	private static final String CREATE_EXTERNAL_CONTRACT = "Create external Contract (@" + ANNOTATION_CONTRACT + ")";
+	private static final String CREATE_INTERNAL_CONTRACT = "Create internal Contract (@"
+			+ ANNOTATION_CONTRACT_REFERENCE + ")";
+	private static final String CREATE_EXTERNAL_CONTRACT = "Create external Contract (@"
+			+ ANNOTATION_CONTRACT + ")";
 
 	private final static String ONLY_CONTRACT_STUB = "Create only Contract stub";
 	private final static String ALL_METHODS_OF_CURRENT_TYPE = "Create Contract stubs for all methods of the target Type";
@@ -69,11 +70,12 @@ public class ContractWizardPage extends NewTypeWizardPage {
 		setTitle("Contract Class");
 		setDescription("Create a new Contract class");
 
-		String[] contractTypeSelection = new String[] {CREATE_INTERNAL_CONTRACT, CREATE_EXTERNAL_CONTRACT };
+		String[] contractTypeSelection = new String[] { CREATE_INTERNAL_CONTRACT, CREATE_EXTERNAL_CONTRACT };
 		fContractTypeButtons = new SelectionButtonDialogFieldGroup(SWT.RADIO, contractTypeSelection, 1);
-		fContractTypeButtons.setLabelText("Which method stubs would you like to create?");
+		fContractTypeButtons.setLabelText("Which kind of Contract would you like to create?");
 
-		String[] stubSelections = new String[] { ONLY_CONTRACT_STUB, ALL_METHODS_OF_CURRENT_TYPE, ALL_METHODS_OF_FULL_TYPE_HIERARCHY };
+		String[] stubSelections = new String[] { ONLY_CONTRACT_STUB, ALL_METHODS_OF_CURRENT_TYPE,
+				ALL_METHODS_OF_FULL_TYPE_HIERARCHY };
 		fContractStubsButtons = new SelectionButtonDialogFieldGroup(SWT.RADIO, stubSelections, 1);
 		fContractStubsButtons.setLabelText("Which method stubs would you like to create?");
 	}
@@ -94,38 +96,11 @@ public class ContractWizardPage extends NewTypeWizardPage {
 		setContractStubSelection(false, true, false, true);
 	}
 
-	private void doStatusUpdate() {
-		IStatus[] status = new IStatus[] {
-				fContainerStatus,
-				isEnclosingTypeSelected() ? fEnclosingTypeStatus
-						: fPackageStatus, fTypeNameStatus, fModifierStatus,
-				fSuperClassStatus, fSuperInterfacesStatus,
-				fSuperClassOrSuperInterfaceIsSetStatus };
-
-		// the mode severe status will be displayed and the OK button
-		// enabled/disabled.
-		updateStatus(status);
-	}
-
 	@Override
 	protected void handleFieldChanged(String fieldName) {
 		super.handleFieldChanged(fieldName);
-
 		fSuperClassOrSuperInterfaceIsSetStatus = superClassOrInterfaceChanged();
-
 		doStatusUpdate();
-	}
-
-	private IStatus superClassOrInterfaceChanged() {
-		StatusInfo status = new StatusInfo();
-		status.setOK();
-
-		if (getSuperClass().isEmpty() && getSuperInterfaces().isEmpty()) {
-			status.setError("Superclass or Interface could not be set");
-			return status;
-		}
-
-		return status;
 	}
 
 	public void createControl(Composite parent) {
@@ -151,13 +126,13 @@ public class ContractWizardPage extends NewTypeWizardPage {
 
 		createSuperClassControls(composite, nColumns);
 		createSuperInterfacesControls(composite, nColumns);
-		
+
 		createSeparator(composite, nColumns);
 
 		createContractTypeSelectionControls(composite, nColumns);
-		
+
 		DialogField.createEmptySpace(composite);
-		
+
 		createMethodStubSelectionControls(composite, nColumns);
 
 		setControl(composite);
@@ -174,15 +149,51 @@ public class ContractWizardPage extends NewTypeWizardPage {
 			setFocus();
 	}
 
-	private void createContractTypeSelectionControls(Composite composite,
-			int nColumns) {
+	public void setContractTypeSelection(boolean internalContract, boolean externalContract,
+			boolean canBeModified) {
+		fContractTypeButtons.setSelection(INTERNAL_CONTRACT, internalContract);
+		fContractTypeButtons.setSelection(EXTERNAL_CONTRACT, externalContract);
+		fContractTypeButtons.setEnabled(canBeModified);
+	}
+
+	public void setContractStubSelection(boolean onlyContractStub, boolean contractWithTargetMethodStubs,
+			boolean contractWithAllMethodStubsOfTypeHierarchy, boolean canBeModified) {
+		fContractStubsButtons.setSelection(CONTRACT_STUB, onlyContractStub);
+		fContractStubsButtons.setSelection(CONTRACT_WITH_TARGET_METHODS, contractWithTargetMethodStubs);
+		fContractStubsButtons.setSelection(CONTRACT_WITH_ALL_TYPE_HIERARCHY_METHODS,
+				contractWithAllMethodStubsOfTypeHierarchy);
+		fContractStubsButtons.setEnabled(canBeModified);
+	}
+	
+	private void doStatusUpdate() {
+		IStatus[] status = new IStatus[] { fContainerStatus,
+				isEnclosingTypeSelected() ? fEnclosingTypeStatus : fPackageStatus, //
+				fTypeNameStatus, //
+				fModifierStatus, //
+				fSuperClassStatus, //
+				fSuperInterfacesStatus, //
+				fSuperClassOrSuperInterfaceIsSetStatus };
+
+		updateStatus(status);
+	}
+
+	private IStatus superClassOrInterfaceChanged() {
+		StatusInfo status = new StatusInfo();
+		status.setOK();
+
+		if (getSuperClass().isEmpty() && getSuperInterfaces().isEmpty())
+			status.setError("Superclass or Interface could not be set");
+
+		return status;
+	}
+
+	private void createContractTypeSelectionControls(Composite composite, int nColumns) {
 		Control labelControl = fContractTypeButtons.getLabelControl(composite);
 		LayoutUtil.setHorizontalSpan(labelControl, nColumns);
 
 		DialogField.createEmptySpace(composite);
-		
-		Control buttonGroup = fContractTypeButtons
-				.getSelectionButtonsGroup(composite);
+
+		Control buttonGroup = fContractTypeButtons.getSelectionButtonsGroup(composite);
 		LayoutUtil.setHorizontalSpan(buttonGroup, nColumns - 1);
 	}
 
@@ -190,22 +201,18 @@ public class ContractWizardPage extends NewTypeWizardPage {
 		return fContractTypeButtons.isSelected(EXTERNAL_CONTRACT);
 	}
 
-	public void setContractTypeSelection(boolean internalContract, boolean externalContract, boolean canBeModified) {
-		fContractTypeButtons.setSelection(INTERNAL_CONTRACT, internalContract);
-		fContractTypeButtons.setSelection(EXTERNAL_CONTRACT, externalContract);
-		fContractTypeButtons.setEnabled(canBeModified);
-	}
-
-	private void createMethodStubSelectionControls(Composite composite,
-			int nColumns) {
+	private void createMethodStubSelectionControls(Composite composite, int nColumns) {
 		Control labelControl = fContractStubsButtons.getLabelControl(composite);
 		LayoutUtil.setHorizontalSpan(labelControl, nColumns);
 
 		DialogField.createEmptySpace(composite);
 
-		Control buttonGroup = fContractStubsButtons
-				.getSelectionButtonsGroup(composite);
+		Control buttonGroup = fContractStubsButtons.getSelectionButtonsGroup(composite);
 		LayoutUtil.setHorizontalSpan(buttonGroup, nColumns - 1);
+	}
+
+	private boolean isCreateOnlyContractStub() {
+		return fContractStubsButtons.isSelected(0);
 	}
 
 	private boolean isCreateAllMethodStubs() {
@@ -216,81 +223,82 @@ public class ContractWizardPage extends NewTypeWizardPage {
 		return fContractStubsButtons.isSelected(2);
 	}
 
-	public void setContractStubSelection(boolean onlyContractStub, boolean contractWithTargetMethodStubs, boolean contractWithAllMethodStubsOfTypeHierarchy, boolean canBeModified) {
-		fContractStubsButtons.setSelection(CONTRACT_STUB, onlyContractStub);
-		fContractStubsButtons.setSelection(CONTRACT_WITH_TARGET_METHODS, contractWithTargetMethodStubs);
-		fContractStubsButtons.setSelection(CONTRACT_WITH_ALL_TYPE_HIERARCHY_METHODS, contractWithAllMethodStubsOfTypeHierarchy);
-		fContractStubsButtons.setEnabled(canBeModified);
-	}
-
 	@Override
-	protected void createTypeMembers(IType type, ImportsManager imports,
-			IProgressMonitor monitor) throws CoreException {
+	protected void createTypeMembers(IType type, ImportsManager imports, IProgressMonitor monitor)
+			throws CoreException {
 
 		C4JContractTransformer contract = new C4JContractTransformer(type);
-		
-		if(isCreateExternalContract())
+
+		if (isCreateExternalContract())
 			contract.addContractAnnotation(target);
-		
+
 		contract.addTargetMember();
 		contract.addClassInvariant();
+		
+		if (!isCreateOnlyContractStub()) 
+			createConstructorStubs(type, contract);
 
-		if (isCreateAllMethodStubs()) {
-			List<IMethodBinding> methodsContainedInTarget = getOnlyMethodsContainedInTarget(type);
-			contract.addMethodStubs(methodsContainedInTarget
-					.toArray(new IMethodBinding[methodsContainedInTarget.size()]));
-		} else if (isCreateAllMethodStubsOfTypeHierarchy()) {
-			IMethodBinding[] methods = getAllMethodsOfTypeHierarchy(type);
-			contract.addMethodStubs(methods);
-		}
+		if (isCreateAllMethodStubs()) 
+			contract.addMethodStubs(getOverridableMethodsOfTarget(type));
+		 else if (isCreateAllMethodStubsOfTypeHierarchy()) 
+			contract.addMethodStubs(getAllOverridableMethods(type));
 
 		contract.applyEdits();
 
-		if (monitor != null) {
+		if (monitor != null)
 			monitor.done();
+	}
+
+	private void createConstructorStubs(IType type, C4JContractTransformer contract)
+			throws JavaModelException, CoreException {
+		CompilationUnit fUnit = getAstRoot(type);
+		ITypeBinding binding = ASTNodes.getTypeBinding(fUnit, type);
+		
+		IMethodBinding[] visibleConstructors = StubUtility2.getVisibleConstructors(binding, true, false);
+		
+		for (IMethodBinding constructor : visibleConstructors) {
+			contract.addContructorStub(constructor);
 		}
 	}
 
-	private List<IMethodBinding> getOnlyMethodsContainedInTarget(IType type)
-			throws JavaModelException {
-		String superTypeName = type.getSuperclassName() != null ? type
-				.getSuperclassName() : type.getSuperInterfaceNames()[0];
+	private List<IMethodBinding> getOverridableMethodsOfTarget(IType type) throws JavaModelException {
 		List<IMethodBinding> methodsContainedInTarget = new ArrayList<IMethodBinding>();
-		IMethodBinding[] allMethodsOfTypeHierarchy = getAllMethodsOfTypeHierarchy(type);
-		for (IMethodBinding method : allMethodsOfTypeHierarchy) {
-			if (method.getDeclaringClass().getName().equals(superTypeName))
+		for (IMethodBinding method : getAllOverridableMethods(type)) {
+			if (isTargetDeclaringClass(method))
 				methodsContainedInTarget.add(method);
 		}
 		return methodsContainedInTarget;
 	}
-	
-	private IMethodBinding[] getAllMethodsOfTypeHierarchy(IType type) {
-		RefactoringASTParser parser = new RefactoringASTParser(
-				ASTProvider.SHARED_AST_LEVEL);
-		CompilationUnit fUnit = parser.parse(type.getCompilationUnit(), true);
-		ITypeBinding binding;
-		try {
-			binding = ASTNodes.getTypeBinding(fUnit, type);
-			IMethodBinding[] overridable = null;
-			if (binding != null) {
-				final IPackageBinding pack = binding.getPackage();
-				final IMethodBinding[] methods = StubUtility2
-						.getOverridableMethods(fUnit.getAST(), binding, false);
-				List<IMethodBinding> list = new ArrayList<IMethodBinding>(
-						methods.length);
-				for (int index = 0; index < methods.length; index++) {
-					final IMethodBinding cur = methods[index];
-					if (Bindings.isVisibleInHierarchy(cur, pack))
-						list.add(cur);
-				}
-				overridable = list.toArray(new IMethodBinding[list.size()]);
-			} else
-				overridable = new IMethodBinding[] {};
 
-			return overridable;
-		} catch (JavaModelException e) {
-			e.printStackTrace();
-			return new IMethodBinding[] {};
+	private boolean isTargetDeclaringClass(IMethodBinding method) {
+		return method.getDeclaringClass().getName().equals(target.getElementName());
+	}
+
+	private List<IMethodBinding> getAllOverridableMethods(IType type) throws JavaModelException {
+		CompilationUnit fUnit = getAstRoot(type);
+		ITypeBinding typeBinding = ASTNodes.getTypeBinding(fUnit, type);
+		
+		if (typeBinding != null) {
+			final IMethodBinding[] methods = StubUtility2.getOverridableMethods(fUnit.getAST(), typeBinding,
+					false);
+			return getMethodsVisibleInTypeHierarchy(typeBinding, methods);
+		} else
+			return new ArrayList<IMethodBinding>();
+	}
+
+	private List<IMethodBinding> getMethodsVisibleInTypeHierarchy(ITypeBinding typeBinding,
+			final IMethodBinding[] methods) {
+		List<IMethodBinding> list = new ArrayList<IMethodBinding>(methods.length);
+		for (IMethodBinding method : methods) {
+			if (Bindings.isVisibleInHierarchy(method, typeBinding.getPackage()))
+				list.add(method);
 		}
+		return list;
+	}
+
+	private CompilationUnit getAstRoot(IType type) {
+		RefactoringASTParser parser = new RefactoringASTParser(ASTProvider.SHARED_AST_LEVEL);
+		CompilationUnit fUnit = parser.parse(type.getCompilationUnit(), true);
+		return fUnit;
 	}
 }

@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.ui.text.hover;
+package de.vksi.c4j.eclipse.plugin.ui.texthover;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
@@ -14,6 +14,8 @@ import org.eclipse.jdt.internal.ui.text.java.hover.JavadocBrowserInformationCont
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import de.vksi.c4j.eclipse.plugin.ui.texthover.C4JTextHover;
 
 import test.util.JavaProjectLoader;
 

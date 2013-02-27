@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.ui.text.hover;
+package de.vksi.c4j.eclipse.plugin.ui.texthover;
 
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CLASS_INVARIANT;
 
