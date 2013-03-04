@@ -17,9 +17,9 @@ import org.junit.Test;
 
 import test.util.JavaProjectCreator;
 
-import de.vksi.c4j.eclipse.plugin.core.configuration.ProjectConvert;
+import de.vksi.c4j.eclipse.plugin.core.configuration.ProjectConverter;
 
-public class ProjectConvertTest {
+public class ProjectConverterTest {
 
 	private static final String LIB_FOLDER_NAME = "libs";
 	private static final String PROJECT_NAME = "virtualTestProject";
@@ -29,17 +29,17 @@ public class ProjectConvertTest {
 	private static final String LOG4J_JAR = "log4j-1.2.16.jar";
 
 	private IJavaProject projectToConvert;
-	private ProjectConvert converter;
+	private ProjectConverter converter;
 
 	@Before
 	public void SetUp() throws CoreException {
 		this.projectToConvert = JavaProjectCreator.create(PROJECT_NAME);
-		converter = new ProjectConvert();
+		converter = new ProjectConverter();
 	}
 
 	@Test
 	public void testLibFolderHasBeenCreated() throws CoreException {
-		converter.toC4JProject(this.projectToConvert);
+		converter.convertToC4JProject(this.projectToConvert);
 		
 		IFolder libFolder = getLibFolder();
 
@@ -49,12 +49,12 @@ public class ProjectConvertTest {
 	@Test
 	public void testExistingLibFolderWillNotBeReplaced() throws Exception {
 		JavaProjectCreator.addFolderToClassEntries(this.projectToConvert, LIB_FOLDER_NAME);
-		converter.toC4JProject(this.projectToConvert);
+		converter.convertToC4JProject(this.projectToConvert);
 	}
 
 	@Test
 	public void testLibFolderContainsRequiredJars() throws Exception {
-		converter.toC4JProject(this.projectToConvert);
+		converter.convertToC4JProject(this.projectToConvert);
 		IFolder libFolder = getLibFolder();
 
 		assertTrue(libFolder.getFile(C4J_JAR).exists());
@@ -64,7 +64,7 @@ public class ProjectConvertTest {
 
 	@Test
 	public void testJarsAddedToClassPath() throws Exception {
-		converter.toC4JProject(this.projectToConvert);
+		converter.convertToC4JProject(this.projectToConvert);
 		List<String> classpathEntries = getJarsFromClassPath();
 
 		assertTrue(classpathEntries.contains(C4J_JAR));

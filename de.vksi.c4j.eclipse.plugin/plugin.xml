@@ -30,19 +30,7 @@
                commandId="de.vksi.c4j.eclipse.plugin.convertToC4jProject"
                label="Convert to C4J Project"
                style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activeMenuSelection">
-                  <iterate
-                        ifEmpty="false"
-                        operator="or">
-                     <adapt
-                           type="org.eclipse.jdt.core.IJavaProject">
-                     </adapt>
-                  </iterate>
-               </with>
-            </visibleWhen>
+            
          </command>
       </menuContribution>
    </extension>

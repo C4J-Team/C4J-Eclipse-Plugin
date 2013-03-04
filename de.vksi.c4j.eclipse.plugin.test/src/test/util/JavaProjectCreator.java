@@ -1,7 +1,9 @@
 package test.util;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -101,16 +103,16 @@ public class JavaProjectCreator {
 	public static void addFolderToClassEntries(IJavaProject javaProject, String folderName) throws CoreException {
 		if (javaProject != null) {
 			IFolder folder = setFolder(javaProject, folderName);
-
 			IPackageFragmentRoot packageFragmentRoot = javaProject.getPackageFragmentRoot(folder);
-
-			IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
-			IClasspathEntry[] newEntries = new IClasspathEntry[oldEntries.length + 1];
-
-			System.arraycopy(oldEntries, 0, newEntries, 0, oldEntries.length);
-			newEntries[oldEntries.length] = JavaCore.newSourceEntry(packageFragmentRoot.getPath());
-
-			javaProject.setRawClasspath(newEntries, null);
+			
+			Set<IClasspathEntry> entries = new HashSet<IClasspathEntry>();
+			for (IClasspathEntry entry : javaProject.getRawClasspath()) {
+				entries.add(entry);
+			}
+			
+			entries.add(JavaCore.newSourceEntry(packageFragmentRoot.getPath()));
+			
+			javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), null);
 		}
 	}
 

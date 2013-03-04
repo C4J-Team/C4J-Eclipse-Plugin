@@ -1,6 +1,6 @@
 package de.vksi.c4j.eclipse.plugin.core.configuration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -15,7 +15,7 @@ import test.util.JavaProjectCreator;
 
 public class C4JVMTest {
 
-	private static final String PATH_TO_JAR_LOCATION = "pathToJarLocation";
+	private static final String DUMMY_JAR = "dummy.jar";
 	private static final String C4J_NAME_POSTIFX = " C4J";
 	private static final String C4J_ID_POSTIFX = " c4j";
 	private static final String EA_JAVAAGENT = "-ea -javaagent:";
@@ -29,13 +29,14 @@ public class C4JVMTest {
 		this.c4jVM = new C4JVM(this.javaProject);
 	}
 	
+
 	@Test
 	public void testSetUpC4JVM() throws CoreException {
 		IVMInstall vmInstall = JavaRuntime.getVMInstall(this.javaProject);
 		String nameBeforeC4JSetup = vmInstall.getName();
 		String idBeforeC4JSetup = vmInstall.getId();
 		
-		this.c4jVM.setUpC4JVM(PATH_TO_JAR_LOCATION);
+		this.c4jVM.setUpC4JVM(javaProject.getProject().getFile(DUMMY_JAR));
 		
 		vmInstall = JavaRuntime.getVMInstall(this.javaProject);
 		String nameAfterC4JSetup = vmInstall.getName();
@@ -44,7 +45,7 @@ public class C4JVMTest {
 		
 		String expectedName = nameBeforeC4JSetup + C4J_NAME_POSTIFX;
 		String expectedID = idBeforeC4JSetup + C4J_ID_POSTIFX;
-		String expectedArguments = EA_JAVAAGENT + PATH_TO_JAR_LOCATION;
+		String expectedArguments = EA_JAVAAGENT + DUMMY_JAR;
 		
 		assertEquals(expectedName, nameAfterC4JSetup);
 		assertEquals(expectedID, idAfterC4JSetup);
