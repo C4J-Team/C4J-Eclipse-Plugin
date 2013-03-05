@@ -4,7 +4,6 @@ import java.text.MessageFormat;
 
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.text.IDocument;
@@ -15,10 +14,10 @@ import org.eclipse.swt.graphics.Point;
 import de.vksi.c4j.eclipse.plugin.internal.TargetFacade;
 import de.vksi.c4j.eclipse.plugin.internal.TypeFacade;
 import de.vksi.c4j.eclipse.plugin.util.AssosiatedMemberRequest;
-import de.vksi.c4j.eclipse.plugin.util.C4JTargetTransformer;
 import de.vksi.c4j.eclipse.plugin.util.AssosiatedMemberRequest.MemberType;
+import de.vksi.c4j.eclipse.plugin.util.C4JTargetTransformer;
+import de.vksi.c4j.eclipse.plugin.util.PluginImages;
 
-@SuppressWarnings("restriction")
 public class CreateContractProposal implements IJavaCompletionProposal {
 
 	private C4JTargetTransformer target;
@@ -61,7 +60,7 @@ public class CreateContractProposal implements IJavaCompletionProposal {
 
 	@Override
 	public Image getImage() {
-		return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_CLASS);
+		return PluginImages.DESC_NEW_CONTRACT.createImage();
 	}
 
 	@Override

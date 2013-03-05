@@ -6,7 +6,6 @@ import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.text.IDocument;
@@ -18,8 +17,8 @@ import de.vksi.c4j.eclipse.plugin.internal.TargetFacade;
 import de.vksi.c4j.eclipse.plugin.internal.TypeFacade;
 import de.vksi.c4j.eclipse.plugin.util.AssosiatedMemberRequest;
 import de.vksi.c4j.eclipse.plugin.util.AssosiatedMemberRequest.MemberType;
+import de.vksi.c4j.eclipse.plugin.util.PluginImages;
 
-@SuppressWarnings("restriction")
 public class CreateContractMethodProposal implements IJavaCompletionProposal {
 
 	private static final String DISPLAY_STRING = "Create/Jump to Contract method";
@@ -71,7 +70,7 @@ public class CreateContractMethodProposal implements IJavaCompletionProposal {
 
 	@Override
 	public Image getImage() {
-		return JavaPluginImages.get(JavaPluginImages.IMG_MISC_PUBLIC);
+		return PluginImages.DESC_CONTRACT_METHOD.createImage();
 	}
 
 	@Override
