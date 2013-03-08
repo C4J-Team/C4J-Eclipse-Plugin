@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.util;
+package de.vksi.c4j.eclipse.plugin.util.requestor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
 import de.vksi.c4j.eclipse.plugin.internal.C4JContractAnnotation;
+import de.vksi.c4j.eclipse.plugin.util.ContractChecker;
 
 public class TargetRequestor implements Requestor {
 	public List<IType> getAssociatedMemberOf(IType contract) {
@@ -33,7 +34,6 @@ public class TargetRequestor implements Requestor {
 			}
 
 		} catch (JavaModelException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return target;

@@ -12,21 +12,21 @@ import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
 import de.vksi.c4j.eclipse.plugin.util.PluginImages;
 
 @SuppressWarnings("restriction")
-public class ContractCreationWizard extends NewElementWizard{
+public class CreateContractWizard extends NewElementWizard {
 
-	private ContractWizardPage fPage;
-    private boolean fOpenEditorOnFinish;
+	private CreateContractWizardPage fPage;
+	private boolean fOpenEditorOnFinish;
 
-	public ContractCreationWizard(ContractWizardPage page, boolean openEditorOnFinish) {
+	public CreateContractWizard(CreateContractWizardPage page, boolean openEditorOnFinish) {
 		setDefaultPageImageDescriptor(PluginImages.DESC_NEW_CONTRACT_WIZ);
 		setDialogSettings(JavaPlugin.getDefault().getDialogSettings());
 		setWindowTitle(NewWizardMessages.NewClassCreationWizard_title);
 
-		fPage= page;
-		fOpenEditorOnFinish= openEditorOnFinish;
+		fPage = page;
+		fOpenEditorOnFinish = openEditorOnFinish;
 	}
 
-	public ContractCreationWizard() {
+	public CreateContractWizard() {
 		this(null, true);
 	}
 
@@ -34,7 +34,7 @@ public class ContractCreationWizard extends NewElementWizard{
 	public void addPages() {
 		super.addPages();
 		if (fPage == null) {
-			fPage= new ContractWizardPage();
+			fPage = new CreateContractWizardPage();
 			fPage.setWizard(this);
 			fPage.init(getSelection());
 		}
@@ -54,9 +54,9 @@ public class ContractCreationWizard extends NewElementWizard{
 	@Override
 	public boolean performFinish() {
 		warnAboutTypeCommentDeprecation();
-		boolean res= super.performFinish();
+		boolean res = super.performFinish();
 		if (res) {
-			IResource resource= fPage.getModifiedResource();
+			IResource resource = fPage.getModifiedResource();
 			if (resource != null) {
 				selectAndReveal(resource);
 				if (fOpenEditorOnFinish) {

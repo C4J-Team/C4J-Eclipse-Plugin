@@ -16,7 +16,9 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
 
-public class WizardPageOne extends NewJavaProjectWizardPageOne implements Listener{
+public class C4JProjectWizardPageOne extends NewJavaProjectWizardPageOne implements Listener{
+	private static final String SELECT_STANDARD_PROJECT_STRUCTURE_LABEL = "Create standard Java Project structure without C4J template";
+	private static final String SELECT_C4J_PROJECT_STRUCTURE_LABEL = "Use C4J template to create Project structure (recommended)";
 	private static final String DEFAULT_OUTPUT_FOLDER = "bin";
 	public static final String SRC_TEST_JAVA = "src/test/java";
 	public static final String SRC_MAIN_RESOURCES = "src/main/resources";
@@ -26,7 +28,7 @@ public class WizardPageOne extends NewJavaProjectWizardPageOne implements Listen
 	private Button noTemplate;
 	private boolean isC4JTemplateSelected = true;
 
-	public WizardPageOne() {
+	public C4JProjectWizardPageOne() {
 		super();
 	}
 
@@ -87,12 +89,12 @@ public class WizardPageOne extends NewJavaProjectWizardPageOne implements Listen
 	    group.setLayout(rowLayout);
 
 	    useC4JTemplate = new Button(group, SWT.RADIO);
-	    useC4JTemplate.setText("Use C4J template to create Project structure (recommended)");
+	    useC4JTemplate.setText(SELECT_C4J_PROJECT_STRUCTURE_LABEL);
 	    useC4JTemplate.setSelection(true);
 	    useC4JTemplate.addListener(SWT.Selection, this);
 	    
 	    noTemplate = new Button(group, SWT.RADIO);
-	    noTemplate.setText("Create standard Java Project structure without C4J template");
+	    noTemplate.setText(SELECT_STANDARD_PROJECT_STRUCTURE_LABEL);
 	    
 	    return group;
 	}

@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.util;
+package de.vksi.c4j.eclipse.plugin.util.requestor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,8 @@ import java.util.List;
 import org.eclipse.jdt.core.IType;
 
 import de.vksi.c4j.eclipse.plugin.internal.C4JContractReferenceAnnotation;
+import de.vksi.c4j.eclipse.plugin.util.ExternalContractMap;
+import de.vksi.c4j.eclipse.plugin.util.ExternalContractScanner;
 
 public class ContractRequestor  implements Requestor {
 	private ExternalContractMap externalContracts;

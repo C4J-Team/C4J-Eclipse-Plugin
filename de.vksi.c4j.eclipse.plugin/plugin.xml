@@ -30,19 +30,7 @@
                commandId="de.vksi.c4j.eclipse.plugin.convertToC4jProject"
                label="Convert to C4J Project"
                style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activeMenuSelection">
-                  <iterate
-                        ifEmpty="false"
-                        operator="or">
-                     <adapt
-                           type="org.eclipse.jdt.core.IJavaProject">
-                     </adapt>
-                  </iterate>
-               </with>
-            </visibleWhen>
+            
          </command>
       </menuContribution>
    </extension>
@@ -57,7 +45,8 @@
             class="de.vksi.c4j.eclipse.plugin.wizards.C4JProjectWizard"
             icon="icons/c4jIcon.gif"
             id="de.vksi.c4j.eclipse.plugin.new.project.wizard"
-            name="C4J Project">
+            name="C4J Project"
+            project="true">
       </wizard>
    </extension>
    <extension

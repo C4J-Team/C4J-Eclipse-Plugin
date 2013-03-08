@@ -6,7 +6,6 @@ import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.text.IDocument;
@@ -14,12 +13,12 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
-import de.vksi.c4j.eclipse.plugin.internal.TargetFacade;
+import de.vksi.c4j.eclipse.plugin.internal.C4JTargetFacade;
 import de.vksi.c4j.eclipse.plugin.internal.TypeFacade;
-import de.vksi.c4j.eclipse.plugin.util.AssosiatedMemberRequest;
-import de.vksi.c4j.eclipse.plugin.util.AssosiatedMemberRequest.MemberType;
+import de.vksi.c4j.eclipse.plugin.util.PluginImages;
+import de.vksi.c4j.eclipse.plugin.util.requestor.AssosiatedMemberRequest;
+import de.vksi.c4j.eclipse.plugin.util.requestor.AssosiatedMemberRequest.MemberType;
 
-@SuppressWarnings("restriction")
 public class CreateContractMethodProposal implements IJavaCompletionProposal {
 
 	private static final String DISPLAY_STRING = "Create/Jump to Contract method";
@@ -37,7 +36,7 @@ public class CreateContractMethodProposal implements IJavaCompletionProposal {
 
 	@Override
 	public void apply(IDocument document) {
-		TypeFacade tf = TargetFacade.createFacade(target.getCompilationUnit());
+		TypeFacade tf = C4JTargetFacade.createFacade(target.getCompilationUnit());
 		AssosiatedMemberRequest request = AssosiatedMemberRequest.newCorrespondingMemberRequest() //
 				.asCreateRequest() //
 		        .withExpectedResultType(MemberType.METHOD) //
@@ -71,7 +70,7 @@ public class CreateContractMethodProposal implements IJavaCompletionProposal {
 
 	@Override
 	public Image getImage() {
-		return JavaPluginImages.get(JavaPluginImages.IMG_MISC_PUBLIC);
+		return PluginImages.DESC_CONTRACT_METHOD.createImage();
 	}
 
 	@Override

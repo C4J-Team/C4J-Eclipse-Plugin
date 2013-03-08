@@ -16,8 +16,8 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 
 import de.vksi.c4j.eclipse.plugin.internal.C4JConditions;
-import de.vksi.c4j.eclipse.plugin.util.ContractRequestor;
-import de.vksi.c4j.eclipse.plugin.util.TypeHierarchyRequestor;
+import de.vksi.c4j.eclipse.plugin.util.requestor.ContractRequestor;
+import de.vksi.c4j.eclipse.plugin.util.requestor.TypeHierarchyRequestor;
 
 public class ConditionExtractor {
 	private C4JConditions conditions;

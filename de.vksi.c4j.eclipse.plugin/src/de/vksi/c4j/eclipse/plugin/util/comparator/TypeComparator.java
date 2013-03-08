@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.vksi.c4j.eclipse.plugin.ui;
+package de.vksi.c4j.eclipse.plugin.util.comparator;
 
 import java.io.Serializable;
 import java.util.Comparator;

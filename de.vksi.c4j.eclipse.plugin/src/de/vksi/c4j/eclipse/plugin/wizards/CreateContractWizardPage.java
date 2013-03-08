@@ -38,7 +38,7 @@ import org.eclipse.ui.PlatformUI;
 import de.vksi.c4j.eclipse.plugin.util.C4JContractTransformer;
 
 @SuppressWarnings("restriction")
-public class ContractWizardPage extends NewTypeWizardPage {
+public class CreateContractWizardPage extends NewTypeWizardPage {
 
 	public final static int INTERNAL_CONTRACT = 0;
 	public final static int EXTERNAL_CONTRACT = 1;
@@ -64,7 +64,7 @@ public class ContractWizardPage extends NewTypeWizardPage {
 	protected IStatus fSuperClassOrSuperInterfaceIsSetStatus;
 	private IType target;
 
-	public ContractWizardPage() {
+	public CreateContractWizardPage() {
 		super(true, PAGE_NAME);
 
 		setTitle("Contract Class");
@@ -80,7 +80,7 @@ public class ContractWizardPage extends NewTypeWizardPage {
 		fContractStubsButtons.setLabelText("Which method stubs would you like to create?");
 	}
 
-	public ContractWizardPage(IType target) {
+	public CreateContractWizardPage(IType target) {
 		this();
 		this.target = target;
 	}
