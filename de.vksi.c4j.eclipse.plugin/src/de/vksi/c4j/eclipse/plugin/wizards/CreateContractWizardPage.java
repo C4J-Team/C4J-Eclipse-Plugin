@@ -39,7 +39,8 @@ import de.vksi.c4j.eclipse.plugin.util.C4JContractTransformer;
 
 @SuppressWarnings("restriction")
 public class CreateContractWizardPage extends NewTypeWizardPage {
-
+	private static final String SUPERTYPE_NOT_SET = "Superclass or Interface not set";
+	
 	public final static int INTERNAL_CONTRACT = 0;
 	public final static int EXTERNAL_CONTRACT = 1;
 
@@ -182,7 +183,7 @@ public class CreateContractWizardPage extends NewTypeWizardPage {
 		status.setOK();
 
 		if (getSuperClass().isEmpty() && getSuperInterfaces().isEmpty())
-			status.setError("Superclass or Interface could not be set");
+			status.setError(SUPERTYPE_NOT_SET);
 
 		return status;
 	}

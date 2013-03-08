@@ -16,6 +16,8 @@ import de.vksi.c4j.eclipse.plugin.util.requestor.AssosiatedMemberRequest.MemberT
 
 public class JumpToContractCommand extends AbstractHandler {
 
+	private static final String JUMP_DIALOG_TITLE = "Jump to...";
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
@@ -25,12 +27,19 @@ public class JumpToContractCommand extends AbstractHandler {
 		if (javaElement instanceof IType) {
 			IType type = (IType) Platform.getAdapterManager().getAdapter(javaElement, IType.class);
 			TypeFacade typeFacade = TypeFacade.createFacade(type.getCompilationUnit());
-			AssosiatedMemberRequest request = createSearchRequest(MemberType.TYPE);
+			AssosiatedMemberRequest request = AssosiatedMemberRequest.newCorrespondingMemberRequest() //
+					.setDialogPromtText(JUMP_DIALOG_TITLE) //
+					.withExpectedResultType(MemberType.TYPE) //
+					.build();
 			jump(typeFacade, request);
 		} else if (javaElement instanceof IMethod) {
 			IMethod method = (IMethod) Platform.getAdapterManager().getAdapter(javaElement, IMethod.class);
 			TypeFacade typeFacade = TypeFacade.createFacade(method.getCompilationUnit());
-			AssosiatedMemberRequest request = createSearchRequest(MemberType.METHOD);
+			AssosiatedMemberRequest request = AssosiatedMemberRequest.newCorrespondingMemberRequest() //
+					.setDialogPromtText(JUMP_DIALOG_TITLE) //
+					.withExpectedResultType(MemberType.METHOD) //
+					.withCurrentMethod(method) //
+					.build();
 			jump(typeFacade, request);
 		}
 
@@ -41,13 +50,4 @@ public class JumpToContractCommand extends AbstractHandler {
 		IMember assosiatedMember = typeFacade.getAssosiatedType(request);
 		JumpAction.openType(assosiatedMember);
 	}
-
-	private AssosiatedMemberRequest createSearchRequest(MemberType memberType) {
-		AssosiatedMemberRequest request = AssosiatedMemberRequest.newCorrespondingMemberRequest() //
-				.setDialogPromtText("Jump to...") //
-				.withExpectedResultType(memberType) //
-				.build();
-		return request;
-	}
-
 }

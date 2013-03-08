@@ -5,13 +5,11 @@ import java.util.List;
 
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jface.layout.PixelConverter;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 import de.vksi.c4j.eclipse.plugin.internal.C4JContractAnnotation;
 import de.vksi.c4j.eclipse.plugin.internal.C4JContractReferenceAnnotation;
@@ -19,8 +17,8 @@ import de.vksi.c4j.eclipse.plugin.util.C4JTargetTransformer;
 
 @SuppressWarnings("restriction")
 public class CreateContractWizardRunner implements WizardRunner<IType> {
-	private static final String CONTRACT = "Contract";
 	private static final String DIALOG_TITLE = "New Contract Class";
+	private static final String CONTRACT = "Contract";
 	private static final String RIGHT_ARROW_BRACKET = ">";
 	private static final String LEFT_ARROW_BRACKET = "<";
 
@@ -31,22 +29,21 @@ public class CreateContractWizardRunner implements WizardRunner<IType> {
 	}
 
 	public IType run() {
+		if(target == null)
+			return null;
+		
 		StructuredSelection selection = new StructuredSelection(target.getCompilationUnit());
 
 		CreateContractWizardPage page = new CreateContractWizardPage(target);
 		page.init(selection);
 
 		CreateContractWizard wizard = new CreateContractWizard(page, true);
-		wizard.init(JavaPlugin.getDefault().getWorkbench(), selection);
+		wizard.init(PlatformUI.getWorkbench(), selection);
 
-		Shell shell = JavaPlugin.getActiveWorkbenchShell();
-		WizardDialog dialog = new WizardDialog(shell, wizard);
-
-		PixelConverter converter = new PixelConverter(JFaceResources.getDialogFont());
-		dialog.setMinimumPageSize(converter.convertWidthInCharsToPixels(70),
-				converter.convertHeightInCharsToPixels(20));
+		Shell parent = PlatformUI.getWorkbench().getDisplay().getActiveShell();
+		WizardDialog dialog = new WizardDialog(parent, wizard);
 		dialog.create();
-		dialog.getShell().setText(DIALOG_TITLE);
+		dialog.setTitle(DIALOG_TITLE);
 
 		configureWizardPage(page);
 
