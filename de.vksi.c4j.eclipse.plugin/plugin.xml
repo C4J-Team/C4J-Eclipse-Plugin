@@ -45,7 +45,8 @@
             class="de.vksi.c4j.eclipse.plugin.wizards.C4JProjectWizard"
             icon="icons/c4jIcon.gif"
             id="de.vksi.c4j.eclipse.plugin.new.project.wizard"
-            name="C4J Project">
+            name="C4J Project"
+            project="true">
       </wizard>
    </extension>
    <extension

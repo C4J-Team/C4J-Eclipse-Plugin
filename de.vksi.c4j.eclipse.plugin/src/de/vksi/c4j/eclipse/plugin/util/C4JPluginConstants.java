@@ -1,7 +1,13 @@
 package de.vksi.c4j.eclipse.plugin.util;
 
+import org.eclipse.core.runtime.IPath;
+
 public class C4JPluginConstants {
 	//C4J core resources
+	//plugin root config
+	public static final String DEFAULT_CONFIG_CONTAINER = "src" + IPath.SEPARATOR + "main" + IPath.SEPARATOR + "resources";
+	public static final String DEFAULT_LIB_CONTAINER = "libs";
+	
 	//Libs
 	public static final String C4J_JAR = "c4j-6.0.0.jar";
 	public static final String JAVASSIST_JAR = "javassist-3.16.1-GA.jar";

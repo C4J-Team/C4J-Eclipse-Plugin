@@ -9,14 +9,14 @@ import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 
-import de.vksi.c4j.eclipse.plugin.util.AssosiatedMemberRequest;
-import de.vksi.c4j.eclipse.plugin.util.Requestor;
-import de.vksi.c4j.eclipse.plugin.util.TargetRequestor;
-import de.vksi.c4j.eclipse.plugin.wizards.ContractWizardRunner;
+import de.vksi.c4j.eclipse.plugin.util.requestor.AssosiatedMemberRequest;
+import de.vksi.c4j.eclipse.plugin.util.requestor.Requestor;
+import de.vksi.c4j.eclipse.plugin.util.requestor.TargetRequestor;
+import de.vksi.c4j.eclipse.plugin.wizards.CreateContractWizardRunner;
 
-public class ContractFacade extends TypeFacade {
+public class C4JContractFacade extends TypeFacade {
 
-	protected ContractFacade(ICompilationUnit compilationUnit) {
+	protected C4JContractFacade(ICompilationUnit compilationUnit) {
 		super(compilationUnit);
 	}
 
@@ -24,7 +24,7 @@ public class ContractFacade extends TypeFacade {
 	protected Collection<IMethod> getAssosiatedMethodsFromClasses(IMethod method, Collection<IType> classes) {
 		List<IMethod> matchedMethods = new ArrayList<IMethod>();
 		for (IType type : classes) {
-			TypeFacade target = ContractFacade.createFacade(type.getCompilationUnit());
+			TypeFacade target = C4JContractFacade.createFacade(type.getCompilationUnit());
 			if (target.hasMethod(method)) {
 				matchedMethods.add(target.getMethod(method));
 			}
@@ -33,7 +33,7 @@ public class ContractFacade extends TypeFacade {
 	}
 
 	@Override
-	protected ContractWizardRunner newCorrespondingClassWizard(IType fromType) {
+	protected CreateContractWizardRunner newCorrespondingClassWizard(IType fromType) {
 		return null;
 	}
 

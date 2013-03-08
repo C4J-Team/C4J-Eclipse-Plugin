@@ -11,21 +11,21 @@ import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 
-import de.vksi.c4j.eclipse.plugin.ui.ChooseDialog;
+import de.vksi.c4j.eclipse.plugin.ui.ChooseMemberDialog;
 import de.vksi.c4j.eclipse.plugin.ui.CreateMethodAction;
 import de.vksi.c4j.eclipse.plugin.ui.CreateNewClassAction;
 import de.vksi.c4j.eclipse.plugin.ui.MemberContentProvider;
 import de.vksi.c4j.eclipse.plugin.ui.TreeActionElement;
-import de.vksi.c4j.eclipse.plugin.util.AssosiatedMemberRequest;
-import de.vksi.c4j.eclipse.plugin.util.AssosiatedMemberRequest.MemberType;
-import de.vksi.c4j.eclipse.plugin.util.ContractRequestor;
-import de.vksi.c4j.eclipse.plugin.util.Requestor;
-import de.vksi.c4j.eclipse.plugin.util.TypeHierarchyRequestor;
-import de.vksi.c4j.eclipse.plugin.wizards.ContractWizardRunner;
+import de.vksi.c4j.eclipse.plugin.util.requestor.AssosiatedMemberRequest;
+import de.vksi.c4j.eclipse.plugin.util.requestor.ContractRequestor;
+import de.vksi.c4j.eclipse.plugin.util.requestor.Requestor;
+import de.vksi.c4j.eclipse.plugin.util.requestor.TypeHierarchyRequestor;
+import de.vksi.c4j.eclipse.plugin.util.requestor.AssosiatedMemberRequest.MemberType;
+import de.vksi.c4j.eclipse.plugin.wizards.CreateContractWizardRunner;
 
-public class TargetFacade extends TypeFacade {
+public class C4JTargetFacade extends TypeFacade {
 
-	protected TargetFacade(ICompilationUnit compilationUnit) {
+	protected C4JTargetFacade(ICompilationUnit compilationUnit) {
 		super(compilationUnit);
 	}
 
@@ -33,7 +33,7 @@ public class TargetFacade extends TypeFacade {
 	protected Collection<IMethod> getAssosiatedMethodsFromClasses(IMethod method, Collection<IType> classes) {
 		List<IMethod> matchedMethods = new ArrayList<IMethod>();
 		for (IType type : classes) {
-			TypeFacade contract = ContractFacade.createFacade(type.getCompilationUnit());
+			TypeFacade contract = C4JContractFacade.createFacade(type.getCompilationUnit());
 			if (contract.hasMethod(method)) {
 				matchedMethods.add(contract.getMethod(method));
 			}
@@ -42,8 +42,8 @@ public class TargetFacade extends TypeFacade {
 	}
 
 	@Override
-	protected ContractWizardRunner newCorrespondingClassWizard(IType type) {
-		return new ContractWizardRunner(type);
+	protected CreateContractWizardRunner newCorrespondingClassWizard(IType type) {
+		return new CreateContractWizardRunner(type);
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class TargetFacade extends TypeFacade {
 
 		contentProvider = contentProvider.withAction(createMethodActions);
 
-		return new ChooseDialog<IMember>(promptText, infoText, contentProvider).getChoice();
+		return new ChooseMemberDialog<IMember>(promptText, infoText, contentProvider).getChoice();
 	}
 
 	private Collection<IType> removeDuplicates(Collection<IType> proposedClasses,
@@ -96,7 +96,7 @@ public class TargetFacade extends TypeFacade {
 		
 		if (request.shouldReturn(MemberType.METHOD) && request.isCreateRequest()) {
 			for (IType type : proposedClasses) {
-				TypeFacade contract = ContractFacade.createFacade(type.getCompilationUnit());
+				TypeFacade contract = C4JContractFacade.createFacade(type.getCompilationUnit());
 				if (!contract.hasMethod(request.getCurrentMethod())) {
 					createMethodActions.add(new CreateMethodAction(type, request.getCurrentMethodDeclaration()));
 				}

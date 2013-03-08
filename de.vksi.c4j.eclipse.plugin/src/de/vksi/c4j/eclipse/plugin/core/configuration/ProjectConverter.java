@@ -1,42 +1,76 @@
 package de.vksi.c4j.eclipse.plugin.core.configuration;
 
+import java.io.IOException;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 
-public class ProjectConverter {
+import de.vksi.c4j.eclipse.plugin.internal.C4JPluginSettings;
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.DEFAULT_CONFIG_CONTAINER;
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.DEFAULT_LIB_CONTAINER;
 
-	private static final String LIB_FOLDER_NAME = "libs";
-	private static final String CONFIG_FOLDER_NAME = "config";
-	private IFolder libFolder;
-	private IFolder configFolder;
+public class ProjectConverter {
 	private IJavaProject javaProject;
 	private C4JVM c4jVM;
 
-	public void convertToC4JProject(IJavaProject javaProject) throws CoreException {
+	public boolean convertToC4JProject(IJavaProject javaProject) throws CoreException, IOException {
 		this.javaProject = javaProject;
-		libFolder = createFolder(LIB_FOLDER_NAME);
-		configFolder = createFolder(CONFIG_FOLDER_NAME);
+		C4JPluginSettings c4jPluginSettings = new C4JPluginSettings(javaProject);
+
+		IFolder configFolder = setUpConfigFolder(c4jPluginSettings);
+		IFolder libFolder = setUpLibFolder(c4jPluginSettings);
 
 		C4JResources c4jResources = new C4JResources();
 		c4jResources.copyLibrariesTo(libFolder);
-		c4jResources.copyConfigFilesTo(configFolder); //TODO: do not add config files if project is created by c4j wizard
+		c4jResources.copyConfigFilesTo(configFolder);
 		c4jResources.addJarsToClasspath(javaProject);
 		IFile localC4J = c4jResources.getLocalC4Jjar();
-		
+
 		c4jVM = new C4JVM(javaProject);
 		c4jVM.setUpC4JVM(localC4J);
+		
+		return true;
 	}
 
-	private IFolder createFolder(String folderName) throws CoreException {
-		IProject generalProject = javaProject.getProject();
-		IFolder folder = generalProject.getFolder(folderName);
+	private IFolder setUpConfigFolder(C4JPluginSettings c4jPluginSettings) throws IOException, CoreException {
+		if (c4jPluginSettings.getPathToConfigFiles() != null)
+			return createFolder(c4jPluginSettings.getPathToConfigFiles());
+		else {
+			IFolder folder = createSrcFolder(new Path(DEFAULT_CONFIG_CONTAINER));
+			c4jPluginSettings.setPathToConfigFiles(folder.getFullPath());
+			return folder;
+		}
+	}
 
-		if (!folder.exists()) 
-			folder.create(false, true, null);
+	private IFolder setUpLibFolder(C4JPluginSettings c4jPluginSettings) throws IOException, CoreException {
+		if (c4jPluginSettings.getPathToLibFiles() != null)
+			return createFolder(c4jPluginSettings.getPathToLibFiles());
+		else {
+			IFolder folder = createFolder(new Path(DEFAULT_LIB_CONTAINER));
+			c4jPluginSettings.setPathToLibFiles(folder.getFullPath());
+			return folder;
+		}
+	}
+
+	private IFolder createFolder(IPath path) throws CoreException {
+		IProject generalProject = javaProject.getProject();
+		IFolder folder = generalProject.getFolder(path);
+
+		if (!folder.exists())
+			folder.create(true, true, null);
 
 		return folder;
+	}
+	
+	private IFolder createSrcFolder(IPath path){
+		IFolder folder = javaProject.getProject().getFolder(path);
+		new Classpath(javaProject).addSourceFolder(folder);
+		return folder;
+		
 	}
 }

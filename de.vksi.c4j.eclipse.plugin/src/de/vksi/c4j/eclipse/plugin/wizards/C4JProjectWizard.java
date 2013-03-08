@@ -1,5 +1,6 @@
 package de.vksi.c4j.eclipse.plugin.wizards;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFolder;
@@ -18,12 +19,12 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
-import de.vksi.c4j.eclipse.plugin.core.configuration.C4JResources;
 import de.vksi.c4j.eclipse.plugin.core.configuration.ProjectConverter;
+import de.vksi.c4j.eclipse.plugin.internal.C4JPluginSettings;
 
 public class C4JProjectWizard extends Wizard implements IExecutableExtension, INewWizard {
 
-	private WizardPageOne fMainPage;
+	private C4JProjectWizardPageOne fMainPage;
 	private NewJavaProjectWizardPageTwo fJavaPage;
 
 	private IConfigurationElement fConfigElement;
@@ -37,13 +38,12 @@ public class C4JProjectWizard extends Wizard implements IExecutableExtension, IN
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-	
 	}
 
 	public void addPages() {
 		super.addPages();
 
-		fMainPage = new WizardPageOne();
+		fMainPage = new C4JProjectWizardPageOne();
 		fMainPage.setTitle("Create a C4J Project");
 		addPage(fMainPage);
 		
@@ -61,17 +61,10 @@ public class C4JProjectWizard extends Wizard implements IExecutableExtension, IN
 		};
 		try {
 			getContainer().run(false, true, op);
-
-			IJavaProject newElement = fJavaPage.getJavaProject();
-
-			IFolder folder = newElement.getProject().getFolder(WizardPageOne.SRC_MAIN_RESOURCES);
-			C4JResources c4jRes = new C4JResources();
-			c4jRes.copyConfigFilesTo(folder);
-
-			new ProjectConverter().convertToC4JProject(newElement);
+			IJavaProject javaProject = setUpC4Jconfiguration();
 
 			BasicNewProjectResourceWizard.updatePerspective(fConfigElement);
-			BasicNewResourceWizard.selectAndReveal(newElement.getResource(), PlatformUI.getWorkbench()
+			BasicNewResourceWizard.selectAndReveal(javaProject.getResource(), PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow());
 
 		} catch (CoreException e) {
@@ -81,8 +74,21 @@ public class C4JProjectWizard extends Wizard implements IExecutableExtension, IN
 			return false; // TODO: should open error dialog and log
 		} catch (InterruptedException e) {
 			return false; // canceled
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return true;
+	}
+
+	private IJavaProject setUpC4Jconfiguration() throws CoreException, IOException {
+		IJavaProject javaProject = fJavaPage.getJavaProject();
+		IFolder folder = javaProject.getProject().getFolder(C4JProjectWizardPageOne.SRC_MAIN_RESOURCES);
+		C4JPluginSettings c4jPluginSettings = new C4JPluginSettings(javaProject);
+		c4jPluginSettings.setPathToConfigFiles(folder.getFullPath());
+
+		new ProjectConverter().convertToC4JProject(javaProject);
+		return javaProject;
 	}
 
 	public boolean performCancel() {

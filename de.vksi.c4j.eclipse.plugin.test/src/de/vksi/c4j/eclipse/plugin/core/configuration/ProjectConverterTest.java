@@ -2,6 +2,7 @@ package de.vksi.c4j.eclipse.plugin.core.configuration;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,14 +15,13 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.DEFAULT_LIB_CONTAINER;
 
 import test.util.JavaProjectCreator;
 
 import de.vksi.c4j.eclipse.plugin.core.configuration.ProjectConverter;
 
 public class ProjectConverterTest {
-
-	private static final String LIB_FOLDER_NAME = "libs";
 	private static final String PROJECT_NAME = "virtualTestProject";
 
 	private static final String C4J_JAR = "c4j-6.0.0.jar";
@@ -38,7 +38,7 @@ public class ProjectConverterTest {
 	}
 
 	@Test
-	public void testLibFolderHasBeenCreated() throws CoreException {
+	public void testLibFolderHasBeenCreated() throws CoreException, IOException {
 		converter.convertToC4JProject(this.projectToConvert);
 		
 		IFolder libFolder = getLibFolder();
@@ -48,7 +48,7 @@ public class ProjectConverterTest {
 	
 	@Test
 	public void testExistingLibFolderWillNotBeReplaced() throws Exception {
-		JavaProjectCreator.addFolderToClassEntries(this.projectToConvert, LIB_FOLDER_NAME);
+		JavaProjectCreator.addFolderToClassEntries(this.projectToConvert, DEFAULT_LIB_CONTAINER);
 		converter.convertToC4JProject(this.projectToConvert);
 	}
 
@@ -84,7 +84,7 @@ public class ProjectConverterTest {
 
 	private IFolder getLibFolder() {
 		IProject project = this.projectToConvert.getProject();
-		IFolder libFolder = project.getFolder(LIB_FOLDER_NAME);
+		IFolder libFolder = project.getFolder(DEFAULT_LIB_CONTAINER);
 		return libFolder;
 	}
 
