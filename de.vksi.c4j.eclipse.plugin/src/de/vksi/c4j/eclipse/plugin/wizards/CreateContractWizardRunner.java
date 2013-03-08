@@ -18,7 +18,7 @@ import de.vksi.c4j.eclipse.plugin.internal.C4JContractReferenceAnnotation;
 import de.vksi.c4j.eclipse.plugin.util.C4JTargetTransformer;
 
 @SuppressWarnings("restriction")
-public class ContractWizardRunner implements WizardRunner<IType> {
+public class CreateContractWizardRunner implements WizardRunner<IType> {
 	private static final String CONTRACT = "Contract";
 	private static final String DIALOG_TITLE = "New Contract Class";
 	private static final String RIGHT_ARROW_BRACKET = ">";
@@ -26,17 +26,17 @@ public class ContractWizardRunner implements WizardRunner<IType> {
 
 	private IType target;
 
-	public ContractWizardRunner(IType type) {
+	public CreateContractWizardRunner(IType type) {
 		this.target = type;
 	}
 
 	public IType run() {
 		StructuredSelection selection = new StructuredSelection(target.getCompilationUnit());
 
-		ContractWizardPage page = new ContractWizardPage(target);
+		CreateContractWizardPage page = new CreateContractWizardPage(target);
 		page.init(selection);
 
-		ContractCreationWizard wizard = new ContractCreationWizard(page, true);
+		CreateContractWizard wizard = new CreateContractWizard(page, true);
 		wizard.init(JavaPlugin.getDefault().getWorkbench(), selection);
 
 		Shell shell = JavaPlugin.getActiveWorkbenchShell();
@@ -71,13 +71,13 @@ public class ContractWizardRunner implements WizardRunner<IType> {
 		return new C4JContractAnnotation(createdType).exists();
 	}
 
-	private void configureWizardPage(ContractWizardPage page) {
+	private void configureWizardPage(CreateContractWizardPage page) {
 		fillInWizardPageName(page);
 		selectContractType(page);
 		fillInWizardPageSuperTypes(page);
 	}
 
-	private void selectContractType(ContractWizardPage page) {
+	private void selectContractType(CreateContractWizardPage page) {
 		C4JContractReferenceAnnotation contractReference = new C4JContractReferenceAnnotation(target);
 		if (contractReference.exists()) {
 			page.setContractTypeSelection(false, true, false);
@@ -85,12 +85,12 @@ public class ContractWizardRunner implements WizardRunner<IType> {
 
 	}
 
-	private void fillInWizardPageName(ContractWizardPage page) {
+	private void fillInWizardPageName(CreateContractWizardPage page) {
 		String contractName = getFullyQualifiedName(target);
 		page.setTypeName(contractName, true);
 	}
 
-	private void fillInWizardPageSuperTypes(ContractWizardPage page) {
+	private void fillInWizardPageSuperTypes(CreateContractWizardPage page) {
 		try {
 			if (target.isInterface()) {
 				List<String> interfacesNames = new ArrayList<String>();

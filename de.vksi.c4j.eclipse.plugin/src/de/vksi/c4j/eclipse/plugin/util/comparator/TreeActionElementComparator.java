@@ -1,7 +1,9 @@
-package de.vksi.c4j.eclipse.plugin.ui;
+package de.vksi.c4j.eclipse.plugin.util.comparator;
 
 import java.io.Serializable;
 import java.util.Comparator;
+
+import de.vksi.c4j.eclipse.plugin.ui.TreeActionElement;
 
 public class TreeActionElementComparator implements Comparator<TreeActionElement<?>>, Serializable
 {

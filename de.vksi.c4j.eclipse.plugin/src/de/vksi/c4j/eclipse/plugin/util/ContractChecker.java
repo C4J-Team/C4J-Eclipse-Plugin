@@ -4,6 +4,7 @@ import org.eclipse.jdt.core.IType;
 
 import de.vksi.c4j.eclipse.plugin.internal.C4JContractAnnotation;
 import de.vksi.c4j.eclipse.plugin.internal.C4JContractReferenceAnnotation;
+import de.vksi.c4j.eclipse.plugin.util.requestor.TypeHierarchyRequestor;
 
 public class ContractChecker {
 
@@ -11,31 +12,40 @@ public class ContractChecker {
 		if (type != null) {
 			if (hasContractAnnotation(type))
 				return true;
-
 			if(hasContractReferenceAnnotation(type))
 				return false;
+			if(checkSuperTypeForContract(type))
+				return true;
+			if(checkSuperInterfacesForContract(type))
+				return true;
+		}
+		return false;
+	}
 
-			IType supertype = TypeHierarchyRequestor.getSupertypeOf(type);
-			if (supertype != null && !TypeHierarchyRequestor.isObject(supertype)) {
-				C4JContractReferenceAnnotation c4jContractReferenceAnnotation = new C4JContractReferenceAnnotation(supertype);
-				if(c4jContractReferenceAnnotation.exists() && type.equals(c4jContractReferenceAnnotation.getContractClass()))
-					return true;
-				
-				C4JContractAnnotation c4jContractAnnotation = new C4JContractAnnotation(supertype);
-				if(c4jContractAnnotation.exists())
-					return true;
-			}
-
-			IType[] superInterfaces = TypeHierarchyRequestor.getSuperInterfacesOf(type);
-			if (superInterfaces.length > 0) {
-				C4JContractReferenceAnnotation c4jContractReferenceAnnotation = new C4JContractReferenceAnnotation(superInterfaces[0]);
-				if(c4jContractReferenceAnnotation.exists() && type.equals(c4jContractReferenceAnnotation.getContractClass()))
-					return true;
-				
-				C4JContractAnnotation c4jContractAnnotation = new C4JContractAnnotation(superInterfaces[0]);
-				if(c4jContractAnnotation.exists())
-					return true;
-			}
+	private static boolean checkSuperTypeForContract(IType type) {
+		IType supertype = TypeHierarchyRequestor.getSupertypeOf(type);
+		if (supertype != null && !TypeHierarchyRequestor.isObject(supertype)) {
+			C4JContractReferenceAnnotation c4jContractReferenceAnnotation = new C4JContractReferenceAnnotation(supertype);
+			if(c4jContractReferenceAnnotation.exists() && type.equals(c4jContractReferenceAnnotation.getContractClass()))
+				return true;
+			
+			C4JContractAnnotation c4jContractAnnotation = new C4JContractAnnotation(supertype);
+			if(c4jContractAnnotation.exists())
+				return true;
+		}
+		return false;
+	}
+	
+	private static boolean checkSuperInterfacesForContract(IType type) {
+		IType[] superInterfaces = TypeHierarchyRequestor.getSuperInterfacesOf(type);
+		if (superInterfaces.length > 0) {
+			C4JContractReferenceAnnotation c4jContractReferenceAnnotation = new C4JContractReferenceAnnotation(superInterfaces[0]);
+			if(c4jContractReferenceAnnotation.exists() && type.equals(c4jContractReferenceAnnotation.getContractClass()))
+				return true;
+			
+			C4JContractAnnotation c4jContractAnnotation = new C4JContractAnnotation(superInterfaces[0]);
+			if(c4jContractAnnotation.exists())
+				return true;
 		}
 		return false;
 	}

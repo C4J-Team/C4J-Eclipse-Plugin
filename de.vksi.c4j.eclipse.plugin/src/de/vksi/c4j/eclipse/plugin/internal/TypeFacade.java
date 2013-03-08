@@ -14,10 +14,10 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.ui.IEditorPart;
 
 import de.vksi.c4j.eclipse.plugin.ui.CreateMethodAction;
-import de.vksi.c4j.eclipse.plugin.util.AssosiatedMemberRequest;
-import de.vksi.c4j.eclipse.plugin.util.AssosiatedMemberRequest.MemberType;
+import de.vksi.c4j.eclipse.plugin.util.requestor.AssosiatedMemberRequest;
+import de.vksi.c4j.eclipse.plugin.util.requestor.Requestor;
+import de.vksi.c4j.eclipse.plugin.util.requestor.AssosiatedMemberRequest.MemberType;
 import de.vksi.c4j.eclipse.plugin.util.ContractChecker;
-import de.vksi.c4j.eclipse.plugin.util.Requestor;
 import de.vksi.c4j.eclipse.plugin.wizards.WizardRunner;
 
 public abstract class TypeFacade {
@@ -39,9 +39,9 @@ public abstract class TypeFacade {
 
 	public static TypeFacade createFacade(ICompilationUnit compilationUnit) {
 		if (isContract(compilationUnit.findPrimaryType())) {
-			return new ContractFacade(compilationUnit);
+			return new C4JContractFacade(compilationUnit);
 		}
-		return new TargetFacade(compilationUnit);
+		return new C4JTargetFacade(compilationUnit);
 	}
 
 	public static boolean isContract(IType type) {

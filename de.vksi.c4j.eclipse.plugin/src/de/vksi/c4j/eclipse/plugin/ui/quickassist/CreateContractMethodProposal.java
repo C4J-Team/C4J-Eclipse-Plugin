@@ -13,11 +13,11 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
-import de.vksi.c4j.eclipse.plugin.internal.TargetFacade;
+import de.vksi.c4j.eclipse.plugin.internal.C4JTargetFacade;
 import de.vksi.c4j.eclipse.plugin.internal.TypeFacade;
-import de.vksi.c4j.eclipse.plugin.util.AssosiatedMemberRequest;
-import de.vksi.c4j.eclipse.plugin.util.AssosiatedMemberRequest.MemberType;
 import de.vksi.c4j.eclipse.plugin.util.PluginImages;
+import de.vksi.c4j.eclipse.plugin.util.requestor.AssosiatedMemberRequest;
+import de.vksi.c4j.eclipse.plugin.util.requestor.AssosiatedMemberRequest.MemberType;
 
 public class CreateContractMethodProposal implements IJavaCompletionProposal {
 
@@ -36,7 +36,7 @@ public class CreateContractMethodProposal implements IJavaCompletionProposal {
 
 	@Override
 	public void apply(IDocument document) {
-		TypeFacade tf = TargetFacade.createFacade(target.getCompilationUnit());
+		TypeFacade tf = C4JTargetFacade.createFacade(target.getCompilationUnit());
 		AssosiatedMemberRequest request = AssosiatedMemberRequest.newCorrespondingMemberRequest() //
 				.asCreateRequest() //
 		        .withExpectedResultType(MemberType.METHOD) //

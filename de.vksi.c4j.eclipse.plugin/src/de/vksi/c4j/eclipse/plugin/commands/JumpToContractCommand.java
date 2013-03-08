@@ -11,8 +11,8 @@ import org.eclipse.jdt.core.IType;
 
 import de.vksi.c4j.eclipse.plugin.internal.TypeFacade;
 import de.vksi.c4j.eclipse.plugin.ui.quickassist.JumpAction;
-import de.vksi.c4j.eclipse.plugin.util.AssosiatedMemberRequest;
-import de.vksi.c4j.eclipse.plugin.util.AssosiatedMemberRequest.MemberType;
+import de.vksi.c4j.eclipse.plugin.util.requestor.AssosiatedMemberRequest;
+import de.vksi.c4j.eclipse.plugin.util.requestor.AssosiatedMemberRequest.MemberType;
 
 public class JumpToContractCommand extends AbstractHandler {
 
@@ -25,25 +25,29 @@ public class JumpToContractCommand extends AbstractHandler {
 		if (javaElement instanceof IType) {
 			IType type = (IType) Platform.getAdapterManager().getAdapter(javaElement, IType.class);
 			TypeFacade typeFacade = TypeFacade.createFacade(type.getCompilationUnit());
-			AssosiatedMemberRequest request = AssosiatedMemberRequest.newCorrespondingMemberRequest() //
-					.setDialogPromtText("Jump to...") //
-					.withExpectedResultType(MemberType.TYPE) //
-					.build();
-			IMember assosiatedMember = typeFacade.getAssosiatedType(request);
-			JumpAction.openType(assosiatedMember);
+			AssosiatedMemberRequest request = createSearchRequest(MemberType.TYPE);
+			jump(typeFacade, request);
 		} else if (javaElement instanceof IMethod) {
 			IMethod method = (IMethod) Platform.getAdapterManager().getAdapter(javaElement, IMethod.class);
-
 			TypeFacade typeFacade = TypeFacade.createFacade(method.getCompilationUnit());
-			AssosiatedMemberRequest request = AssosiatedMemberRequest.newCorrespondingMemberRequest() //
-					.setDialogPromtText("Jump to...").withExpectedResultType(MemberType.METHOD) //
-					.withCurrentMethod(method) //
-					.build();
-			IMember assosiatedMember = typeFacade.getAssosiatedType(request);
-			JumpAction.openType(assosiatedMember);
+			AssosiatedMemberRequest request = createSearchRequest(MemberType.METHOD);
+			jump(typeFacade, request);
 		}
 
 		return null;
+	}
+
+	private void jump(TypeFacade typeFacade, AssosiatedMemberRequest request) {
+		IMember assosiatedMember = typeFacade.getAssosiatedType(request);
+		JumpAction.openType(assosiatedMember);
+	}
+
+	private AssosiatedMemberRequest createSearchRequest(MemberType memberType) {
+		AssosiatedMemberRequest request = AssosiatedMemberRequest.newCorrespondingMemberRequest() //
+				.setDialogPromtText("Jump to...") //
+				.withExpectedResultType(memberType) //
+				.build();
+		return request;
 	}
 
 }

@@ -18,6 +18,10 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 
+import de.vksi.c4j.eclipse.plugin.util.comparator.MethodComparator;
+import de.vksi.c4j.eclipse.plugin.util.comparator.TreeActionElementComparator;
+import de.vksi.c4j.eclipse.plugin.util.comparator.TypeComparator;
+
 public class MemberContentProvider implements ITreeContentAndDefaultSelectionProvider {
 	private final Map<IType, List<IMethod>> methodsByType;
 	private Object[] elements;

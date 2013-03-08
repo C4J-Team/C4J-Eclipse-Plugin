@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.util;
+package de.vksi.c4j.eclipse.plugin.util.requestor;
 
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
