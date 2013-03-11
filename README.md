@@ -18,7 +18,7 @@ To convert an existing Java-Project into a C4J-Project just **right-click** your
 For target classes (=classes guarded by contracts) opened in the editor you can create new contracts using the shortcut **Crtl+1**. The C4J-Plugin identifies the name of the target class under the cursor. The cursor can be either set on class or method level. If the target class has no contract up to that point, a contract creation wizard is going to be shown. In case the target class is already guarded by a contract a dialog is shown and prompts you to 
 * jump to an existing contract
 * jump to an existing contract method corresponding to the cursor position 
-* create a new contract method corresponding to the cursor position (if a contract exists but does not contain a contract method for the selected target method  
+* create a new contract method corresponding to the cursor position (if a contract exists but does not contain a contract method for the selected target method)
 * create a new contract for the corresponding target
 
 ###Switching between target and contract class
