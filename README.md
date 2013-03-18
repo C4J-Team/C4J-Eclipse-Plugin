@@ -15,7 +15,7 @@ A project creation wizard is shown and asks you to set up your C4J-Project. The 
 To convert an existing Java-Project into a C4J-Project just **right-click** your project in the Package Explorer View (alternative: Navigator or Project Explorer) and go to **Configure -> Convert to C4J Project**. A Dialog is shown and prompts you to choose the location of the C4J libraries and config files.
 
 ###Creating a new contract classes/methods
-For target classes (=classes guarded by contracts) opened in the editor you can create new contracts using the shortcut **Crtl+1**. The C4J-Plugin identifies the name of the target class under the cursor. The cursor can be either set on class or method level. If the target class has no contract up to that point, a contract creation wizard is going to be shown. In case the target class is already guarded by a contract a dialog is shown and prompts you to 
+For target classes (=classes guarded by contracts) opened in the editor you can create new contracts using the shortcut **Ctrl+1**. The C4J-Plugin identifies the name of the target class under the cursor. The cursor can be either set on class or method level. If the target class has no contract up to that point, a contract creation wizard is going to be shown. In case the target class is already guarded by a contract a dialog is shown and prompts you to 
 * jump to an existing contract
 * jump to an existing contract method corresponding to the cursor position 
 * create a new contract method corresponding to the cursor position (if a contract exists but does not contain a contract method for the selected target method)
