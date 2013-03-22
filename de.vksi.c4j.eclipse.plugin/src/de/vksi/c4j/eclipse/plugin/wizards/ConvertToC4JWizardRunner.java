@@ -46,6 +46,7 @@ public class ConvertToC4JWizardRunner implements WizardRunner<Boolean> {
 
 	private boolean convertProject() {
 		try {
+			//TODO: use ProgressMonitor to provide feedback
 			return new ProjectConverter().convertToC4JProject(javaProject);
 		} catch (CoreException e) {
 			e.printStackTrace();
@@ -54,5 +55,4 @@ public class ConvertToC4JWizardRunner implements WizardRunner<Boolean> {
 		}
 		return false;
 	}
-
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.ui.refactoring.RefactoringSaveHelper;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -31,6 +32,9 @@ public class CreateContractWizardRunner implements WizardRunner<IType> {
 	public IType run() {
 		if(target == null)
 			return null;
+		 
+		RefactoringSaveHelper dirtySaver = new RefactoringSaveHelper(RefactoringSaveHelper.SAVE_ALL); 
+		dirtySaver.saveEditors(null);
 		
 		StructuredSelection selection = new StructuredSelection(target.getCompilationUnit());
 

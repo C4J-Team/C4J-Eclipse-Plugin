@@ -27,7 +27,7 @@ public class AssertStatementVisitor extends ASTVisitor {
 		String assertMessage = assertStatement.getMessage() != null ? assertStatement.getMessage().toString() : "";
 		
 		assertExpression = assertExpression.replace(TARGET, "");
-		return assertExpression + " : " + assertMessage;
+		return assertMessage.isEmpty() ? assertExpression : assertExpression + " : " + assertMessage;
 	}
 
 }

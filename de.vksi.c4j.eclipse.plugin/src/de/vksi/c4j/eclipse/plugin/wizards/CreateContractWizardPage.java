@@ -227,7 +227,6 @@ public class CreateContractWizardPage extends NewTypeWizardPage {
 	@Override
 	protected void createTypeMembers(IType type, ImportsManager imports, IProgressMonitor monitor)
 			throws CoreException {
-
 		C4JContractTransformer contract = new C4JContractTransformer(type);
 
 		if (isCreateExternalContract())

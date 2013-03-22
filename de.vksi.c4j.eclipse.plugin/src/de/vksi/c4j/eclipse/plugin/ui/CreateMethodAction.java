@@ -6,6 +6,7 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.ui.refactoring.RefactoringSaveHelper;
 
 import de.vksi.c4j.eclipse.plugin.util.C4JContractTransformer;
 
@@ -23,6 +24,9 @@ public class CreateMethodAction extends CreateNewClassAction {
 
 	@Override
 	public IMember execute() {
+		RefactoringSaveHelper dirtySaver = new RefactoringSaveHelper(RefactoringSaveHelper.SAVE_ALL); 
+		dirtySaver.saveEditors(null);
+		
 		C4JContractTransformer contractTransformer = new C4JContractTransformer(type);
 		try {
 			if (method.isConstructor())

@@ -8,9 +8,9 @@
 
    <description url="http://www.example.com/description">
       C4J Eclipse Plugin
-Please make sure your Eclipse platform is up-to-date. 
+Please make sure your (Juno)Eclipse platform is up-to-date. 
 -------------------------------------------------------
-Required bundle versions:
+Min. required bundle versions:
 org.eclipse.core.resources version=3.8.1
 org.eclipse.jdt version=&quot;3.8.0&quot;
 org.eclipse.jdt.core version=&quot;3.8.2&quot;
