@@ -13,7 +13,6 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
-import de.vksi.c4j.eclipse.plugin.internal.C4JTargetFacade;
 import de.vksi.c4j.eclipse.plugin.internal.TypeFacade;
 import de.vksi.c4j.eclipse.plugin.util.PluginImages;
 import de.vksi.c4j.eclipse.plugin.util.requestor.AssosiatedMemberRequest;
@@ -36,7 +35,7 @@ public class CreateContractMethodProposal implements IJavaCompletionProposal {
 
 	@Override
 	public void apply(IDocument document) {
-		TypeFacade tf = C4JTargetFacade.createFacade(target.getCompilationUnit());
+		TypeFacade tf = TypeFacade.createFacade(target.getCompilationUnit());
 		AssosiatedMemberRequest request = AssosiatedMemberRequest.newCorrespondingMemberRequest() //
 				.asCreateRequest() //
 		        .withExpectedResultType(MemberType.METHOD) //
@@ -83,7 +82,7 @@ public class CreateContractMethodProposal implements IJavaCompletionProposal {
 		return 0;
 	}
 
-	public IMethod getSelectedMethod() {
+	private IMethod getSelectedMethod() {
 		return selectedMethod;
 	}
 

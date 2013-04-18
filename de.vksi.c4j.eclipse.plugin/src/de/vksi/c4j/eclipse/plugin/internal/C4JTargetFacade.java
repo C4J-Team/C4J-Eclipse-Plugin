@@ -17,11 +17,12 @@ import de.vksi.c4j.eclipse.plugin.ui.CreateNewClassAction;
 import de.vksi.c4j.eclipse.plugin.ui.MemberContentProvider;
 import de.vksi.c4j.eclipse.plugin.ui.TreeActionElement;
 import de.vksi.c4j.eclipse.plugin.util.requestor.AssosiatedMemberRequest;
+import de.vksi.c4j.eclipse.plugin.util.requestor.AssosiatedMemberRequest.MemberType;
 import de.vksi.c4j.eclipse.plugin.util.requestor.ContractRequestor;
 import de.vksi.c4j.eclipse.plugin.util.requestor.Requestor;
 import de.vksi.c4j.eclipse.plugin.util.requestor.TypeHierarchyRequestor;
-import de.vksi.c4j.eclipse.plugin.util.requestor.AssosiatedMemberRequest.MemberType;
 import de.vksi.c4j.eclipse.plugin.wizards.CreateContractWizardRunner;
+import de.vksi.c4j.eclipse.plugin.wizards.WizardRunner;
 
 public class C4JTargetFacade extends TypeFacade {
 
@@ -42,7 +43,7 @@ public class C4JTargetFacade extends TypeFacade {
 	}
 
 	@Override
-	protected CreateContractWizardRunner newCorrespondingClassWizard(IType type) {
+	protected WizardRunner<IType> getCorrespondingWizard(IType type) {
 		return new CreateContractWizardRunner(type);
 	}
 
@@ -72,7 +73,7 @@ public class C4JTargetFacade extends TypeFacade {
 		MemberContentProvider contentProvider = new MemberContentProvider(proposedClasses, proposedMethods).withAction(new CreateNewClassAction() {
 			@Override
 			public IType execute() {
-				return newCorrespondingClassWizard(getType()).run();
+				return getCorrespondingWizard(getType()).run();
 			}
 		});
 

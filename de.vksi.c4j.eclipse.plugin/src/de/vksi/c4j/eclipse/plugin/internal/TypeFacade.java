@@ -155,15 +155,15 @@ public abstract class TypeFacade {
 		return this.assosiatedTypeSearcher;
 	}
 
-	abstract protected Collection<IMethod> getAssosiatedMethodsFromClasses(IMethod method,
+	protected abstract Collection<IMethod> getAssosiatedMethodsFromClasses(IMethod method,
 			Collection<IType> classes);
 
-	abstract protected WizardRunner<IType> newCorrespondingClassWizard(IType fromType);
+	protected abstract WizardRunner<IType> getCorrespondingWizard(IType fromType);
 
-	abstract protected IMember openDialog(AssosiatedMemberRequest request, Collection<IType> proposedClasses,
+	protected abstract IMember openDialog(AssosiatedMemberRequest request, Collection<IType> proposedClasses,
 			Collection<IMethod> proposedMethods, boolean perfectMatches);
 
-	abstract protected Requestor getRequestor();
+	protected abstract Requestor getRequestor();
 
 	private static interface MemberAction {
 		IMember getCorrespondingMember();
@@ -218,7 +218,7 @@ public abstract class TypeFacade {
 
 	private class OpenNewClassWizard implements MemberAction {
 		public IType getCorrespondingMember() {
-			WizardRunner<IType> wizard = newCorrespondingClassWizard(getType());
+			WizardRunner<IType> wizard = getCorrespondingWizard(getType());
 			return wizard != null ? wizard.run() : null;
 		}
 	}

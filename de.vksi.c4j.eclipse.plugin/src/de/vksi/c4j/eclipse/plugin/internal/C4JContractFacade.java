@@ -12,7 +12,7 @@ import org.eclipse.jdt.core.IType;
 import de.vksi.c4j.eclipse.plugin.util.requestor.AssosiatedMemberRequest;
 import de.vksi.c4j.eclipse.plugin.util.requestor.Requestor;
 import de.vksi.c4j.eclipse.plugin.util.requestor.TargetRequestor;
-import de.vksi.c4j.eclipse.plugin.wizards.CreateContractWizardRunner;
+import de.vksi.c4j.eclipse.plugin.wizards.WizardRunner;
 
 public class C4JContractFacade extends TypeFacade {
 
@@ -33,7 +33,7 @@ public class C4JContractFacade extends TypeFacade {
 	}
 
 	@Override
-	protected CreateContractWizardRunner newCorrespondingClassWizard(IType fromType) {
+	protected WizardRunner<IType> getCorrespondingWizard(IType fromType) {
 		return null;
 	}
 
