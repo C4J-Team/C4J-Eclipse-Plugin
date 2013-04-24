@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.commands;
+package de.vksi.c4j.eclipse.plugin.commandhandler;
 
 import java.util.Iterator;
 
@@ -15,7 +15,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.vksi.c4j.eclipse.plugin.wizards.ConvertToC4JWizardRunner;
 
-public class ConvertToC4JProjectCommand extends AbstractHandler {
+public class ConvertToC4JProjectCommandHandler extends AbstractHandler {
 	//TODO: refactor
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {

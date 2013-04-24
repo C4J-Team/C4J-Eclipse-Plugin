@@ -8,13 +8,14 @@ import org.eclipse.jdt.core.search.SearchParticipant;
 import org.eclipse.jdt.core.search.SearchPattern;
 
 import de.vksi.c4j.eclipse.plugin.util.requestor.ExternalContractSearchRequestor;
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CONTRACT;
 
 public class ExternalContractScanner {
 	private ExternalContractMap externalContracts = new ExternalContractMap();
 
 	//TODO: scope search to "type hierarchy" -> like JDTSearchProvider.searchMethodReference(referenceList, method, scope, iJavaProject);
 	public void scan() {
-		SearchPattern pattern = SearchPattern.createPattern("Contract", IJavaSearchConstants.TYPE,
+		SearchPattern pattern = SearchPattern.createPattern(ANNOTATION_CONTRACT, IJavaSearchConstants.TYPE,
 				IJavaSearchConstants.ANNOTATION_TYPE_REFERENCE, SearchPattern.R_EXACT_MATCH);
 
 		IJavaSearchScope scope = SearchEngine.createWorkspaceScope();

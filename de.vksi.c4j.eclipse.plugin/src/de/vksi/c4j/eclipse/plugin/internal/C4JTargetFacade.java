@@ -34,7 +34,7 @@ public class C4JTargetFacade extends TypeFacade {
 	protected Collection<IMethod> getAssosiatedMethodsFromClasses(IMethod method, Collection<IType> classes) {
 		List<IMethod> matchedMethods = new ArrayList<IMethod>();
 		for (IType type : classes) {
-			TypeFacade contract = C4JContractFacade.createFacade(type.getCompilationUnit());
+			TypeFacade contract = TypeFacade.createFacade(type.getCompilationUnit());
 			if (contract.hasMethod(method)) {
 				matchedMethods.add(contract.getMethod(method));
 			}

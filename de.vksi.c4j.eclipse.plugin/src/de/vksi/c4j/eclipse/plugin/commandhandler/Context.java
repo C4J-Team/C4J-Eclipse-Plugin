@@ -1,4 +1,4 @@
-package de.vksi.c4j.eclipse.plugin.commands;
+package de.vksi.c4j.eclipse.plugin.commandhandler;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.IFile;

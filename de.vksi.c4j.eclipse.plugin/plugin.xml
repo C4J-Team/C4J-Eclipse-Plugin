@@ -5,7 +5,7 @@
          point="org.eclipse.ui.commands">
       <command
             categoryId="de.vksi.c4j.eclipse.plugin.commands.category"
-            defaultHandler="de.vksi.c4j.eclipse.plugin.commands.ConvertToC4JProjectCommand"
+            defaultHandler="de.vksi.c4j.eclipse.plugin.commandhandler.ConvertToC4JProjectCommandHandler"
             id="de.vksi.c4j.eclipse.plugin.convertToC4jProject"
             name="Convert to C4J Project">
       </command>
@@ -15,7 +15,7 @@
       </category>
       <command
             categoryId="de.vksi.c4j.eclipse.plugin.commands.category"
-            defaultHandler="de.vksi.c4j.eclipse.plugin.commands.JumpToContractCommand"
+            defaultHandler="de.vksi.c4j.eclipse.plugin.commandhandler.JumpToContractCommandHandler"
             description="Jump to contract"
             id="de.vksi.c4j.eclipse.plugin.jumpToContract"
             name="Jump to Contract">
@@ -49,8 +49,7 @@
             project="true">
       </wizard>
    </extension>
-   <extension
-         point="org.eclipse.jdt.ui.javaEditorTextHovers">
+   <extension point="org.eclipse.jdt.ui.javaEditorTextHovers">
       <hover
             activate="true"
             class="de.vksi.c4j.eclipse.plugin.ui.texthover.C4JTextHover"
