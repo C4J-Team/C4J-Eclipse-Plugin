@@ -24,9 +24,9 @@ import de.vksi.c4j.eclipse.plugin.util.requestor.TypeHierarchyRequestor;
 import de.vksi.c4j.eclipse.plugin.wizards.CreateContractWizardRunner;
 import de.vksi.c4j.eclipse.plugin.wizards.WizardRunner;
 
-public class C4JTargetFacade extends TypeFacade {
+public class C4JTarget extends TypeFacade {
 
-	protected C4JTargetFacade(ICompilationUnit compilationUnit) {
+	protected C4JTarget(ICompilationUnit compilationUnit) {
 		super(compilationUnit);
 	}
 
@@ -97,7 +97,7 @@ public class C4JTargetFacade extends TypeFacade {
 		
 		if (request.shouldReturn(MemberType.METHOD) && request.isCreateRequest()) {
 			for (IType type : proposedClasses) {
-				TypeFacade contract = C4JContractFacade.createFacade(type.getCompilationUnit());
+				TypeFacade contract = C4JContract.createFacade(type.getCompilationUnit());
 				if (!contract.hasMethod(request.getCurrentMethod())) {
 					createMethodActions.add(new CreateMethodAction(type, request.getCurrentMethodDeclaration()));
 				}

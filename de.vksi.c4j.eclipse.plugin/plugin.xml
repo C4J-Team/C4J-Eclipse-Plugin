@@ -15,10 +15,10 @@
       </category>
       <command
             categoryId="de.vksi.c4j.eclipse.plugin.commands.category"
-            defaultHandler="de.vksi.c4j.eclipse.plugin.commandhandler.JumpToContractCommandHandler"
-            description="Jump to contract"
-            id="de.vksi.c4j.eclipse.plugin.jumpToContract"
-            name="Jump to Contract">
+            defaultHandler="de.vksi.c4j.eclipse.plugin.commandhandler.JumpCommandHandler"
+            description="Jump to Contract/Target"
+            id="de.vksi.c4j.eclipse.plugin.jump"
+            name="Jump">
       </command>
    </extension>
    <extension
@@ -67,13 +67,13 @@
    <extension
          point="org.eclipse.ui.bindings">
       <key
-            commandId="de.vksi.c4j.eclipse.plugin.jumpToContract"
+            commandId="de.vksi.c4j.eclipse.plugin.jump"
             contextId="org.eclipse.ui.textEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Ctrl+Alt+ARROW_RIGHT">
       </key>
       <key
-            commandId="de.vksi.c4j.eclipse.plugin.jumpToContract"
+            commandId="de.vksi.c4j.eclipse.plugin.jump"
             contextId="org.eclipse.ui.textEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Ctrl+Alt+ARROW_LEFT">

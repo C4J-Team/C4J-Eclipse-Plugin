@@ -14,9 +14,9 @@ import de.vksi.c4j.eclipse.plugin.util.requestor.Requestor;
 import de.vksi.c4j.eclipse.plugin.util.requestor.TargetRequestor;
 import de.vksi.c4j.eclipse.plugin.wizards.WizardRunner;
 
-public class C4JContractFacade extends TypeFacade {
+public class C4JContract extends TypeFacade {
 
-	protected C4JContractFacade(ICompilationUnit compilationUnit) {
+	protected C4JContract(ICompilationUnit compilationUnit) {
 		super(compilationUnit);
 	}
 
@@ -24,7 +24,7 @@ public class C4JContractFacade extends TypeFacade {
 	protected Collection<IMethod> getAssosiatedMethodsFromClasses(IMethod method, Collection<IType> classes) {
 		List<IMethod> matchedMethods = new ArrayList<IMethod>();
 		for (IType type : classes) {
-			TypeFacade target = C4JContractFacade.createFacade(type.getCompilationUnit());
+			TypeFacade target = C4JContract.createFacade(type.getCompilationUnit());
 			if (target.hasMethod(method)) {
 				matchedMethods.add(target.getMethod(method));
 			}

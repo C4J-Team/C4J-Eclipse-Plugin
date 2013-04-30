@@ -14,7 +14,7 @@ import de.vksi.c4j.eclipse.plugin.ui.quickassist.JumpAction;
 import de.vksi.c4j.eclipse.plugin.util.requestor.AssosiatedMemberRequest;
 import de.vksi.c4j.eclipse.plugin.util.requestor.AssosiatedMemberRequest.MemberType;
 
-public class JumpToContractCommandHandler extends AbstractHandler {
+public class JumpCommandHandler extends AbstractHandler {
 
 	private static final String JUMP_DIALOG_TITLE = "Jump to...";
 

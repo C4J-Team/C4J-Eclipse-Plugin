@@ -39,9 +39,9 @@ public abstract class TypeFacade {
 
 	public static TypeFacade createFacade(ICompilationUnit compilationUnit) {
 		if (isContract(compilationUnit.findPrimaryType())) {
-			return new C4JContractFacade(compilationUnit);
+			return new C4JContract(compilationUnit);
 		}
-		return new C4JTargetFacade(compilationUnit);
+		return new C4JTarget(compilationUnit);
 	}
 
 	public static boolean isContract(IType type) {
