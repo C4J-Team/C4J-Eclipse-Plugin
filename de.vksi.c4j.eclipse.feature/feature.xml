@@ -125,10 +125,16 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <import plugin="org.eclipse.jface.text" version="3.8.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jdt.launching" version="3.6.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.ide" version="3.8.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.filesystem"/>
       <import plugin="org.eclipse.core.filebuffers" version="3.5.200" match="greaterOrEqual"/>
    </requires>
 
+	<plugin
+         id="de.vksi.c4j.eclipse.plugin.logging"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+   
    <plugin
          id="de.vksi.c4j.eclipse.plugin"
          download-size="0"

@@ -19,7 +19,7 @@ public class C4JQuickAssistProcessor implements IQuickAssistProcessor {
 	@Override
 	public IJavaCompletionProposal[] getAssists(IInvocationContext context, IProblemLocation[] locations)
 			throws CoreException {
-
+		
 		this.context = context;
 		if (locations.length == 0)
 			return getQuickAssists(context, locations);

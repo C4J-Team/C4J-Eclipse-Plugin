@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: C4J Eclipse Plugin
+Bundle-Name: Plugin
 Bundle-SymbolicName: de.vksi.c4j.eclipse.plugin;singleton:=true
 Bundle-Version: 0.0.1.qualifier
 Bundle-Activator: de.vksi.c4j.eclipse.plugin.C4JEclipsePluginActivator
@@ -13,8 +13,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.text;bundle-version="3.8.1",
  org.eclipse.jdt.launching;bundle-version="3.6.100",
  org.eclipse.ui.ide;bundle-version="3.8.1",
- org.eclipse.core.filebuffers;bundle-version="3.5.200"
-Bundle-ActivationPolicy: lazy
+ org.eclipse.core.filebuffers;bundle-version="3.5.200",
+ de.vksi.c4j.eclipse.plugin.logging
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.eclipse.core.filesystem
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
 Bundle-Vendor: VKSI

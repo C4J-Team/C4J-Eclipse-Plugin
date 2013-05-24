@@ -6,7 +6,6 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-
 	<properties>
 		<tycho-version>0.16.0</tycho-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -46,9 +45,10 @@
 		</plugins>
 	</build>
 	<modules>
+		<module>../de.vksi.c4j.eclipse.plugin.logging</module>
 		<module>../de.vksi.c4j.eclipse.plugin</module>
+		<module>../de.vksi.c4j.eclipse.plugin.test</module>
 		<module>../de.vksi.c4j.eclipse.feature</module>
 		<module>../de.vksi.c4j.eclipse.repository</module>
-		<module>../de.vksi.c4j.eclipse.plugin.test</module>
 	</modules>
 </project>

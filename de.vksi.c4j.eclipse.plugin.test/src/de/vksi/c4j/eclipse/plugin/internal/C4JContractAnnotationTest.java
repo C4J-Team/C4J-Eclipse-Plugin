@@ -14,12 +14,10 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import test.util.JavaProjectLoader;
 
-@RunWith(MockitoJUnitRunner.class)
+
 public class C4JContractAnnotationTest {
 	private C4JContractAnnotation c4JContractAnnotation;
 	private IJavaProject javaProject;
