@@ -9,7 +9,6 @@ import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.JAVASSIST_JAR;
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.LOG4J_JAR;
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.LOG4J_PROPERTIES;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,9 +17,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -30,6 +29,7 @@ import org.osgi.framework.Bundle;
 import de.vksi.c4j.eclipse.plugin.C4JEclipsePluginActivator;
 
 public class C4JResources {
+	private static Logger logger = C4JEclipsePluginActivator.getLogManager().getLogger(C4JResources.class.getName());
 	private static final String JAR_FILE_EXTENSION = "jar";
 	private static final String LIBS_PATH = "resources/libs/";
 	private static final String CONFIG_PATH = "resources/config/";
@@ -53,7 +53,7 @@ public class C4JResources {
 		destLibFolder = destFolder;
 		copyFiles(destLibFolder, getResourceURLsFromBundle(LIBS_PATH));
 	}
-	
+
 	public IFile getLocalC4Jjar() {
 		IFile c4jJar = destLibFolder.getFile(C4J_JAR);
 		return c4jJar.exists() ? c4jJar : null;
@@ -79,10 +79,8 @@ public class C4JResources {
 	private void createResource(URL url, IFile destFileHandle) {
 		try {
 			destFileHandle.create(url.openStream(), false, null);
-		} catch (CoreException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("Could not create C4J resource " + destFileHandle.getName(), e);
 		}
 	}
 
@@ -105,10 +103,10 @@ public class C4JResources {
 
 	private Set<IClasspathEntry> getClassPathEntries() {
 		Set<IClasspathEntry> classPathEntries = new HashSet<IClasspathEntry>();
-		
+
 		for (String res : resourceMap.get(LIBS_PATH)) {
 			IFile resourceHandle = getResourceHandle(destLibFolder, res);
-			if(resourceHandle.exists() && JAR_FILE_EXTENSION.equalsIgnoreCase(resourceHandle.getFileExtension()))
+			if (resourceHandle.exists() && JAR_FILE_EXTENSION.equalsIgnoreCase(resourceHandle.getFileExtension()))
 				classPathEntries.add(JavaCore.newLibraryEntry(resourceHandle.getFullPath(), null, null));
 		}
 		return classPathEntries;

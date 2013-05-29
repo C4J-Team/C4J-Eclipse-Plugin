@@ -13,6 +13,7 @@ import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.RETURN_IGNORED;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -57,8 +58,11 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
 
+import de.vksi.c4j.eclipse.plugin.C4JEclipsePluginActivator;
+
 @SuppressWarnings("restriction")
 public class C4JContractTransformer {
+	private static Logger logger = C4JEclipsePluginActivator.getLogManager().getLogger(C4JContractTransformer.class.getName());
 	private static final String PRE_CONDITION_TODO_COMMENT = "// TODO: write preconditions if required";
 	private static final String POST_CONDITION_TODO_COMMENT = "// TODO: write postconditions if required";
 	private static final String CLASS_INVARIANTS_TODO_COMMENT = "// TODO: write invariants if required";
@@ -83,7 +87,7 @@ public class C4JContractTransformer {
 		ASTParser parser = ASTParser.newParser(ASTProvider.SHARED_AST_LEVEL);
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		parser.setSource(contract.getCompilationUnit());
-		//TODO: try parser.setResolveBindings(false);
+		parser.setResolveBindings(false);
 		astRoot = (CompilationUnit) parser.createAST(null);
 
 		// create a ASTRewrite
@@ -99,7 +103,7 @@ public class C4JContractTransformer {
 		try {
 			importRewrite = StubUtility.createImportRewrite(contract.getCompilationUnit(), true);
 		} catch (JavaModelException e) {
-			e.printStackTrace();
+			logger.error("Could not create imports of " + contract.getElementName());
 		}
 	}
 
@@ -315,15 +319,9 @@ public class C4JContractTransformer {
 			TextEdit importEdit = importRewrite.rewriteImports(null);
 			applyEdits(importEdit);
 			//TODO: implement undo functionality if creation/modification fails
-		} catch (JavaModelException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (CoreException e) {
-			e.printStackTrace();
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {
+			logger.error("Could not apply code manipulation to " + contract.getElementName(), e);
+		} 
 	}
 
 	private void applyEdits(TextEdit edits) throws BadLocationException, CoreException {

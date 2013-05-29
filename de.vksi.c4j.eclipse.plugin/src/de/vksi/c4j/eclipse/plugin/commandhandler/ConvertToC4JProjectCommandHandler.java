@@ -16,7 +16,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import de.vksi.c4j.eclipse.plugin.wizards.ConvertToC4JWizardRunner;
 
 public class ConvertToC4JProjectCommandHandler extends AbstractHandler {
-	//TODO: refactor
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection selection = getSelection(event);
@@ -47,11 +46,7 @@ public class ConvertToC4JProjectCommandHandler extends AbstractHandler {
 		if (selection.size() == 1) {
 			IJavaProject javaProject = JavaCore.create(project);
 			if (javaProject.exists()) {
-				try {
-					new ConvertToC4JWizardRunner(javaProject, selection).run();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				new ConvertToC4JWizardRunner(javaProject, selection).run();
 			}
 		}
 	}

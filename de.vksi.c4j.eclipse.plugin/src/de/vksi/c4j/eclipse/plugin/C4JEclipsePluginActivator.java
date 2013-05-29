@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -34,9 +33,6 @@ public class C4JEclipsePluginActivator extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		configure();
-		
-		Logger logger = C4JEclipsePluginActivator.getLogManager().getLogger(C4JEclipsePluginActivator.class.getName());
-		logger.info("LOGGING STUFF");
 	}
 
 	public void stop(BundleContext context) throws Exception {

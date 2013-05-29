@@ -17,9 +17,8 @@ public class C4JQuickAssistProcessor implements IQuickAssistProcessor {
 	private IInvocationContext context;
 
 	@Override
-	public IJavaCompletionProposal[] getAssists(IInvocationContext context, IProblemLocation[] locations)
-			throws CoreException {
-		
+	public IJavaCompletionProposal[] getAssists(IInvocationContext context, IProblemLocation[] locations) throws CoreException {
+
 		this.context = context;
 		if (locations.length == 0)
 			return getQuickAssists(context, locations);
@@ -43,8 +42,11 @@ public class C4JQuickAssistProcessor implements IQuickAssistProcessor {
 
 	private boolean isContract(ASTNode currentNode) {
 		TypeDeclaration typeDeclaration = getTypeDeclaration(currentNode);
-		IType type = context.getCompilationUnit().getType(typeDeclaration.getName().toString());
-		return ContractChecker.isContract(type);
+		if (typeDeclaration != null) {
+			IType type = context.getCompilationUnit().getType(typeDeclaration.getName().toString());
+			return ContractChecker.isContract(type);
+		}
+		return false;
 	}
 
 	private IJavaCompletionProposal[] getQuickFixes(IInvocationContext context, IProblemLocation[] locations) {
@@ -61,15 +63,11 @@ public class C4JQuickAssistProcessor implements IQuickAssistProcessor {
 		return new IJavaCompletionProposal[] {};
 	}
 
-	private IJavaCompletionProposal[] createAssistFor(MethodDeclaration currentNode,
-			IInvocationContext context) {
-
+	private IJavaCompletionProposal[] createAssistFor(MethodDeclaration currentNode, IInvocationContext context) {
 		TypeDeclaration typeDeclaration = getTypeDeclaration(currentNode);
 		// no contract support for nested classes
-		if (!isNestedClass(typeDeclaration)) {
-
+		if (!isNestedClass(typeDeclaration))
 			return new IJavaCompletionProposal[] { new CreateContractMethodProposal(context) };
-		}
 
 		return new IJavaCompletionProposal[] {};
 	}

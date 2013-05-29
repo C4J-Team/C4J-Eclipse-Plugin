@@ -1,5 +1,6 @@
 package de.vksi.c4j.eclipse.plugin.internal;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IImportDeclaration;
@@ -8,8 +9,10 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
-public abstract class C4JAnnotation {
+import de.vksi.c4j.eclipse.plugin.C4JEclipsePluginActivator;
 
+public abstract class C4JAnnotation {
+	private static Logger logger = C4JEclipsePluginActivator.getLogManager().getLogger(C4JAnnotation.class.getName());
 	private static final int FIRST_MEMBER_VALUE_PAIR = 0;
 	private IType type;
 
@@ -21,6 +24,10 @@ public abstract class C4JAnnotation {
 		return getAnnotation() != null;
 	}
 
+	public IType getType(){
+		return type;
+	}
+	
 	public IAnnotation getAnnotation() {
 		if (type == null)
 			return null;
@@ -33,7 +40,7 @@ public abstract class C4JAnnotation {
 				}
 			}
 		} catch (JavaModelException e) {
-			e.printStackTrace();
+			logger.error("Could not get C4J-Annotation of " + type.getElementName(), e);
 		}
 		return null;
 	}
@@ -47,8 +54,7 @@ public abstract class C4JAnnotation {
 					return true;
 				}
 			} catch (JavaModelException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Could not request C4J-Annotation of " + type.getElementName(), e);
 			}
 		}
 		return false;

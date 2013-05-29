@@ -1,5 +1,8 @@
 package de.vksi.c4j.eclipse.plugin.core.configuration;
 
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.DEFAULT_CONFIG_CONTAINER;
+import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.DEFAULT_LIB_CONTAINER;
+
 import java.io.IOException;
 
 import org.eclipse.core.resources.IFile;
@@ -11,8 +14,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 
 import de.vksi.c4j.eclipse.plugin.internal.C4JPluginSettings;
-import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.DEFAULT_CONFIG_CONTAINER;
-import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.DEFAULT_LIB_CONTAINER;
 
 public class ProjectConverter {
 	private IJavaProject javaProject;

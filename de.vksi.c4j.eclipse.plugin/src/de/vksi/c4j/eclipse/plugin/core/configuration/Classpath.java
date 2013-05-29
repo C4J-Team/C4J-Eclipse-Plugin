@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -16,10 +17,12 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.ui.util.CoreUtility;
 import org.eclipse.jdt.internal.ui.wizards.buildpaths.CPListElement;
 
+import de.vksi.c4j.eclipse.plugin.C4JEclipsePluginActivator;
 import de.vksi.c4j.eclipse.plugin.util.comparator.ClasspathEntryComparator;
 
 @SuppressWarnings("restriction")
 public class Classpath {
+	private static Logger logger = C4JEclipsePluginActivator.getLogManager().getLogger(Classpath.class.getName());
 
 	private IJavaProject javaProject;
 
@@ -33,7 +36,6 @@ public class Classpath {
 		add(newEntries);
 	}
 
-	// TODO: sort entries
 	public void add(Set<IClasspathEntry> entries) throws JavaModelException {
 		entries.addAll(getClasspathEntries());
 		List<IClasspathEntry> sortedList = sortClasspathEnties(entries);
@@ -61,7 +63,7 @@ public class Classpath {
 				List<IClasspathEntry> sortedEntries = sortClasspathEnties(entries);
 				javaProject.setRawClasspath(sortedEntries.toArray(new IClasspathEntry[sortedEntries.size()]), null);
 			} catch (CoreException e) {
-				e.printStackTrace();
+				logger.error("Could not add source folder to classpath", e);
 			}
 		}
 		return packageFragmentRoot;
@@ -70,7 +72,7 @@ public class Classpath {
 	private Set<IClasspathEntry> getClasspathEntries() throws JavaModelException {
 		Set<IClasspathEntry> entries = new HashSet<IClasspathEntry>();
 		for (IClasspathEntry entry : javaProject.getRawClasspath()) {
-				entries.add(entry);
+			entries.add(entry);
 		}
 		return entries;
 	}

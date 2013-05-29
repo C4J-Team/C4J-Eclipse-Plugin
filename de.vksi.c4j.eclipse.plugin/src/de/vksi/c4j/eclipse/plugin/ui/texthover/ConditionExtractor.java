@@ -6,6 +6,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
@@ -15,11 +16,13 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 
+import de.vksi.c4j.eclipse.plugin.C4JEclipsePluginActivator;
 import de.vksi.c4j.eclipse.plugin.internal.C4JConditions;
 import de.vksi.c4j.eclipse.plugin.util.requestor.ContractRequestor;
 import de.vksi.c4j.eclipse.plugin.util.requestor.TypeHierarchyRequestor;
 
 public class ConditionExtractor {
+	private static Logger logger = C4JEclipsePluginActivator.getLogManager().getLogger(ConditionExtractor.class.getName());
 	private C4JConditions conditions;
 	private ContractRequestor contractRequestor;
 
@@ -72,27 +75,24 @@ public class ConditionExtractor {
 	}
 
 	private IMethod getMethodOfInterest(IJavaElement element, IType contract) {
-		IMethod method = null;
-		try {
-			if (element instanceof IType)
-				method = getClassInvariantsMethod(contract);
-			else
-				method = (IMethod) element;
-		} catch (JavaModelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return method;
+		if (element instanceof IType)
+			return getClassInvariantsMethod(contract);
+		else
+			return (IMethod) element;
 	}
 
-	private IMethod getClassInvariantsMethod(IType contract) throws JavaModelException {
+	private IMethod getClassInvariantsMethod(IType contract) {
 		if (contract != null) {
-			for (IMethod method : contract.getMethods()) {
-				for (IAnnotation annotation : method.getAnnotations()) {
-					if (ANNOTATION_CLASS_INVARIANT.equals(annotation.getElementName())) {
-						return method;
+			try {
+				for (IMethod method : contract.getMethods()) {
+					for (IAnnotation annotation : method.getAnnotations()) {
+						if (ANNOTATION_CLASS_INVARIANT.equals(annotation.getElementName())) {
+							return method;
+						}
 					}
 				}
+			} catch (JavaModelException e) {
+				logger.error("Could not resolve ClassInvariant-Method of " + contract.getElementName(), e);
 			}
 		}
 		return null;
@@ -109,7 +109,6 @@ public class ConditionExtractor {
 	}
 
 	private ASTNode parse(IType contract) {
-		//TODO: try to use ASTProvider.SHARED_AST_LEVEL instead of AST.JLS4
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setSource(contract.getCompilationUnit());
 		parser.setResolveBindings(false);
@@ -121,8 +120,8 @@ public class ConditionExtractor {
 	private void addWarningToPreconditions(IType type) {
 		String relatedContractName = type.getElementName();
 		String warning = MessageFormat.format("<br>WARNING: Found strengthening pre-condition "
-				+ "in Contract ''{0}'' which is already defined from its super Contract "
-				+ "- ignoring the pre-condition", relatedContractName);
+				+ "in Contract ''{0}'' which is already defined from its super Contract " + "- ignoring the pre-condition",
+				relatedContractName);
 		conditions.addWaringToConditions(C4JConditions.PRE_CONDITIONS, warning);
 	}
 }
