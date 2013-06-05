@@ -50,7 +50,6 @@ public class ConvertToC4JWizardRunner implements WizardRunner<Boolean> {
 			return new ProjectConverter().convertToC4JProject(javaProject);
 		} catch (Exception e) {
 			logger.error("Could not convert into C4J-Project", e);
-			e.printStackTrace();
 		} 
 		return false;
 	}
