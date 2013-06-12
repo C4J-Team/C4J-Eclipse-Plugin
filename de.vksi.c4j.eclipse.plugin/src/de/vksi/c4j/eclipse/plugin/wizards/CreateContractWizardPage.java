@@ -235,7 +235,7 @@ public class CreateContractWizardPage extends NewTypeWizardPage {
 		contract.addTargetMember();
 		contract.addClassInvariant();
 		
-		if (!isCreateOnlyContractStub()) 
+		if (!isCreateOnlyContractStub() && !target.isInterface()) 
 			createConstructorStubs(type, contract);
 
 		if (isCreateAllMethodStubs()) 
