@@ -4,6 +4,7 @@ import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CONT
 import static de.vksi.c4j.eclipse.plugin.util.C4JPluginConstants.ANNOTATION_CONTRACT_REFERENCE;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -20,6 +21,7 @@ import org.eclipse.jdt.internal.corext.codemanipulation.StubUtility2;
 import org.eclipse.jdt.internal.corext.dom.ASTNodes;
 import org.eclipse.jdt.internal.corext.dom.Bindings;
 import org.eclipse.jdt.internal.corext.refactoring.util.RefactoringASTParser;
+import org.eclipse.jdt.internal.corext.util.MethodsSourcePositionComparator;
 import org.eclipse.jdt.internal.ui.IJavaHelpContextIds;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.internal.ui.javaeditor.ASTProvider;
@@ -40,7 +42,7 @@ import de.vksi.c4j.eclipse.plugin.util.C4JContractTransformer;
 @SuppressWarnings("restriction")
 public class CreateContractWizardPage extends NewTypeWizardPage {
 	private static final String SUPERTYPE_NOT_SET = "Superclass or Interface not set";
-	
+
 	public final static int INTERNAL_CONTRACT = 0;
 	public final static int EXTERNAL_CONTRACT = 1;
 
@@ -50,10 +52,8 @@ public class CreateContractWizardPage extends NewTypeWizardPage {
 
 	private final static String PAGE_NAME = "NewContractClassWizardPage";
 
-	private static final String CREATE_INTERNAL_CONTRACT = "Create internal Contract (@"
-			+ ANNOTATION_CONTRACT_REFERENCE + ")";
-	private static final String CREATE_EXTERNAL_CONTRACT = "Create external Contract (@"
-			+ ANNOTATION_CONTRACT + ")";
+	private static final String CREATE_INTERNAL_CONTRACT = "Create internal Contract (@" + ANNOTATION_CONTRACT_REFERENCE + ")";
+	private static final String CREATE_EXTERNAL_CONTRACT = "Create external Contract (@" + ANNOTATION_CONTRACT + ")";
 
 	private final static String ONLY_CONTRACT_STUB = "Create only Contract stub";
 	private final static String ALL_METHODS_OF_CURRENT_TYPE = "Create Contract stubs for all methods of the target Type";
@@ -139,8 +139,7 @@ public class CreateContractWizardPage extends NewTypeWizardPage {
 		setControl(composite);
 
 		Dialog.applyDialogFont(composite);
-		PlatformUI.getWorkbench().getHelpSystem()
-				.setHelp(composite, IJavaHelpContextIds.NEW_CLASS_WIZARD_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IJavaHelpContextIds.NEW_CLASS_WIZARD_PAGE);
 	}
 
 	@Override
@@ -150,8 +149,7 @@ public class CreateContractWizardPage extends NewTypeWizardPage {
 			setFocus();
 	}
 
-	public void setContractTypeSelection(boolean internalContract, boolean externalContract,
-			boolean canBeModified) {
+	public void setContractTypeSelection(boolean internalContract, boolean externalContract, boolean canBeModified) {
 		fContractTypeButtons.setSelection(INTERNAL_CONTRACT, internalContract);
 		fContractTypeButtons.setSelection(EXTERNAL_CONTRACT, externalContract);
 		fContractTypeButtons.setEnabled(canBeModified);
@@ -161,14 +159,12 @@ public class CreateContractWizardPage extends NewTypeWizardPage {
 			boolean contractWithAllMethodStubsOfTypeHierarchy, boolean canBeModified) {
 		fContractStubsButtons.setSelection(CONTRACT_STUB, onlyContractStub);
 		fContractStubsButtons.setSelection(CONTRACT_WITH_TARGET_METHODS, contractWithTargetMethodStubs);
-		fContractStubsButtons.setSelection(CONTRACT_WITH_ALL_TYPE_HIERARCHY_METHODS,
-				contractWithAllMethodStubsOfTypeHierarchy);
+		fContractStubsButtons.setSelection(CONTRACT_WITH_ALL_TYPE_HIERARCHY_METHODS, contractWithAllMethodStubsOfTypeHierarchy);
 		fContractStubsButtons.setEnabled(canBeModified);
 	}
-	
+
 	private void doStatusUpdate() {
-		IStatus[] status = new IStatus[] { fContainerStatus,
-				isEnclosingTypeSelected() ? fEnclosingTypeStatus : fPackageStatus, //
+		IStatus[] status = new IStatus[] { fContainerStatus, isEnclosingTypeSelected() ? fEnclosingTypeStatus : fPackageStatus, //
 				fTypeNameStatus, //
 				fModifierStatus, //
 				fSuperClassStatus, //
@@ -225,8 +221,7 @@ public class CreateContractWizardPage extends NewTypeWizardPage {
 	}
 
 	@Override
-	protected void createTypeMembers(IType type, ImportsManager imports, IProgressMonitor monitor)
-			throws CoreException {
+	protected void createTypeMembers(IType type, ImportsManager imports, IProgressMonitor monitor) throws CoreException {
 		C4JContractTransformer contract = new C4JContractTransformer(type);
 
 		if (isCreateExternalContract())
@@ -234,13 +229,13 @@ public class CreateContractWizardPage extends NewTypeWizardPage {
 
 		contract.addTargetMember();
 		contract.addClassInvariant();
-		
-		if (!isCreateOnlyContractStub() && !target.isInterface()) 
-			createConstructorStubs(type, contract);
 
-		if (isCreateAllMethodStubs()) 
+		if (!isCreateOnlyContractStub() && !target.isInterface())
+			createConstructorStubs(type, contract);
+		
+		if (isCreateAllMethodStubs())
 			contract.addMethodStubs(getOverridableMethodsOfTarget(type));
-		 else if (isCreateAllMethodStubsOfTypeHierarchy()) 
+		else if (isCreateAllMethodStubsOfTypeHierarchy())
 			contract.addMethodStubs(getAllOverridableMethods(type));
 
 		contract.applyEdits();
@@ -249,13 +244,12 @@ public class CreateContractWizardPage extends NewTypeWizardPage {
 			monitor.done();
 	}
 
-	private void createConstructorStubs(IType type, C4JContractTransformer contract)
-			throws JavaModelException, CoreException {
+	private void createConstructorStubs(IType type, C4JContractTransformer contract) throws JavaModelException, CoreException {
 		CompilationUnit fUnit = getAstRoot(type);
 		ITypeBinding binding = ASTNodes.getTypeBinding(fUnit, type);
-		
+
 		IMethodBinding[] visibleConstructors = StubUtility2.getVisibleConstructors(binding, true, false);
-		
+
 		for (IMethodBinding constructor : visibleConstructors) {
 			contract.addContructorStub(constructor);
 		}
@@ -267,6 +261,7 @@ public class CreateContractWizardPage extends NewTypeWizardPage {
 			if (isTargetDeclaringClass(method))
 				methodsContainedInTarget.add(method);
 		}
+		
 		return methodsContainedInTarget;
 	}
 
@@ -277,17 +272,16 @@ public class CreateContractWizardPage extends NewTypeWizardPage {
 	private List<IMethodBinding> getAllOverridableMethods(IType type) throws JavaModelException {
 		CompilationUnit fUnit = getAstRoot(type);
 		ITypeBinding typeBinding = ASTNodes.getTypeBinding(fUnit, type);
-		
+
 		if (typeBinding != null) {
-			final IMethodBinding[] methods = StubUtility2.getOverridableMethods(fUnit.getAST(), typeBinding,
-					false);
+			final IMethodBinding[] methods = StubUtility2.getOverridableMethods(fUnit.getAST(), typeBinding, false);
+			Arrays.sort(methods, new MethodsSourcePositionComparator(typeBinding));
 			return getMethodsVisibleInTypeHierarchy(typeBinding, methods);
 		} else
 			return new ArrayList<IMethodBinding>();
 	}
 
-	private List<IMethodBinding> getMethodsVisibleInTypeHierarchy(ITypeBinding typeBinding,
-			final IMethodBinding[] methods) {
+	private List<IMethodBinding> getMethodsVisibleInTypeHierarchy(ITypeBinding typeBinding, final IMethodBinding[] methods) {
 		List<IMethodBinding> list = new ArrayList<IMethodBinding>(methods.length);
 		for (IMethodBinding method : methods) {
 			if (Bindings.isVisibleInHierarchy(method, typeBinding.getPackage()))
