@@ -1,3 +1,4 @@
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/3083d7ebe6c6e8b78a9abf7ad7a889ae "githalytics.com")](http://githalytics.com/C4J-Team/C4J-Eclipse-Plugin)
 C4J-Eclipse-Plugin
 ==================
 ##Installation
