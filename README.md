@@ -1,4 +1,3 @@
-[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/3083d7ebe6c6e8b78a9abf7ad7a889ae "githalytics.com")](http://githalytics.com/C4J-Team/C4J-Eclipse-Plugin)
 C4J-Eclipse-Plugin
 ==================
 ##Installation
@@ -31,3 +30,4 @@ Having classes guarded by contracts one of the greatest advantages is that the c
 * what you get as a result (postconditions) - if you fulfill the preconditions -
 
 The C4J-Plugin provides you an easy access to these contract information. To display the contract information of a target class, **point your mouse cursor to the desired class/method** opened in the editor. The corresponding conditions are going to be displayed in a lightweight pop-up dialog directly in the editor.
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/3083d7ebe6c6e8b78a9abf7ad7a889ae "githalytics.com")](http://githalytics.com/C4J-Team/C4J-Eclipse-Plugin)
