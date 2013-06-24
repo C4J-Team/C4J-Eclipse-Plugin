@@ -34,13 +34,13 @@ public class ProjectConverter {
 
 		c4jVM = new C4JVM(javaProject);
 		c4jVM.setUpC4JVM(localC4J);
-		
+
 		return true;
 	}
 
 	private IFolder setUpConfigFolder(C4JPluginSettings c4jPluginSettings) throws IOException, CoreException {
 		if (c4jPluginSettings.getPathToConfigFiles() != null)
-			return createFolder(c4jPluginSettings.getPathToConfigFiles());
+			return createSrcFolder(c4jPluginSettings.getPathToConfigFiles());
 		else {
 			IFolder folder = createSrcFolder(new Path(DEFAULT_CONFIG_CONTAINER));
 			c4jPluginSettings.setPathToConfigFiles(folder.getFullPath());
@@ -59,19 +59,20 @@ public class ProjectConverter {
 	}
 
 	private IFolder createFolder(IPath path) throws CoreException {
-		IProject generalProject = javaProject.getProject();
-		IFolder folder = generalProject.getFolder(path);
+		IFolder folder = javaProject.getProject().getFolder(path);
 
 		if (!folder.exists())
 			folder.create(true, true, null);
 
 		return folder;
 	}
-	
-	private IFolder createSrcFolder(IPath path){
+
+	private IFolder createSrcFolder(IPath path) {
 		IFolder folder = javaProject.getProject().getFolder(path);
-		new Classpath(javaProject).addSourceFolder(folder);
-		return folder;
 		
+		if (!folder.exists())
+			new Classpath(javaProject).addSourceFolder(folder);
+		
+		return folder;
 	}
 }
