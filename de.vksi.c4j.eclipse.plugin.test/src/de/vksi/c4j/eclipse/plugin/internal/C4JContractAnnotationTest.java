@@ -1,8 +1,6 @@
 package de.vksi.c4j.eclipse.plugin.internal;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static test.util.TestConstants.ANNOTATION_CONTRACT;
 import static test.util.TestConstants.PATH_TO_DOT_PROJECT_FILE;
 import static test.util.TestConstants.PROJECTNAME;
@@ -16,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import test.util.JavaProjectLoader;
-
 
 public class C4JContractAnnotationTest {
 	private C4JContractAnnotation c4JContractAnnotation;
@@ -44,8 +41,8 @@ public class C4JContractAnnotationTest {
 	}
 
 	@Test
-	public void testReturnNullIfHasNoValueTargetClass() throws JavaModelException {
-		assertEquals(null, c4JContractAnnotation.getTargetClass());
+	public void testReturnTargetClass() throws JavaModelException {
+		assertNotNull(c4JContractAnnotation.getTargetClass());
 	}
 
 	@Test
@@ -54,13 +51,13 @@ public class C4JContractAnnotationTest {
 	}
 
 	@Test
-	public void testFalseIfHasNoValue() {
-		assertFalse(c4JContractAnnotation.hasValue());
+	public void testTrueIfHasValue() {
+		assertTrue(c4JContractAnnotation.hasValue());
 	}
 
 	@Test
-	public void testReturnEmptyStringIfHasNoAnnotationValue() throws JavaModelException {
-		assertEquals("", c4JContractAnnotation.getAnnotationValue());
+	public void testReturnAnnotationValue() throws JavaModelException {
+		assertTrue(!c4JContractAnnotation.getAnnotationValue().isEmpty());
 	}
 
 }

@@ -57,21 +57,27 @@ public class C4JConditions {
 
 	private void addPreConditions(List<String> preConditions) {
 		if (!preConditions.isEmpty()) {
-			Set<String> mergedPostConditions = new HashSet<String>();
-			mergedPostConditions.addAll(getConditions(C4JConditions.PRE_CONDITIONS));
-			mergedPostConditions.addAll(preConditions);
-
-			map.put(PRE_CONDITIONS, new ArrayList<String>(mergedPostConditions));
+			//Set<String> mergedPostConditions = new HashSet<String>();
+			//mergedPostConditions.addAll(getConditions(C4JConditions.PRE_CONDITIONS));
+			//mergedPostConditions.addAll(preConditions);
+			
+			//map.put(PRE_CONDITIONS, new ArrayList<String>(mergedPostConditions));
+			
+			preConditions.removeAll(getConditions(C4JConditions.PRE_CONDITIONS));
+			getConditions(C4JConditions.PRE_CONDITIONS).addAll(preConditions);
 		}
 	}
 
 	private void addPostConditions(List<String> postConditions) {
 		if (!postConditions.isEmpty()) {
-			Set<String> mergedPostConditions = new HashSet<String>();
-			mergedPostConditions.addAll(getConditions(C4JConditions.POST_CONDITIONS));
-			mergedPostConditions.addAll(postConditions);
-
-			map.put(POST_CONDITIONS, new ArrayList<String>(mergedPostConditions));
+//			Set<String> mergedPostConditions = new HashSet<String>();
+//			mergedPostConditions.addAll(getConditions(C4JConditions.POST_CONDITIONS));
+//			mergedPostConditions.addAll(postConditions);
+//
+//			map.put(POST_CONDITIONS, new ArrayList<String>(mergedPostConditions));
+			
+			postConditions.removeAll(getConditions(C4JConditions.POST_CONDITIONS));
+			getConditions(C4JConditions.POST_CONDITIONS).addAll(postConditions);
 		}
 	}
 

@@ -22,6 +22,6 @@ public class TestConstants {
 	public static final String CONTRACT_SOURCEFILE_DOI_0 = "StackSpecContract.java";
 	
 	//***external
-	public static final String TODS_CONTRACT = "TimeOfDaySpecContract.java";
-	public static final String TODS = "TimeOfDaySpec.java";
+	public static final String TODS_CONTRACT = "TimeOfDayContract.java";
+	public static final String TODS = "TimeOfDay.java";
 }

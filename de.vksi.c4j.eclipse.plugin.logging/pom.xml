@@ -17,9 +17,9 @@
   </build>
   <packaging>eclipse-plugin</packaging>
   <parent>
-  	<groupId>de.vksi.c4j.eclipse</groupId>
-  	<artifactId>de.vksi.c4j.eclipse.parent</artifactId>
-  	<version>1.0.0-SNAPSHOT</version>
-  	<relativePath>../de.vksi.c4j.eclipse.parent</relativePath>
+          <groupId>de.vksi.c4j.eclipse</groupId>
+          <artifactId>de.vksi.c4j.eclipse.parent</artifactId>
+          <version>1.0.0-SNAPSHOT</version>
+          <relativePath>../de.vksi.c4j.eclipse.parent</relativePath>
   </parent>
 </project>
