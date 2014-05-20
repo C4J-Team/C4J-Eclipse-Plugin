@@ -24,8 +24,8 @@ import de.vksi.c4j.eclipse.plugin.core.configuration.ProjectConverter;
 public class ProjectConverterTest {
 	private static final String PROJECT_NAME = "virtualTestProject";
 
-	private static final String C4J_JAR = "c4j-6.0.0.jar";
-	private static final String JAVA_ASSIST_JAR = "javassist-3.16.1-GA.jar";
+	private static final String C4J_JAR = "c4j-6.0.0-for-java-8.jar";
+	private static final String JAVA_ASSIST_JAR = "javassist-3.18.1-GA.jar";
 	private static final String LOG4J_JAR = "log4j-1.2.16.jar";
 
 	private IJavaProject projectToConvert;

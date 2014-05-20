@@ -9,8 +9,8 @@ public class C4JPluginConstants {
 	public static final String DEFAULT_LIB_CONTAINER = "libs";
 	
 	//Libs
-	public static final String C4J_JAR = "c4j-6.0.0.jar";
-	public static final String JAVASSIST_JAR = "javassist-3.16.1-GA.jar";
+	public static final String C4J_JAR = "c4j-6.0.0-for-java-8.jar";
+	public static final String JAVASSIST_JAR = "javassist-3.18.1-GA.jar";
 	public static final String LOG4J_JAR = "log4j-1.2.16.jar";
 	public static final String CHANGELOG = "CHANGELOG.txt";
 	

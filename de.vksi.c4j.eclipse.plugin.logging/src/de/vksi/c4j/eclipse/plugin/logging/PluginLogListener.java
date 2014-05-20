@@ -1,11 +1,10 @@
 package de.vksi.c4j.eclipse.plugin.logging;
 
-import org.eclipse.core.runtime.ILogListener;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.ILogListener;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * PluginLogListener
@@ -52,22 +51,23 @@ class PluginLogListener implements ILogListener {
 	 * @param status Log Status
 	 * @param plugin plug-in id
 	 */	
+	@Override
 	public void logging(IStatus status, String plugin) {
 		if (null == this.logger || null == status) 
 			return;
 		
 		int severity = status.getSeverity();
 		Level level = Level.DEBUG;  
-		if (severity == Status.ERROR)
+		if (severity == IStatus.ERROR)
 			level = Level.ERROR;
 		else
-		if (severity == Status.WARNING)
+		if (severity == IStatus.WARNING)
 			level = Level.WARN;
 		else
-		if (severity == Status.INFO)
+		if (severity == IStatus.INFO)
 			level = Level.INFO;
 		else
-		if (severity == Status.CANCEL)
+		if (severity == IStatus.CANCEL)
 			level = Level.FATAL;
 
 		plugin = formatText(plugin);

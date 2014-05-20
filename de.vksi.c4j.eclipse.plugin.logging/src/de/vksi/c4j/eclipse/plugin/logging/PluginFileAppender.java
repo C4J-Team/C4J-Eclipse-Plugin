@@ -85,6 +85,7 @@ public class PluginFileAppender extends RollingFileAppender {
 	 * Sets the file name.Translate it before setting. 
 	 * @param file file name
 	 */	
+	@Override
 	public void setFile(String file) {
 		super.setFile(getTranslatedFileName(file));
 	}
@@ -97,6 +98,7 @@ public class PluginFileAppender extends RollingFileAppender {
 	 * @param bufferSize buffer size
 	 * @throws IOException - IO Error happend or the state location was not set   
 	 */	
+	@Override
 	public void setFile(String fileName,boolean append,boolean bufferedIO,int bufferSize) throws IOException {
 		if (this.stateLocation == null) 
 			throw new IOException("Missing Plugin State Location.");			
@@ -109,6 +111,7 @@ public class PluginFileAppender extends RollingFileAppender {
 	 * Finishes instance initialization. If state location was not set, set activate as 
 	 * pending and does nothing.
 	 */	
+	@Override
 	public void activateOptions() {
 		if (this.stateLocation == null) { 
 			this.activateOptionsPending = true;

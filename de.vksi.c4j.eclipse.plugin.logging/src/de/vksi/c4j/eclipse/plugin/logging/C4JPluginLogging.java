@@ -30,6 +30,7 @@ public class C4JPluginLogging extends Plugin {
 	 * 
 	 * @see Plugin#stop
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		synchronized (this.logManagers) {
 			Iterator<PluginLogManager> it = this.logManagers.iterator();
@@ -62,6 +63,7 @@ public class C4JPluginLogging extends Plugin {
 		}
 	}
 
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;

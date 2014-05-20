@@ -2,10 +2,12 @@ package de.vksi.c4j.eclipse.plugin.logging;
 
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
+import org.apache.log4j.Priority;
 import org.apache.log4j.spi.ErrorCode;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.ThrowableInformation;
 import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
@@ -35,6 +37,7 @@ public class PluginLogAppender extends AppenderSkeleton {
 	 * default - Status.OK
 	 * @param event LoggingEvent instance
 	 */	
+	@Override
 	public void append(LoggingEvent event) {
 		
 		if (this.layout == null) {
@@ -53,16 +56,16 @@ public class PluginLogAppender extends AppenderSkeleton {
 		}
 				
 		Level level = event.getLevel();
-		int severity = Status.OK;
+		int severity = IStatus.OK;
 		
-		if (level.toInt() >= Level.ERROR_INT) 
-			severity = Status.ERROR;
+		if (level.toInt() >= Priority.ERROR_INT) 
+			severity = IStatus.ERROR;
 		else
-		if (level.toInt() >= Level.WARN_INT)
-			severity = Status.WARNING;
+		if (level.toInt() >= Priority.WARN_INT)
+			severity = IStatus.WARNING;
 		else
-		if (level.toInt() >= Level.DEBUG_INT) 
-			severity = Status.INFO;
+		if (level.toInt() >= Priority.DEBUG_INT) 
+			severity = IStatus.INFO;
 		
 		this.pluginLog.log(new Status(severity, this.pluginLog.getBundle()
 				.getSymbolicName(), level.toInt(), text, thrown));
@@ -71,6 +74,7 @@ public class PluginLogAppender extends AppenderSkeleton {
 	/**
 	 * Closes this appender
 	 */	
+	@Override
 	public void close() {
 		this.closed = true; 
 	}
@@ -79,6 +83,7 @@ public class PluginLogAppender extends AppenderSkeleton {
 	 * Checks if this appender requires layout
 	 * @return true if layout is required.
 	 */	
+	@Override
 	public boolean requiresLayout() {
 		return true;
 	}

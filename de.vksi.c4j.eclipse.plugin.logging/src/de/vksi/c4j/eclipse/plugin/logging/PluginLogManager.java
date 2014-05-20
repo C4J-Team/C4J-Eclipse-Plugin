@@ -39,6 +39,7 @@ public class PluginLogManager {
 		 * @param category level
 		 * @param appender appender added for this level
 		 */
+		@Override
 		public void addAppenderEvent(Category cat, Appender appender) {
 			if (appender instanceof PluginLogAppender) {
 				((PluginLogAppender)appender).setLog(log);
@@ -54,6 +55,7 @@ public class PluginLogManager {
 		 * @param category level
 		 * @param appender appender added for this level
 		 */
+		@Override
 		public void removeAppenderEvent(Category cat, Appender appender) {
 		}
 	}
