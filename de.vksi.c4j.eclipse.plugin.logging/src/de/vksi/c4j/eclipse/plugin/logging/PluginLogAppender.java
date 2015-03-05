@@ -74,7 +74,6 @@ public class PluginLogAppender extends AppenderSkeleton {
 	/**
 	 * Closes this appender
 	 */	
-	@Override
 	public void close() {
 		this.closed = true; 
 	}
@@ -83,7 +82,6 @@ public class PluginLogAppender extends AppenderSkeleton {
 	 * Checks if this appender requires layout
 	 * @return true if layout is required.
 	 */	
-	@Override
 	public boolean requiresLayout() {
 		return true;
 	}

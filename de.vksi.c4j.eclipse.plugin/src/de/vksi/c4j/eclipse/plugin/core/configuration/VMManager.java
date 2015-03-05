@@ -24,7 +24,7 @@ import org.eclipse.jdt.launching.VMStandin;
 @SuppressWarnings("restriction")
 public class VMManager {
 	private static final String JRE_CONTAINER = "org.eclipse.jdt.launching.JRE_CONTAINER";
-	private static final String PROJECT_LOC = "${project_loc}/";
+	private static final String PROJECT_LOC_WITHNAME = "${project_loc:NAME}/";
 	private IJavaProject javaProject;
 
 	public VMManager(IJavaProject javaProject) {
@@ -145,7 +145,7 @@ public class VMManager {
 			if (vmArguments != null) {
 				for (String arg : vmArguments) {
 					if (arg.contains(JAVAAGENT_ARGUMENT)) {
-						String pathToC4Jlib = arg.replace(JAVAAGENT_ARGUMENT + PROJECT_LOC, "");
+						String pathToC4Jlib = arg.replace(JAVAAGENT_ARGUMENT + PROJECT_LOC_WITHNAME.replace("NAME", file.getProject().getName()), "");
 						boolean match = pathToC4Jlib.equals(file.getProjectRelativePath().toString());
 						if (match)
 							return true;

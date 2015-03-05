@@ -51,7 +51,6 @@ class PluginLogListener implements ILogListener {
 	 * @param status Log Status
 	 * @param plugin plug-in id
 	 */	
-	@Override
 	public void logging(IStatus status, String plugin) {
 		if (null == this.logger || null == status) 
 			return;

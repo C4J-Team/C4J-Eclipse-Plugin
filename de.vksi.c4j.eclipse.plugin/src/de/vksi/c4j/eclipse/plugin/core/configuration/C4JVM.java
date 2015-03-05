@@ -14,7 +14,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.VMStandin;
 
 public class C4JVM {
-	private static final String PROJECT_LOC = "${project_loc}/";
+	private static final String PROJECT_LOC_WITHNAME = "${project_loc:NAME}/";
 	private static final String C4J_NAME_POSTIFX = "C4J";
 	private VMManager vmManager;
 
@@ -44,7 +44,7 @@ public class C4JVM {
 	}
 
 	private ArrayList<String> generateC4JVMarguments(IFile file) {
-		String fileLocation = PROJECT_LOC + file.getProjectRelativePath().toString();
+		String fileLocation = PROJECT_LOC_WITHNAME.replace("NAME", file.getProject().getName()) + file.getProjectRelativePath().toString();
 
 		ArrayList<String> listOfArguments = new ArrayList<String>();
 		listOfArguments.add(EA_AGRUMENT);

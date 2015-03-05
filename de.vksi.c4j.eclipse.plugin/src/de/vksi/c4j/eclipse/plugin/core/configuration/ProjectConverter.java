@@ -16,7 +16,6 @@ import de.vksi.c4j.eclipse.plugin.internal.C4JPluginSettings;
 
 public class ProjectConverter {
 	private IJavaProject javaProject;
-	private C4JVM c4jVM;
 
 	public boolean convertToC4JProject(IJavaProject javaProject) throws CoreException, IOException {
 		this.javaProject = javaProject;
@@ -31,7 +30,7 @@ public class ProjectConverter {
 		c4jResources.addJarsToClasspath(javaProject);
 		IFile localC4J = c4jResources.getLocalC4Jjar();
 
-		c4jVM = new C4JVM(javaProject);
+		C4JVM c4jVM = new C4JVM(javaProject);
 		c4jVM.setUpC4JVM(localC4J);
 
 		return true;

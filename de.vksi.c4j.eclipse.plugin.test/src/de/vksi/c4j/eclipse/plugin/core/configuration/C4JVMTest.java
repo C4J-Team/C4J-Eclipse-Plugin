@@ -15,7 +15,7 @@ import test.util.JavaProjectCreator;
 
 public class C4JVMTest {
 
-	private static final String PROJECT_LOC = "${project_loc}/";
+	private static final String PROJECT_LOC = "${project_loc:virtualTestProject}/";
 	private static final String DUMMY_JAR = "dummy.jar";
 	private static final String C4J = "C4J";
 	private static final String EA_JAVAAGENT = "-ea -javaagent:";

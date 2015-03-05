@@ -2,7 +2,7 @@
 <feature
       id="de.vksi.c4j.eclipse.feature"
       label="C4J Eclipse Plugin"
-      version="1.0.0.qualifier"
+      version="1.0.1.qualifier"
       provider-name="VKSI"
       plugin="de.vksi.c4j.eclipse.plugin">
 

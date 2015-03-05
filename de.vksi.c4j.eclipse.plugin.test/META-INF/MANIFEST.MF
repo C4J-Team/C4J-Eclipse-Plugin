@@ -2,8 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Test
 Bundle-SymbolicName: de.vksi.c4j.eclipse.plugin.test
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Fragment-Host: de.vksi.c4j.eclipse.plugin;bundle-version="0.0.1"
-Require-Bundle: org.junit;bundle-version="4.10.0",
- org.mockito.mockito-all;bundle-version="1.9.5"
+Require-Bundle: org.junit;bundle-version="4.10.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

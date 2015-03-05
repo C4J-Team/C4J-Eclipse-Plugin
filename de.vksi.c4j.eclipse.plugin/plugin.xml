@@ -79,4 +79,22 @@
             sequence="Ctrl+Alt+ARROW_LEFT">
       </key>
    </extension>
+   <extension
+         point="org.eclipse.ltk.core.refactoring.renameParticipants">
+      <renameParticipant
+            class="de.vksi.c4j.eclipse.plugin.refactoring.RenameParticipantUpdateJre"
+            id="de.vksi.c4j.eclipse.plugin.renameParticipant1"
+            name="C4JRenameParticipant">
+         <enablement>
+      <with variable="affectedNatures">
+        <iterate operator="or">
+          <equals value="org.eclipse.jdt.core.javanature"/>
+        </iterate>
+      </with>
+      <with variable="element">
+        <instanceof value="org.eclipse.jdt.core.IJavaProject"/>
+      </with>
+    </enablement>
+      </renameParticipant>
+   </extension>
 </plugin>

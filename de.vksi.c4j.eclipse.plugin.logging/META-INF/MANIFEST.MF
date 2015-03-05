@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Logging
 Bundle-SymbolicName: de.vksi.c4j.eclipse.plugin.logging;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-Activator: de.vksi.c4j.eclipse.plugin.logging.C4JPluginLogging
 Bundle-Vendor: VKSI
 Require-Bundle: org.eclipse.core.runtime
